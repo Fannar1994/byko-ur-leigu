@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
@@ -9,11 +9,19 @@ import { Search } from "lucide-react";
 interface KennitalaSearchProps {
   onSearch: (kennitala: string) => void;
   isLoading: boolean;
+  initialKennitala?: string;
 }
 
-const KennitalaSearch: React.FC<KennitalaSearchProps> = ({ onSearch, isLoading }) => {
-  const [kennitala, setKennitala] = useState("");
+const KennitalaSearch: React.FC<KennitalaSearchProps> = ({ onSearch, isLoading, initialKennitala = "" }) => {
+  const [kennitala, setKennitala] = useState(initialKennitala);
   const [error, setError] = useState("");
+
+  // Update kennitala if initialKennitala changes
+  useEffect(() => {
+    if (initialKennitala) {
+      setKennitala(initialKennitala);
+    }
+  }, [initialKennitala]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

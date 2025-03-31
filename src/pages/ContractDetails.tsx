@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -13,28 +13,38 @@ import { searchByKennitala } from "@/services/api";
 
 const ContractDetails = () => {
   const { contractNumber } = useParams();
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [contractData, setContractData] = useState<SearchResults | null>(null);
   const [localRentalItems, setLocalRentalItems] = useState<RentalItem[]>([]);
   const [pickedItems, setPickedItems] = useState<Record<string, boolean>>({});
   const [countValues, setCountValues] = useState<Record<string, string>>({});
+  
+  // Get the lastKennitala from localStorage if available
+  const lastKennitala = localStorage.getItem('lastSearchedKennitala') || '';
 
   useEffect(() => {
     const fetchContractData = async () => {
       setLoading(true);
       try {
-        // Use a valid kennitala format (10 digits) to avoid validation errors
-        const data = await searchByKennitala("1234567890");
+        // Use a valid kennitala format from localStorage or fallback to default
+        const kennitala = lastKennitala || "1234567890";
+        const data = await searchByKennitala(kennitala);
         setContractData(data);
         
         if (data) {
           const contract = data.contracts.find(c => c.contractNumber === contractNumber);
           
           if (contract) {
+            // Filter items by contract ID
             const contractItems = data.rentalItems.filter(item => 
               item.contractId === contract.id
             );
             setLocalRentalItems(contractItems);
+          } else {
+            toast.error("Samningur fannst ekki", {
+              description: `Samningur ${contractNumber} finnst ekki í kerfinu.`,
+            });
           }
         }
       } catch (error) {
@@ -48,7 +58,7 @@ const ContractDetails = () => {
     };
 
     fetchContractData();
-  }, [contractNumber]);
+  }, [contractNumber, lastKennitala]);
 
   const handleCountChange = (itemId: string, value: string) => {
     setCountValues(prev => ({
@@ -71,7 +81,19 @@ const ContractDetails = () => {
       description: `${pickedCount} vörur merktar sem tilbúnar til afhendingar.`,
     });
     
-    // In a real app, you would save this state to the server
+    // Update the status of picked items
+    setLocalRentalItems(prev => 
+      prev.map(item => 
+        pickedItems[item.id] 
+          ? { ...item, status: "Tiltekt" } 
+          : item
+      )
+    );
+  };
+
+  const handleGoBack = () => {
+    // Navigate back to the index page
+    navigate('/');
   };
 
   const contract = contractData?.contracts.find(c => c.contractNumber === contractNumber);
@@ -86,11 +108,13 @@ const ContractDetails = () => {
             className="h-32 w-auto mx-auto" 
           />
           <div className="absolute left-6">
-            <Link to="/">
-              <Button variant="outline" className="text-white border-white hover:bg-white/10">
-                <ChevronLeft className="mr-2 h-4 w-4" /> Til baka
-              </Button>
-            </Link>
+            <Button 
+              variant="outline" 
+              className="text-white border-white hover:bg-white/10"
+              onClick={handleGoBack}
+            >
+              <ChevronLeft className="mr-2 h-4 w-4" /> Til baka
+            </Button>
           </div>
         </div>
       </header>
@@ -236,9 +260,9 @@ const ContractDetails = () => {
             {!contract && !loading && (
               <div className="text-center py-12 text-white">
                 <p>Samningur með númer {contractNumber} fannst ekki.</p>
-                <Link to="/" className="text-primary hover:underline mt-4 inline-block">
+                <Button onClick={handleGoBack} className="mt-4">
                   Til baka
-                </Link>
+                </Button>
               </div>
             )}
           </>

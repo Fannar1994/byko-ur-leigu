@@ -1,5 +1,5 @@
 
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { toast } from "sonner";
 import KennitalaSearch from "@/components/KennitalaSearch";
 import ResultsDisplay from "@/components/ResultsDisplay";
@@ -17,6 +17,15 @@ const Index = () => {
   const navigate = useNavigate();
   const { setIsAuthenticated } = useContext(AuthContext);
 
+  // Check for stored kennitala on initial load
+  useEffect(() => {
+    const storedKennitala = localStorage.getItem('lastSearchedKennitala');
+    if (storedKennitala) {
+      setLastSearchedKennitala(storedKennitala);
+      handleSearch(storedKennitala);
+    }
+  }, []);
+
   const handleLogout = () => {
     setIsAuthenticated(false);
     toast.success("Útskráning tókst", {
@@ -28,6 +37,9 @@ const Index = () => {
   const handleSearch = async (kennitala: string) => {
     setIsLoading(true);
     setLastSearchedKennitala(kennitala);
+    // Store the kennitala in localStorage
+    localStorage.setItem('lastSearchedKennitala', kennitala);
+    
     try {
       const results = await searchByKennitala(kennitala);
       setSearchResults(results);
@@ -83,7 +95,7 @@ const Index = () => {
           <p className="text-white">Leitaðu að leigusamningum með kennitölu</p>
         </div>
       
-        <KennitalaSearch onSearch={handleSearch} isLoading={isLoading} />
+        <KennitalaSearch onSearch={handleSearch} isLoading={isLoading} initialKennitala={lastSearchedKennitala} />
         
         {isLoading && (
           <div className="flex justify-center py-12">
@@ -95,7 +107,7 @@ const Index = () => {
           <ResultsDisplay results={searchResults} onDataChange={refreshData} />
         )}
         
-        {!isLoading && !searchResults && (
+        {!isLoading && !searchResults && !lastSearchedKennitala && (
           <div className="text-center py-12 text-white">
             <p>Sláðu inn kennitölu til að leita að leigusamningum.</p>
             <p className="text-sm mt-2">Fyrir prófun, notaðu hvaða 10 stafa tölu sem er.</p>
