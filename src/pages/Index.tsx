@@ -51,7 +51,7 @@ const Index = () => {
             <img 
               src="/lovable-uploads/32d6ed3c-0d96-4a87-b8ec-6d4abea3412c.png" 
               alt="BYKO LEIGA" 
-              className="h-12"
+              className="h-20 w-auto" // Increased height and added width auto to maintain aspect ratio
             />
             <div className="hidden md:block">
               <h1 className="text-3xl font-bold">Rental Contract System</h1>
