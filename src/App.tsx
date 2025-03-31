@@ -8,6 +8,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Index from "./pages/Index";
 import Login from "./pages/Login";
 import NotFound from "./pages/NotFound";
+import ContractDetails from "./pages/ContractDetails";
 
 // Create auth context
 export const AuthContext = createContext({
@@ -43,6 +44,11 @@ const App = () => {
               <Route path="/" element={
                 <ProtectedRoute>
                   <Index />
+                </ProtectedRoute>
+              } />
+              <Route path="/contract/:contractNumber" element={
+                <ProtectedRoute>
+                  <ContractDetails />
                 </ProtectedRoute>
               } />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

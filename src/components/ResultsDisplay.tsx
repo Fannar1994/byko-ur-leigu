@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import OffHireDialog from "./OffHireDialog";
 import { offHireItem } from "@/services/api";
+import { Link } from "react-router-dom";
 
 interface ResultsDisplayProps {
   results: SearchResults | null;
@@ -147,7 +148,8 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, onDataChange }
       case "On Rent": 
       case "Í leigu": return "bg-primary text-primary-foreground"; // Yellow
       case "Off-Hired": return "bg-red-100 text-red-800";
-      case "Pending Return": return "bg-white text-black"; // White
+      case "Pending Return": 
+      case "Tiltekt": return "bg-white text-black"; // White
       default: return "bg-gray-100 text-gray-800";
     }
   };
@@ -251,7 +253,12 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, onDataChange }
                       {sortedContracts.map((contract) => (
                         <tr key={contract.id}>
                           <td className="px-6 py-4 whitespace-nowrap">
-                            <div className="font-medium text-white">{contract.contractNumber}</div>
+                            <Link 
+                              to={`/contract/${contract.contractNumber}`}
+                              className="font-medium text-primary hover:underline"
+                            >
+                              {contract.contractNumber}
+                            </Link>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
                             <Badge className={getStatusColor(contract.status)}>
@@ -362,9 +369,17 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, onDataChange }
                               <div className="font-medium text-white">{item.itemName}</div>
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap">
-                              <div className="text-sm text-white">
-                                {contract?.contractNumber || "-"}
-                              </div>
+                              {contract && (
+                                <Link 
+                                  to={`/contract/${contract.contractNumber}`}
+                                  className="text-sm text-primary hover:underline"
+                                >
+                                  {contract.contractNumber}
+                                </Link>
+                              )}
+                              {!contract && (
+                                <div className="text-sm text-white">-</div>
+                              )}
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap">
                               <div className="flex items-center gap-1 text-white">
