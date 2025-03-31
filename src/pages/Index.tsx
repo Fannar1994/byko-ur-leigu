@@ -5,12 +5,15 @@ import KennitalaSearch from "@/components/KennitalaSearch";
 import ResultsDisplay from "@/components/ResultsDisplay";
 import { searchByKennitala } from "@/services/api";
 import { SearchResults } from "@/types/contract";
-import { AlertCircle } from "lucide-react";
+import { AlertCircle, LogIn } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
 
 const Index = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [searchResults, setSearchResults] = useState<SearchResults | null>(null);
   const [lastSearchedKennitala, setLastSearchedKennitala] = useState<string>("");
+  const navigate = useNavigate();
 
   const handleSearch = async (kennitala: string) => {
     setIsLoading(true);
@@ -45,18 +48,27 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background dark">
-      <header className="py-6 px-4 bg-[#2A2A2A] text-white mb-8">
+      <header className="py-0 px-0 bg-[#2A2A2A] text-white mb-8">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-3">
+          <div className="flex items-center w-full">
             <img 
-              src="/lovable-uploads/32d6ed3c-0d96-4a87-b8ec-6d4abea3412c.png" 
+              src="/lovable-uploads/3e1840af-2d2e-403d-81ae-e4201bb075c5.png" 
               alt="BYKO LEIGA" 
-              className="h-20 w-auto" // Increased height and added width auto to maintain aspect ratio
+              className="h-28 w-auto" 
             />
-            <div className="hidden md:block">
-              <h1 className="text-3xl font-bold">Rental Contract System</h1>
-              <p className="text-primary">Search for rental contracts using Icelandic ID numbers</p>
+            <div className="hidden md:block ml-4">
+              <h1 className="text-3xl font-bold text-white">Rental Contract System</h1>
+              <p className="text-white">Search for rental contracts using Icelandic ID numbers</p>
             </div>
+          </div>
+          <div className="pr-6">
+            <Button 
+              variant="outline" 
+              className="text-white border-white hover:bg-white/10"
+              onClick={() => navigate("/login")}
+            >
+              <LogIn className="mr-2 h-4 w-4" /> Login
+            </Button>
           </div>
         </div>
       </header>
@@ -84,7 +96,7 @@ const Index = () => {
       
       <footer className="bg-[#2A2A2A] text-white py-4 px-4">
         <div className="container mx-auto text-center text-sm">
-          <p>© {new Date().getFullYear()} BYKO LEIGA | Rental Management System</p>
+          <p>BYKO Leiga</p>
         </div>
       </footer>
     </div>
