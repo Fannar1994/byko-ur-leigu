@@ -11,6 +11,7 @@ export interface Contract {
   startDate: string;
   endDate: string;
   totalValue: number;
+  location?: string; // Add location field
 }
 
 export interface RentalItem {

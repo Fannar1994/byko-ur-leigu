@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { SearchResults, Contract, RentalItem } from "@/types/contract";
 import { formatDate, formatCurrency } from "@/utils/formatters";
-import { ChevronDown, ChevronUp, Calendar, FileText, Package, UserX } from "lucide-react";
+import { ChevronDown, ChevronUp, Calendar, FileText, Package, UserX, MapPin } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -213,6 +213,15 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, onDataChange }
                         </th>
                         <th 
                           className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider cursor-pointer"
+                          onClick={() => handleSort("location")}
+                        >
+                          <div className="flex items-center gap-1">
+                            <span>Verkstaður</span>
+                            <SortIcon field="location" currentField={sortField} direction={sortDirection} />
+                          </div>
+                        </th>
+                        <th 
+                          className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider cursor-pointer"
                           onClick={() => handleSort("startDate")}
                         >
                           <div className="flex items-center gap-1">
@@ -264,6 +273,12 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, onDataChange }
                             <Badge className={getStatusColor(contract.status)}>
                               {contract.status}
                             </Badge>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <div className="flex items-center gap-1 text-white">
+                              <MapPin size={14} className="text-gray-400" />
+                              <span>{contract.location || '-'}</span>
+                            </div>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
                             <div className="flex items-center gap-1 text-white">

@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -6,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
-import { ChevronLeft, Calendar, Check, Package } from "lucide-react";
+import { ChevronLeft, Calendar, Check, Package, MapPin } from "lucide-react";
 import { formatDate } from "@/utils/formatters";
 import { SearchResults, RentalItem } from "@/types/contract";
 import { searchByKennitala } from "@/services/api";
@@ -23,8 +22,6 @@ const ContractDetails = () => {
     const fetchContractData = async () => {
       setLoading(true);
       try {
-        // In a real app, we'd have an API endpoint to get items by contract number
-        // For this demo, we'll get all contracts and filter
         const data = await searchByKennitala("any-kennitala");
         setContractData(data);
         
@@ -32,7 +29,6 @@ const ContractDetails = () => {
           const contract = data.contracts.find(c => c.contractNumber === contractNumber);
           
           if (contract) {
-            // Filter items for this specific contract
             const contractItems = data.rentalItems.filter(item => 
               item.contractId === contract.id
             );
@@ -116,7 +112,7 @@ const ContractDetails = () => {
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                       <div>
                         <div className="text-sm text-gray-500">Upphafsdagsetning</div>
                         <div className="text-lg font-medium text-white flex items-center">
@@ -131,9 +127,16 @@ const ContractDetails = () => {
                           {formatDate(contract.endDate)}
                         </div>
                       </div>
+                      <div>
+                        <div className="text-sm text-gray-500">Verkstaður</div>
+                        <div className="text-lg font-medium text-white flex items-center">
+                          <MapPin size={16} className="mr-2" />
+                          {contract.location || '-'}
+                        </div>
+                      </div>
                       
                       {contractData && (
-                        <div className="col-span-2">
+                        <div className="col-span-3">
                           <div className="text-sm text-gray-500">Leigutaki</div>
                           <div className="text-lg font-medium text-white">
                             {contractData.renter.name} ({contractData.renter.kennitala})

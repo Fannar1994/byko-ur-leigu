@@ -29,7 +29,8 @@ export async function searchByKennitala(kennitala: string): Promise<SearchResult
         status: "Virkur",
         startDate: "2023-06-15",
         endDate: "2023-12-15",
-        totalValue: 150000
+        totalValue: 150000,
+        location: "Hafnarfjörður" // Add location
       },
       {
         id: "c2",
@@ -37,7 +38,8 @@ export async function searchByKennitala(kennitala: string): Promise<SearchResult
         status: "Lokið",
         startDate: "2022-11-01",
         endDate: "2023-02-01",
-        totalValue: 75000
+        totalValue: 75000,
+        location: "Reykjavík" // Add location
       }
     ],
     rentalItems: [
