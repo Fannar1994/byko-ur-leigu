@@ -359,7 +359,7 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, onDataChange }
                               <div className="font-medium text-white">{formatCurrency(item.rentalRate)}</div>
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap">
-                              <div className="text-sm text-brand-400">
+                              <div className="text-sm text-white">
                                 {contract?.contractNumber || "-"}
                               </div>
                             </td>
