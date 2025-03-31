@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -164,6 +165,11 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, onDataChange }
       </Card>
 
       <Tabs defaultValue="contracts" className="w-full">
+        <TabsList className="w-full mb-6">
+          <TabsTrigger value="contracts" className="flex-1">Allir samningar</TabsTrigger>
+          <TabsTrigger value="items" className="flex-1">Vörur í leigu</TabsTrigger>
+        </TabsList>
+        
         <TabsContent value="contracts" className="animate-fade-in">
           <Card>
             <CardHeader className="pb-2">
@@ -270,8 +276,8 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, onDataChange }
                 <div className="text-center py-6 text-gray-500">Engar vörur eru í leigu</div>
               ) : (
                 <div className="overflow-x-auto">
-                  <table className="min-w-full divide-y divide-gray-200">
-                    <thead className="bg-gray-50 dark:bg-gray-800">
+                  <table className="min-w-full divide-y divide-gray-700">
+                    <thead className="bg-[#2A2A2A]">
                       <tr>
                         <th 
                           className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider cursor-pointer"
@@ -330,31 +336,31 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, onDataChange }
                         </th>
                       </tr>
                     </thead>
-                    <tbody className="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-700">
+                    <tbody className="bg-[#2A2A2A] divide-y divide-gray-700">
                       {activeRentalItems.map((item) => {
                         const contract = results.contracts.find(c => c.id === item.contractId);
                         return (
                           <tr key={item.id}>
                             <td className="px-6 py-4 whitespace-nowrap">
-                              <div className="font-medium">{item.itemName}</div>
+                              <div className="font-medium text-white">{item.itemName}</div>
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap">
-                              <Badge variant="outline">{item.category}</Badge>
+                              <Badge variant="outline" className="text-white">{item.category}</Badge>
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap">
-                              <div className="text-sm text-gray-600 dark:text-gray-400">{item.serialNumber}</div>
+                              <div className="text-sm text-white">{item.serialNumber}</div>
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap">
-                              <div className="flex items-center gap-1">
+                              <div className="flex items-center gap-1 text-white">
                                 <Calendar size={14} className="text-gray-400" />
                                 <span>{formatDate(item.dueDate)}</span>
                               </div>
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap">
-                              <div className="font-medium">{formatCurrency(item.rentalRate)}</div>
+                              <div className="font-medium text-white">{formatCurrency(item.rentalRate)}</div>
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap">
-                              <div className="text-sm text-brand-700 dark:text-brand-400">
+                              <div className="text-sm text-brand-400">
                                 {contract?.contractNumber || "-"}
                               </div>
                             </td>
