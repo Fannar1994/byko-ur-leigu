@@ -50,7 +50,7 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, onDataChange }
   });
 
   // Only show active rental items (items from active contracts)
-  const activeContracts = results.contracts.filter(c => c.status === "Active").map(c => c.id);
+  const activeContracts = results.contracts.filter(c => c.status === "Active" || c.status === "Virkur").map(c => c.id);
   const activeRentalItems = sortedItems.filter(item => 
     activeContracts.includes(item.contractId) && 
     item.status !== "Off-Hired"
@@ -96,7 +96,7 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, onDataChange }
           )
         );
         
-        toast.success("Success", {
+        toast.success("Aðgerð tókst", {
           description: response.message,
         });
         
@@ -105,17 +105,17 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, onDataChange }
           onDataChange();
         }
       } else {
-        toast.error("Error", {
-          description: response.message || "Failed to off-hire item.",
+        toast.error("Villa", {
+          description: response.message || "Ekki tókst að skila vöru.",
         });
       }
     } catch (error) {
-      let errorMessage = "An unknown error occurred.";
+      let errorMessage = "Óþekkt villa kom upp.";
       if (error instanceof Error) {
         errorMessage = error.message;
       }
       
-      toast.error("Error", {
+      toast.error("Villa", {
         description: errorMessage,
       });
     } finally {
@@ -132,9 +132,12 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, onDataChange }
   // Get contract status badge color
   const getStatusColor = (status: Contract["status"]) => {
     switch (status) {
-      case "Active": return "bg-green-100 text-green-800";
-      case "Completed": return "bg-blue-100 text-blue-800";
-      case "Cancelled": return "bg-red-100 text-red-800";
+      case "Active":
+      case "Virkur": return "bg-primary text-primary-foreground"; // Yellow
+      case "Completed":
+      case "Lokið": return "bg-green-100 text-green-800"; // Green
+      case "Cancelled":
+      case "Tiltekt": return "bg-white text-black"; // White
       default: return "bg-gray-100 text-gray-800";
     }
   };
@@ -142,9 +145,10 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, onDataChange }
   // Get item status badge color
   const getItemStatusColor = (status?: string) => {
     switch (status) {
-      case "On Rent": return "bg-green-100 text-green-800";
+      case "On Rent": 
+      case "Í leigu": return "bg-primary text-primary-foreground"; // Yellow
       case "Off-Hired": return "bg-red-100 text-red-800";
-      case "Pending Return": return "bg-yellow-100 text-yellow-800";
+      case "Pending Return": return "bg-white text-black"; // White
       default: return "bg-gray-100 text-gray-800";
     }
   };
@@ -154,17 +158,17 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, onDataChange }
       {/* Renter Information */}
       <Card className="shadow-md">
         <CardHeader className="pb-2">
-          <CardTitle className="text-xl font-semibold text-brand-800">Renter Information</CardTitle>
+          <CardTitle className="text-xl font-semibold text-white">Upplýsingar um leigutaka</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <div className="text-sm text-gray-500">Name</div>
-              <div className="text-lg font-semibold">{results.renter.name}</div>
+              <div className="text-sm text-gray-500">Nafn</div>
+              <div className="text-lg font-semibold text-white">{results.renter.name}</div>
             </div>
             <div>
               <div className="text-sm text-gray-500">Kennitala</div>
-              <div className="text-lg">{results.renter.kennitala}</div>
+              <div className="text-lg text-white">{results.renter.kennitala}</div>
             </div>
           </div>
         </CardContent>
@@ -175,11 +179,11 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, onDataChange }
         <TabsList className="grid w-full grid-cols-2 mb-6">
           <TabsTrigger value="contracts" className="flex items-center gap-2">
             <FileText size={16} />
-            <span>Contracts ({results.contracts.length})</span>
+            <span>Samningar ({results.contracts.length})</span>
           </TabsTrigger>
           <TabsTrigger value="items" className="flex items-center gap-2">
             <Package size={16} />
-            <span>Currently On Rent ({activeRentalItems.length})</span>
+            <span>Í leigu ({activeRentalItems.length})</span>
           </TabsTrigger>
         </TabsList>
         
@@ -187,11 +191,11 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, onDataChange }
         <TabsContent value="contracts" className="animate-fade-in">
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-xl font-semibold text-brand-800">All Contracts</CardTitle>
+              <CardTitle className="text-xl font-semibold text-white">Allir samningar</CardTitle>
             </CardHeader>
             <CardContent>
               {sortedContracts.length === 0 ? (
-                <div className="text-center py-6 text-gray-500">No contracts found</div>
+                <div className="text-center py-6 text-gray-500">Engir samningar fundust</div>
               ) : (
                 <div className="overflow-x-auto">
                   <table className="min-w-full divide-y divide-gray-200">
@@ -202,7 +206,7 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, onDataChange }
                           onClick={() => handleSort("contractNumber")}
                         >
                           <div className="flex items-center gap-1">
-                            <span>Contract #</span>
+                            <span>Samningur #</span>
                             <SortIcon field="contractNumber" currentField={sortField} direction={sortDirection} />
                           </div>
                         </th>
@@ -211,7 +215,7 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, onDataChange }
                           onClick={() => handleSort("status")}
                         >
                           <div className="flex items-center gap-1">
-                            <span>Status</span>
+                            <span>Staða</span>
                             <SortIcon field="status" currentField={sortField} direction={sortDirection} />
                           </div>
                         </th>
@@ -220,7 +224,7 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, onDataChange }
                           onClick={() => handleSort("startDate")}
                         >
                           <div className="flex items-center gap-1">
-                            <span>Start Date</span>
+                            <span>Upphafsdagur</span>
                             <SortIcon field="startDate" currentField={sortField} direction={sortDirection} />
                           </div>
                         </th>
@@ -229,7 +233,7 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, onDataChange }
                           onClick={() => handleSort("endDate")}
                         >
                           <div className="flex items-center gap-1">
-                            <span>End Date</span>
+                            <span>Lokadagur</span>
                             <SortIcon field="endDate" currentField={sortField} direction={sortDirection} />
                           </div>
                         </th>
@@ -238,7 +242,7 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, onDataChange }
                           onClick={() => handleSort("totalValue")}
                         >
                           <div className="flex items-center gap-1">
-                            <span>Value</span>
+                            <span>Virði</span>
                             <SortIcon field="totalValue" currentField={sortField} direction={sortDirection} />
                           </div>
                         </th>
@@ -284,11 +288,11 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, onDataChange }
         <TabsContent value="items" className="animate-fade-in">
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-xl font-semibold text-brand-800">Items Currently On Rent</CardTitle>
+              <CardTitle className="text-xl font-semibold text-white">Vörur í leigu</CardTitle>
             </CardHeader>
             <CardContent>
               {activeRentalItems.length === 0 ? (
-                <div className="text-center py-6 text-gray-500">No items currently on rent</div>
+                <div className="text-center py-6 text-gray-500">Engar vörur eru í leigu</div>
               ) : (
                 <div className="overflow-x-auto">
                   <table className="min-w-full divide-y divide-gray-200">
@@ -299,7 +303,7 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, onDataChange }
                           onClick={() => handleItemSort("itemName")}
                         >
                           <div className="flex items-center gap-1">
-                            <span>Item Name</span>
+                            <span>Vörunafn</span>
                             <SortIcon field="itemName" currentField={itemSortField} direction={itemSortDirection} />
                           </div>
                         </th>
@@ -308,7 +312,7 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, onDataChange }
                           onClick={() => handleItemSort("category")}
                         >
                           <div className="flex items-center gap-1">
-                            <span>Category</span>
+                            <span>Flokkur</span>
                             <SortIcon field="category" currentField={itemSortField} direction={itemSortDirection} />
                           </div>
                         </th>
@@ -317,7 +321,7 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, onDataChange }
                           onClick={() => handleItemSort("serialNumber")}
                         >
                           <div className="flex items-center gap-1">
-                            <span>Serial #</span>
+                            <span>Raðnr. #</span>
                             <SortIcon field="serialNumber" currentField={itemSortField} direction={itemSortDirection} />
                           </div>
                         </th>
@@ -326,7 +330,7 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, onDataChange }
                           onClick={() => handleItemSort("dueDate")}
                         >
                           <div className="flex items-center gap-1">
-                            <span>Due Date</span>
+                            <span>Skiladagur</span>
                             <SortIcon field="dueDate" currentField={itemSortField} direction={itemSortDirection} />
                           </div>
                         </th>
@@ -335,19 +339,19 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, onDataChange }
                           onClick={() => handleItemSort("rentalRate")}
                         >
                           <div className="flex items-center gap-1">
-                            <span>Rate</span>
+                            <span>Verð</span>
                             <SortIcon field="rentalRate" currentField={itemSortField} direction={itemSortDirection} />
                           </div>
                         </th>
                         <th 
                           className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider"
                         >
-                          Contract #
+                          Samningur #
                         </th>
                         <th 
                           className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider"
                         >
-                          Actions
+                          Aðgerðir
                         </th>
                       </tr>
                     </thead>
@@ -388,7 +392,7 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, onDataChange }
                                 className="flex items-center gap-1"
                               >
                                 <UserX size={14} />
-                                <span>Off-Hire</span>
+                                <span>Skila</span>
                               </Button>
                             </td>
                           </tr>
