@@ -164,17 +164,6 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, onDataChange }
       </Card>
 
       <Tabs defaultValue="contracts" className="w-full">
-        <TabsList className="grid w-full grid-cols-2 mb-6">
-          <TabsTrigger value="contracts" className="flex items-center gap-2">
-            <FileText size={16} />
-            <span>Samningar ({results.contracts.length})</span>
-          </TabsTrigger>
-          <TabsTrigger value="items" className="flex items-center gap-2">
-            <Package size={16} />
-            <span>Í leigu ({activeRentalItems.length})</span>
-          </TabsTrigger>
-        </TabsList>
-        
         <TabsContent value="contracts" className="animate-fade-in">
           <Card>
             <CardHeader className="pb-2">
@@ -189,7 +178,7 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, onDataChange }
                     <thead className="bg-[#2A2A2A]">
                       <tr>
                         <th 
-                          className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider cursor-pointer"
+                          className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider cursor-pointer"
                           onClick={() => handleSort("contractNumber")}
                         >
                           <div className="flex items-center gap-1">
@@ -198,7 +187,7 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, onDataChange }
                           </div>
                         </th>
                         <th 
-                          className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider cursor-pointer"
+                          className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider cursor-pointer"
                           onClick={() => handleSort("status")}
                         >
                           <div className="flex items-center gap-1">
@@ -207,7 +196,7 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, onDataChange }
                           </div>
                         </th>
                         <th 
-                          className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider cursor-pointer"
+                          className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider cursor-pointer"
                           onClick={() => handleSort("startDate")}
                         >
                           <div className="flex items-center gap-1">
@@ -216,7 +205,7 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, onDataChange }
                           </div>
                         </th>
                         <th 
-                          className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider cursor-pointer"
+                          className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider cursor-pointer"
                           onClick={() => handleSort("endDate")}
                         >
                           <div className="flex items-center gap-1">
@@ -225,7 +214,7 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, onDataChange }
                           </div>
                         </th>
                         <th 
-                          className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider cursor-pointer"
+                          className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider cursor-pointer"
                           onClick={() => handleSort("totalValue")}
                         >
                           <div className="flex items-center gap-1">
@@ -285,7 +274,7 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, onDataChange }
                     <thead className="bg-gray-50 dark:bg-gray-800">
                       <tr>
                         <th 
-                          className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider cursor-pointer"
+                          className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider cursor-pointer"
                           onClick={() => handleItemSort("itemName")}
                         >
                           <div className="flex items-center gap-1">
@@ -294,7 +283,7 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, onDataChange }
                           </div>
                         </th>
                         <th 
-                          className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider cursor-pointer"
+                          className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider cursor-pointer"
                           onClick={() => handleItemSort("category")}
                         >
                           <div className="flex items-center gap-1">
@@ -303,7 +292,7 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, onDataChange }
                           </div>
                         </th>
                         <th 
-                          className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider cursor-pointer"
+                          className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider cursor-pointer"
                           onClick={() => handleItemSort("serialNumber")}
                         >
                           <div className="flex items-center gap-1">
@@ -312,7 +301,7 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, onDataChange }
                           </div>
                         </th>
                         <th 
-                          className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider cursor-pointer"
+                          className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider cursor-pointer"
                           onClick={() => handleItemSort("dueDate")}
                         >
                           <div className="flex items-center gap-1">
@@ -321,7 +310,7 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, onDataChange }
                           </div>
                         </th>
                         <th 
-                          className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider cursor-pointer"
+                          className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider cursor-pointer"
                           onClick={() => handleItemSort("rentalRate")}
                         >
                           <div className="flex items-center gap-1">
@@ -330,12 +319,12 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, onDataChange }
                           </div>
                         </th>
                         <th 
-                          className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider"
+                          className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider"
                         >
                           Samningur #
                         </th>
                         <th 
-                          className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider"
+                          className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider"
                         >
                           Aðgerðir
                         </th>
