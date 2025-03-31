@@ -166,7 +166,7 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, onDataChange }
       <Tabs defaultValue="contracts" className="w-full">
         <TabsList className="w-full mb-6">
           <TabsTrigger value="contracts" className="flex-1">Allir samningar</TabsTrigger>
-          <TabsTrigger value="items" className="flex-1">Vörur í leigu</TabsTrigger>
+          <TabsTrigger value="items" className="flex-1">Í leigu</TabsTrigger>
         </TabsList>
         
         <TabsContent value="contracts" className="animate-fade-in">
@@ -268,7 +268,7 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, onDataChange }
         <TabsContent value="items" className="animate-fade-in">
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-xl font-semibold text-white">Vörur í leigu</CardTitle>
+              <CardTitle className="text-xl font-semibold text-white">Í leigu</CardTitle>
             </CardHeader>
             <CardContent>
               {activeRentalItems.length === 0 ? (
