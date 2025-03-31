@@ -21,10 +21,17 @@ export interface RentalItem {
   serialNumber: string;
   dueDate: string;
   rentalRate: number;
+  status?: 'On Rent' | 'Off-Hired' | 'Pending Return';
 }
 
 export interface SearchResults {
   renter: Renter;
   contracts: Contract[];
   rentalItems: RentalItem[];
+}
+
+export interface OffHireResponse {
+  success: boolean;
+  message: string;
+  itemId: string;
 }

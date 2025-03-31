@@ -1,5 +1,5 @@
 
-import { SearchResults } from "@/types/contract";
+import { SearchResults, OffHireResponse } from "@/types/contract";
 
 // This is a mock API service - in a real application, this would connect to the InspHire API
 export async function searchByKennitala(kennitala: string): Promise<SearchResults> {
@@ -48,7 +48,8 @@ export async function searchByKennitala(kennitala: string): Promise<SearchResult
         category: "Heavy Machinery",
         serialNumber: "EX-2023-001",
         dueDate: "2023-12-15",
-        rentalRate: 25000
+        rentalRate: 25000,
+        status: "On Rent"
       },
       {
         id: "i2",
@@ -57,7 +58,8 @@ export async function searchByKennitala(kennitala: string): Promise<SearchResult
         category: "Construction Equipment",
         serialNumber: "CM-2023-042",
         dueDate: "2023-12-15",
-        rentalRate: 8000
+        rentalRate: 8000,
+        status: "On Rent"
       },
       {
         id: "i3",
@@ -66,7 +68,8 @@ export async function searchByKennitala(kennitala: string): Promise<SearchResult
         category: "Safety Equipment",
         serialNumber: "SH-2023-105",
         dueDate: "2023-12-15",
-        rentalRate: 500
+        rentalRate: 500,
+        status: "On Rent"
       }
     ]
   };
@@ -80,4 +83,20 @@ export function validateKennitala(kennitala: string): boolean {
   
   // More sophisticated validation could be added here
   return true;
+}
+
+// New function to handle off-hiring an item
+export async function offHireItem(itemId: string, noCharge: boolean = false): Promise<OffHireResponse> {
+  // Simulate API delay
+  await new Promise(resolve => setTimeout(resolve, 800));
+  
+  // In a real implementation, this would call the InspHire API
+  console.log(`Off-hiring item ${itemId} with no charge: ${noCharge}`);
+  
+  // Simulate success
+  return {
+    success: true,
+    message: `Item successfully off-hired${noCharge ? ' with no charge' : ''}.`,
+    itemId
+  };
 }

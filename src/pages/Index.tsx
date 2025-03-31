@@ -10,9 +10,11 @@ import { AlertCircle } from "lucide-react";
 const Index = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [searchResults, setSearchResults] = useState<SearchResults | null>(null);
+  const [lastSearchedKennitala, setLastSearchedKennitala] = useState<string>("");
 
   const handleSearch = async (kennitala: string) => {
     setIsLoading(true);
+    setLastSearchedKennitala(kennitala);
     try {
       const results = await searchByKennitala(kennitala);
       setSearchResults(results);
@@ -35,8 +37,14 @@ const Index = () => {
     }
   };
 
+  const refreshData = async () => {
+    if (lastSearchedKennitala) {
+      handleSearch(lastSearchedKennitala);
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-b from-brand-50 to-white">
+    <div className="min-h-screen bg-gradient-to-b from-brand-50 to-white dark:from-gray-900 dark:to-gray-950">
       <header className="py-6 px-4 bg-brand-800 text-white mb-8">
         <div className="max-w-7xl mx-auto">
           <h1 className="text-3xl font-bold">Kennitala Connect</h1>
@@ -54,11 +62,11 @@ const Index = () => {
         )}
         
         {!isLoading && searchResults && (
-          <ResultsDisplay results={searchResults} />
+          <ResultsDisplay results={searchResults} onDataChange={refreshData} />
         )}
         
         {!isLoading && !searchResults && (
-          <div className="text-center py-12 text-gray-500">
+          <div className="text-center py-12 text-gray-500 dark:text-gray-400">
             <p>Enter a kennitala to search for rental contracts.</p>
             <p className="text-sm mt-2">For testing, use any 10-digit number.</p>
           </div>
