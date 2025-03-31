@@ -1,19 +1,29 @@
 
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { toast } from "sonner";
 import KennitalaSearch from "@/components/KennitalaSearch";
 import ResultsDisplay from "@/components/ResultsDisplay";
 import { searchByKennitala } from "@/services/api";
 import { SearchResults } from "@/types/contract";
-import { AlertCircle, LogIn } from "lucide-react";
+import { AlertCircle, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../App";
 
 const Index = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [searchResults, setSearchResults] = useState<SearchResults | null>(null);
   const [lastSearchedKennitala, setLastSearchedKennitala] = useState<string>("");
   const navigate = useNavigate();
+  const { setIsAuthenticated } = useContext(AuthContext);
+
+  const handleLogout = () => {
+    setIsAuthenticated(false);
+    toast.success("Útskráning tókst", {
+      description: "Þú hefur verið skráð/ur út.",
+    });
+    navigate("/login");
+  };
 
   const handleSearch = async (kennitala: string) => {
     setIsLoading(true);
@@ -23,13 +33,13 @@ const Index = () => {
       setSearchResults(results);
     } catch (error) {
       console.error("Search error:", error);
-      let errorMessage = "An unknown error occurred. Please try again.";
+      let errorMessage = "Óþekkt villa kom upp. Vinsamlegast reyndu aftur.";
       
       if (error instanceof Error) {
         errorMessage = error.message;
       }
       
-      toast.error("Search Error", {
+      toast.error("Leitarvilla", {
         description: errorMessage,
         icon: <AlertCircle className="h-5 w-5 text-red-500" />,
       });
@@ -57,17 +67,17 @@ const Index = () => {
               className="h-28 w-auto" 
             />
             <div className="hidden md:block ml-4">
-              <h1 className="text-3xl font-bold text-white">Rental Contract System</h1>
-              <p className="text-white">Search for rental contracts using Icelandic ID numbers</p>
+              <h1 className="text-3xl font-bold text-white">Leigusamningakerfi</h1>
+              <p className="text-white">Leitaðu að leigusamningum með kennitölu</p>
             </div>
           </div>
           <div className="pr-6">
             <Button 
               variant="outline" 
               className="text-white border-white hover:bg-white/10"
-              onClick={() => navigate("/login")}
+              onClick={handleLogout}
             >
-              <LogIn className="mr-2 h-4 w-4" /> Login
+              <LogOut className="mr-2 h-4 w-4" /> Útskrá
             </Button>
           </div>
         </div>
@@ -88,8 +98,8 @@ const Index = () => {
         
         {!isLoading && !searchResults && (
           <div className="text-center py-12 text-muted-foreground">
-            <p>Enter a kennitala to search for rental contracts.</p>
-            <p className="text-sm mt-2">For testing, use any 10-digit number.</p>
+            <p>Sláðu inn kennitölu til að leita að leigusamningum.</p>
+            <p className="text-sm mt-2">Fyrir prófun, notaðu hvaða 10 stafa tölu sem er.</p>
           </div>
         )}
       </main>

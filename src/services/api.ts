@@ -8,12 +8,12 @@ export async function searchByKennitala(kennitala: string): Promise<SearchResult
   
   // Simulate API error for invalid format
   if (kennitala.length !== 10 || !/^\d+$/.test(kennitala)) {
-    throw new Error("Invalid kennitala format. Please enter a 10-digit number.");
+    throw new Error("Ógilt kennitölusnið. Vinsamlegast sláðu inn 10 stafa tölu.");
   }
 
   // Simulate no results found
   if (kennitala === "0000000000") {
-    throw new Error("No contracts found for this kennitala.");
+    throw new Error("Engir samningar fundust fyrir þessa kennitölu.");
   }
 
   // Mock data for demonstration
@@ -26,7 +26,7 @@ export async function searchByKennitala(kennitala: string): Promise<SearchResult
       {
         id: "c1",
         contractNumber: `C-${kennitala.substring(0, 6)}`,
-        status: "Active",
+        status: "Virkur",
         startDate: "2023-06-15",
         endDate: "2023-12-15",
         totalValue: 150000
@@ -34,7 +34,7 @@ export async function searchByKennitala(kennitala: string): Promise<SearchResult
       {
         id: "c2",
         contractNumber: `C-${kennitala.substring(0, 4)}-B`,
-        status: "Completed",
+        status: "Lokið",
         startDate: "2022-11-01",
         endDate: "2023-02-01",
         totalValue: 75000
@@ -44,32 +44,32 @@ export async function searchByKennitala(kennitala: string): Promise<SearchResult
       {
         id: "i1",
         contractId: "c1",
-        itemName: "Excavator XL2000",
-        category: "Heavy Machinery",
+        itemName: "Gröfuvél XL2000",
+        category: "Þungar vinnuvélar",
         serialNumber: "EX-2023-001",
         dueDate: "2023-12-15",
         rentalRate: 25000,
-        status: "On Rent"
+        status: "Í leigu"
       },
       {
         id: "i2",
         contractId: "c1",
-        itemName: "Concrete Mixer",
-        category: "Construction Equipment",
+        itemName: "Steypuhrærivél",
+        category: "Byggingartæki",
         serialNumber: "CM-2023-042",
         dueDate: "2023-12-15",
         rentalRate: 8000,
-        status: "On Rent"
+        status: "Í leigu"
       },
       {
         id: "i3",
         contractId: "c1",
-        itemName: "Safety Helmet (5 units)",
-        category: "Safety Equipment",
+        itemName: "Öryggishjálmar (5 stk)",
+        category: "Öryggisbúnaður",
         serialNumber: "SH-2023-105",
         dueDate: "2023-12-15",
         rentalRate: 500,
-        status: "On Rent"
+        status: "Í leigu"
       }
     ]
   };
@@ -96,7 +96,7 @@ export async function offHireItem(itemId: string, noCharge: boolean = false): Pr
   // Simulate success
   return {
     success: true,
-    message: `Item successfully off-hired${noCharge ? ' with no charge' : ''}.`,
+    message: `Hlutur var skráður af leigu${noCharge ? ' án gjalds' : ''}.`,
     itemId
   };
 }

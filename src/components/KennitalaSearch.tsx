@@ -23,7 +23,7 @@ const KennitalaSearch: React.FC<KennitalaSearchProps> = ({ onSearch, isLoading }
     
     // Validate kennitala
     if (!validateKennitala(kennitala)) {
-      setError("Invalid kennitala format. Please enter a 10-digit number.");
+      setError("Ógilt kennitölusnið. Vinsamlegast sláðu inn 10 stafa tölu.");
       return;
     }
     
@@ -52,9 +52,9 @@ const KennitalaSearch: React.FC<KennitalaSearchProps> = ({ onSearch, isLoading }
       <CardContent className="pt-6">
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <h2 className="text-xl font-semibold text-white">Search Contracts by Kennitala</h2>
+            <h2 className="text-xl font-semibold text-white">Leita að samningum eftir kennitölu</h2>
             <p className="text-sm text-white">
-              Enter a 10-digit Icelandic ID number to find associated rental contracts.
+              Sláðu inn 10 stafa kennitölu til að finna tengda leigusamninga.
             </p>
           </div>
           
@@ -64,7 +64,7 @@ const KennitalaSearch: React.FC<KennitalaSearchProps> = ({ onSearch, isLoading }
                 type="text"
                 value={kennitala}
                 onChange={handleChange}
-                placeholder="Enter kennitala (e.g., 0123456789)"
+                placeholder="Sláðu inn kennitölu (t.d. 0123456789)"
                 className={`pl-4 pr-10 py-6 text-lg ${error ? 'border-red-500 focus:ring-red-500' : ''}`}
               />
               {error && (
@@ -79,12 +79,12 @@ const KennitalaSearch: React.FC<KennitalaSearchProps> = ({ onSearch, isLoading }
               {isLoading ? (
                 <div className="flex items-center gap-2">
                   <div className="h-4 w-4 rounded-full border-2 border-black border-t-transparent animate-spin"></div>
-                  <span>Searching...</span>
+                  <span>Leita...</span>
                 </div>
               ) : (
                 <div className="flex items-center gap-2">
                   <Search size={18} />
-                  <span>Search</span>
+                  <span>Leita</span>
                 </div>
               )}
             </Button>

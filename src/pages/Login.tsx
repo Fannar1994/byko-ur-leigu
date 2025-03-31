@@ -1,16 +1,18 @@
 
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import { AuthContext } from "../App";
 
 const Login = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+  const { setIsAuthenticated } = useContext(AuthContext);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -20,8 +22,9 @@ const Login = () => {
     setTimeout(() => {
       setIsLoading(false);
       // For demo, let any login work
-      toast.success("Login successful", {
-        description: "Welcome back!",
+      setIsAuthenticated(true);
+      toast.success("Innskráning tókst", {
+        description: "Velkomin/n aftur!",
       });
       navigate("/");
     }, 1500);
@@ -44,17 +47,17 @@ const Login = () => {
       <main className="flex-1 flex items-center justify-center p-4">
         <div className="w-full max-w-md space-y-8">
           <div className="text-center">
-            <h2 className="text-3xl font-bold">Login</h2>
-            <p className="text-muted-foreground mt-2">Sign in to your account</p>
+            <h2 className="text-3xl font-bold">Innskráning</h2>
+            <p className="text-muted-foreground mt-2">Skráðu þig inn á þinn aðgang</p>
           </div>
           
           <form onSubmit={handleLogin} className="space-y-6">
             <div className="space-y-2">
-              <Label htmlFor="username">Username</Label>
+              <Label htmlFor="username">Notandanafn</Label>
               <Input 
                 id="username"
                 type="text" 
-                placeholder="Enter your username"
+                placeholder="Sláðu inn notandanafn"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 required
@@ -62,11 +65,11 @@ const Login = () => {
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="password">Lykilorð</Label>
               <Input 
                 id="password"
                 type="password" 
-                placeholder="Enter your password"
+                placeholder="Sláðu inn lykilorð"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
@@ -81,9 +84,9 @@ const Login = () => {
               {isLoading ? (
                 <>
                   <div className="h-5 w-5 rounded-full border-2 border-current border-t-transparent animate-spin mr-2"></div>
-                  Logging in...
+                  Skrái inn...
                 </>
-              ) : "Log in"}
+              ) : "Innskrá"}
             </Button>
           </form>
         </div>
