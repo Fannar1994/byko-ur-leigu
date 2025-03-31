@@ -7,6 +7,7 @@ import { formatDate, formatCurrency } from "@/utils/formatters";
 import { ChevronDown, ChevronUp, Calendar, FileText, Package, UserX } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import OffHireDialog from "./OffHireDialog";
 import { offHireItem } from "@/services/api";
 
@@ -24,6 +25,7 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, onDataChange }
   const [selectedItem, setSelectedItem] = useState<RentalItem | null>(null);
   const [processingItemId, setProcessingItemId] = useState<string | null>(null);
   const [localRentalItems, setLocalRentalItems] = useState<RentalItem[]>([]);
+  const [countValues, setCountValues] = useState<Record<string, string>>({});
 
   React.useEffect(() => {
     if (results?.rentalItems) {
@@ -114,6 +116,13 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, onDataChange }
     } finally {
       setProcessingItemId(null);
     }
+  };
+
+  const handleCountChange = (itemId: string, value: string) => {
+    setCountValues(prev => ({
+      ...prev,
+      [itemId]: value
+    }));
   };
 
   const SortIcon = ({ field, currentField, direction }: { field: string, currentField: string, direction: "asc" | "desc" }) => {
@@ -316,7 +325,7 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, onDataChange }
                           onClick={() => handleItemSort("serialNumber")}
                         >
                           <div className="flex items-center gap-1">
-                            <span>Raðnúmer</span>
+                            <span>Leigunúmer</span>
                             <SortIcon field="serialNumber" currentField={itemSortField} direction={itemSortDirection} />
                           </div>
                         </th>
@@ -334,7 +343,7 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, onDataChange }
                           onClick={() => handleItemSort("rentalRate")}
                         >
                           <div className="flex items-center gap-1 justify-center">
-                            <span>Verð</span>
+                            <span>Talning</span>
                             <SortIcon field="rentalRate" currentField={itemSortField} direction={itemSortDirection} />
                           </div>
                         </th>
@@ -370,8 +379,14 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, onDataChange }
                                 <span>{formatDate(item.dueDate)}</span>
                               </div>
                             </td>
-                            <td className="px-6 py-4 whitespace-nowrap">
-                              <div className="font-medium text-white">{formatCurrency(item.rentalRate)}</div>
+                            <td className="px-6 py-4 whitespace-nowrap text-center">
+                              <Input
+                                type="number"
+                                value={countValues[item.id] || ''}
+                                onChange={(e) => handleCountChange(item.id, e.target.value)}
+                                className="w-24 mx-auto text-center bg-gray-800 border-gray-700 text-white"
+                                min="0"
+                              />
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap">
                               <div className="text-sm text-white">
