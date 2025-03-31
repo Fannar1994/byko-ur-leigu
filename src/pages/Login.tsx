@@ -32,15 +32,13 @@ const Login = () => {
 
   return (
     <div className="min-h-screen bg-background dark flex flex-col">
-      <header className="py-0 px-0 bg-[#2A2A2A] text-white">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <div className="flex items-center w-full">
-            <img 
-              src="/lovable-uploads/3e1840af-2d2e-403d-81ae-e4201bb075c5.png" 
-              alt="BYKO LEIGA" 
-              className="h-28 w-auto" 
-            />
-          </div>
+      <header className="py-4 px-0 bg-[#2A2A2A] text-white flex justify-center">
+        <div className="w-full flex items-center justify-center">
+          <img 
+            src="/lovable-uploads/3e1840af-2d2e-403d-81ae-e4201bb075c5.png" 
+            alt="BYKO LEIGA" 
+            className="h-32 w-auto mx-auto" 
+          />
         </div>
       </header>
       
@@ -48,7 +46,7 @@ const Login = () => {
         <div className="w-full max-w-md space-y-8">
           <div className="text-center">
             <h2 className="text-3xl font-bold text-white">Innskráning</h2>
-            <p className="text-muted-foreground mt-2">Skráðu þig inn á þinn aðgang</p>
+            <p className="text-white mt-2">Skráðu þig inn á þinn aðgang</p>
           </div>
           
           <form onSubmit={handleLogin} className="space-y-6">

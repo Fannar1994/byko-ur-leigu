@@ -58,20 +58,14 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background dark">
-      <header className="py-0 px-0 bg-[#2A2A2A] text-white mb-8">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <div className="flex items-center w-full">
-            <img 
-              src="/lovable-uploads/3e1840af-2d2e-403d-81ae-e4201bb075c5.png" 
-              alt="BYKO LEIGA" 
-              className="h-28 w-auto" 
-            />
-            <div className="hidden md:block ml-4">
-              <h1 className="text-3xl font-bold text-white">Leigusamningakerfi</h1>
-              <p className="text-white">Leitaðu að leigusamningum með kennitölu</p>
-            </div>
-          </div>
-          <div className="pr-6">
+      <header className="py-4 px-0 bg-[#2A2A2A] text-white mb-8 flex justify-center">
+        <div className="w-full flex items-center justify-center">
+          <img 
+            src="/lovable-uploads/3e1840af-2d2e-403d-81ae-e4201bb075c5.png" 
+            alt="BYKO LEIGA" 
+            className="h-32 w-auto mx-auto" 
+          />
+          <div className="absolute right-6">
             <Button 
               variant="outline" 
               className="text-white border-white hover:bg-white/10"
@@ -84,6 +78,11 @@ const Index = () => {
       </header>
       
       <main className="container px-4 pb-12 max-w-7xl mx-auto space-y-8">
+        <div className="text-center mb-8">
+          <h1 className="text-3xl font-bold text-white">Leigusamningakerfi</h1>
+          <p className="text-white">Leitaðu að leigusamningum með kennitölu</p>
+        </div>
+      
         <KennitalaSearch onSearch={handleSearch} isLoading={isLoading} />
         
         {isLoading && (
@@ -97,7 +96,7 @@ const Index = () => {
         )}
         
         {!isLoading && !searchResults && (
-          <div className="text-center py-12 text-muted-foreground">
+          <div className="text-center py-12 text-white">
             <p>Sláðu inn kennitölu til að leita að leigusamningum.</p>
             <p className="text-sm mt-2">Fyrir prófun, notaðu hvaða 10 stafa tölu sem er.</p>
           </div>
