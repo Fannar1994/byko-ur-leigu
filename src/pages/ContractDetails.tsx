@@ -6,10 +6,19 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
-import { ChevronLeft, Calendar, Check, Package, MapPin } from "lucide-react";
+import { ChevronLeft, Calendar, Check, Package, MapPin, Table } from "lucide-react";
 import { formatDate } from "@/utils/formatters";
 import { SearchResults, RentalItem } from "@/types/contract";
 import { searchByKennitala } from "@/services/api";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  Table as UITable,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 const ContractDetails = () => {
   const { contractNumber } = useParams();
@@ -92,11 +101,27 @@ const ContractDetails = () => {
   };
 
   const handleGoBack = () => {
-    // Navigate back to the index page
-    navigate('/');
+    // Navigate back to the index page with the kennitala query parameter
+    navigate('/?kennitala=' + lastKennitala);
   };
 
   const contract = contractData?.contracts.find(c => c.contractNumber === contractNumber);
+
+  // Filter for active and non-active items
+  const activeItems = localRentalItems.filter(item => item.status !== "Tiltekt");
+  const pickupReadyItems = localRentalItems.filter(item => item.status === "Tiltekt");
+
+  const getStatusColor = (status?: string) => {
+    switch (status) {
+      case "Active":
+      case "Virkur": return "bg-primary text-primary-foreground"; // Yellow
+      case "Completed":
+      case "Lokið": return "bg-green-500 text-black"; // Green with black text
+      case "Cancelled":
+      case "Tiltekt": return "bg-white text-black"; // White
+      default: return "bg-gray-100 text-gray-800";
+    }
+  };
 
   return (
     <div className="min-h-screen bg-background dark">
@@ -132,7 +157,7 @@ const ContractDetails = () => {
                   <CardHeader className="pb-2">
                     <CardTitle className="text-xl font-semibold text-white flex items-center justify-between">
                       <span>Samningur {contractNumber}</span>
-                      <Badge className="ml-2 py-1 px-2">
+                      <Badge className={getStatusColor(contract.status)}>
                         {contract.status}
                       </Badge>
                     </CardTitle>
@@ -173,87 +198,130 @@ const ContractDetails = () => {
                   </CardContent>
                 </Card>
 
-                <Card>
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-xl font-semibold text-white flex justify-between items-center">
-                      <span>Vörur í samningi</span>
-                      <Button 
-                        className="ml-auto" 
-                        onClick={handleCompletePickup}
-                        disabled={!Object.values(pickedItems).some(Boolean)}
-                      >
-                        <Check className="h-4 w-4 mr-2" /> Staðfesta tiltekt
-                      </Button>
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    {localRentalItems.length === 0 ? (
-                      <div className="text-center py-6 text-gray-500">Engar vörur fundust í þessum samningi</div>
-                    ) : (
-                      <div className="overflow-x-auto">
-                        <table className="min-w-full divide-y divide-gray-700">
-                          <thead className="bg-[#2A2A2A]">
-                            <tr>
-                              <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-                                Leigunúmer
-                              </th>
-                              <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-                                Vöruheiti
-                              </th>
-                              <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-                                Skiladagsetning
-                              </th>
-                              <th className="px-6 py-3 text-center text-xs font-medium text-white uppercase tracking-wider">
-                                Talning
-                              </th>
-                              <th className="px-6 py-3 text-center text-xs font-medium text-white uppercase tracking-wider">
-                                Tiltekt
-                              </th>
-                            </tr>
-                          </thead>
-                          <tbody className="bg-[#2A2A2A] divide-y divide-gray-700">
-                            {localRentalItems.map((item) => (
-                              <tr key={item.id} className={pickedItems[item.id] ? "bg-green-900/20" : ""}>
-                                <td className="px-6 py-4 whitespace-nowrap">
-                                  <div className="text-sm text-white">{item.serialNumber}</div>
-                                </td>
-                                <td className="px-6 py-4 whitespace-nowrap">
-                                  <div className="font-medium text-white">{item.itemName}</div>
-                                </td>
-                                <td className="px-6 py-4 whitespace-nowrap">
-                                  <div className="flex items-center gap-1 text-white">
-                                    <Calendar size={14} className="text-gray-400" />
-                                    <span>{formatDate(item.dueDate)}</span>
-                                  </div>
-                                </td>
-                                <td className="px-6 py-4 whitespace-nowrap text-center">
-                                  <Input
-                                    type="number"
-                                    value={countValues[item.id] || ''}
-                                    onChange={(e) => handleCountChange(item.id, e.target.value)}
-                                    className="w-24 mx-auto text-center bg-gray-800 border-gray-700 text-white"
-                                    min="0"
-                                  />
-                                </td>
-                                <td className="px-6 py-4 whitespace-nowrap text-center">
-                                  <Button
-                                    size="sm"
-                                    variant={pickedItems[item.id] ? "default" : "outline"}
-                                    onClick={() => toggleItemPicked(item.id)}
-                                    className="flex items-center gap-1"
-                                  >
-                                    <Package size={14} />
-                                    <span>{pickedItems[item.id] ? "Tilbúið" : "Merkja"}</span>
-                                  </Button>
-                                </td>
-                              </tr>
-                            ))}
-                          </tbody>
-                        </table>
-                      </div>
-                    )}
-                  </CardContent>
-                </Card>
+                <Tabs defaultValue="active">
+                  <TabsList className="w-full mb-4">
+                    <TabsTrigger value="active" className="flex-1">Virkir samningar</TabsTrigger>
+                    <TabsTrigger value="pickup" className="flex-1">Tiltekt</TabsTrigger>
+                  </TabsList>
+                  
+                  <TabsContent value="active">
+                    <Card>
+                      <CardHeader className="pb-2">
+                        <CardTitle className="text-xl font-semibold text-white flex justify-between items-center">
+                          <span>Vörur í samningi</span>
+                          <Button 
+                            className="ml-auto" 
+                            onClick={handleCompletePickup}
+                            disabled={!Object.values(pickedItems).some(Boolean)}
+                          >
+                            <Check className="h-4 w-4 mr-2" /> Staðfesta tiltekt
+                          </Button>
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        {activeItems.length === 0 ? (
+                          <div className="text-center py-6 text-gray-500">Engar virkar vörur fundust í þessum samningi</div>
+                        ) : (
+                          <div className="overflow-x-auto">
+                            <UITable>
+                              <TableHeader className="bg-[#2A2A2A]">
+                                <TableRow>
+                                  <TableHead className="text-white">Leigunúmer</TableHead>
+                                  <TableHead className="text-white">Vöruheiti</TableHead>
+                                  <TableHead className="text-white">Skiladagsetning</TableHead>
+                                  <TableHead className="text-white text-center">Talning</TableHead>
+                                  <TableHead className="text-white text-center">Tiltekt</TableHead>
+                                </TableRow>
+                              </TableHeader>
+                              <TableBody className="bg-[#2A2A2A]">
+                                {activeItems.map((item) => (
+                                  <TableRow key={item.id} className={pickedItems[item.id] ? "bg-green-900/20" : ""}>
+                                    <TableCell className="text-white">{item.serialNumber}</TableCell>
+                                    <TableCell className="font-medium text-white">{item.itemName}</TableCell>
+                                    <TableCell>
+                                      <div className="flex items-center gap-1 text-white">
+                                        <Calendar size={14} className="text-gray-400" />
+                                        <span>{formatDate(item.dueDate)}</span>
+                                      </div>
+                                    </TableCell>
+                                    <TableCell className="text-center">
+                                      <Input
+                                        type="number"
+                                        value={countValues[item.id] || ''}
+                                        onChange={(e) => handleCountChange(item.id, e.target.value)}
+                                        className="w-24 mx-auto text-center bg-gray-800 border-gray-700 text-white"
+                                        min="0"
+                                      />
+                                    </TableCell>
+                                    <TableCell className="text-center">
+                                      <Button
+                                        size="sm"
+                                        variant={pickedItems[item.id] ? "default" : "outline"}
+                                        onClick={() => toggleItemPicked(item.id)}
+                                        className="flex items-center gap-1"
+                                      >
+                                        <Package size={14} />
+                                        <span>{pickedItems[item.id] ? "Tilbúið" : "Merkja"}</span>
+                                      </Button>
+                                    </TableCell>
+                                  </TableRow>
+                                ))}
+                              </TableBody>
+                            </UITable>
+                          </div>
+                        )}
+                      </CardContent>
+                    </Card>
+                  </TabsContent>
+                  
+                  <TabsContent value="pickup">
+                    <Card>
+                      <CardHeader className="pb-2">
+                        <CardTitle className="text-xl font-semibold text-white flex items-center">
+                          <Table className="mr-2 h-5 w-5" />
+                          <span>Vörur í tiltekt</span>
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        {pickupReadyItems.length === 0 ? (
+                          <div className="text-center py-6 text-gray-500">Engar vörur eru tilbúnar í tiltekt</div>
+                        ) : (
+                          <div className="overflow-x-auto">
+                            <UITable>
+                              <TableHeader className="bg-[#2A2A2A]">
+                                <TableRow>
+                                  <TableHead className="text-white">Leigunúmer</TableHead>
+                                  <TableHead className="text-white">Vöruheiti</TableHead>
+                                  <TableHead className="text-white">Skiladagsetning</TableHead>
+                                  <TableHead className="text-white text-center">Staða</TableHead>
+                                </TableRow>
+                              </TableHeader>
+                              <TableBody className="bg-[#2A2A2A]">
+                                {pickupReadyItems.map((item) => (
+                                  <TableRow key={item.id} className="bg-green-900/20">
+                                    <TableCell className="text-white">{item.serialNumber}</TableCell>
+                                    <TableCell className="font-medium text-white">{item.itemName}</TableCell>
+                                    <TableCell>
+                                      <div className="flex items-center gap-1 text-white">
+                                        <Calendar size={14} className="text-gray-400" />
+                                        <span>{formatDate(item.dueDate)}</span>
+                                      </div>
+                                    </TableCell>
+                                    <TableCell className="text-center">
+                                      <Badge className="bg-white text-black">
+                                        Tilbúið til afhendingar
+                                      </Badge>
+                                    </TableCell>
+                                  </TableRow>
+                                ))}
+                              </TableBody>
+                            </UITable>
+                          </div>
+                        )}
+                      </CardContent>
+                    </Card>
+                  </TabsContent>
+                </Tabs>
               </div>
             )}
 
