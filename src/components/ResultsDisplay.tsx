@@ -233,7 +233,7 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, onDataChange }
                       {sortedContracts.map((contract) => (
                         <tr key={contract.id}>
                           <td className="px-6 py-4 whitespace-nowrap">
-                            <div className="font-medium text-brand-400">{contract.contractNumber}</div>
+                            <div className="font-medium text-white">{contract.contractNumber}</div>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
                             <Badge className={getStatusColor(contract.status)}>
