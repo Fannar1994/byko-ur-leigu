@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -322,13 +321,9 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, onDataChange }
                           </div>
                         </th>
                         <th 
-                          className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider cursor-pointer"
-                          onClick={() => handleItemSort("category")}
+                          className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider"
                         >
-                          <div className="flex items-center gap-1">
-                            <span>Flokkur</span>
-                            <SortIcon field="category" currentField={itemSortField} direction={itemSortDirection} />
-                          </div>
+                          <span>Samningsnúmer</span>
                         </th>
                         <th 
                           className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider cursor-pointer"
@@ -351,11 +346,6 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, onDataChange }
                         <th 
                           className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider"
                         >
-                          Samningsnúmer
-                        </th>
-                        <th 
-                          className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider"
-                        >
                           Aðgerðir
                         </th>
                       </tr>
@@ -372,7 +362,9 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, onDataChange }
                               <div className="font-medium text-white">{item.itemName}</div>
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap">
-                              <Badge variant="outline" className="text-white">{item.category}</Badge>
+                              <div className="text-sm text-white">
+                                {contract?.contractNumber || "-"}
+                              </div>
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap">
                               <div className="flex items-center gap-1 text-white">
@@ -388,11 +380,6 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, onDataChange }
                                 className="w-24 mx-auto text-center bg-gray-800 border-gray-700 text-white"
                                 min="0"
                               />
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap">
-                              <div className="text-sm text-white">
-                                {contract?.contractNumber || "-"}
-                              </div>
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap">
                               <Button
