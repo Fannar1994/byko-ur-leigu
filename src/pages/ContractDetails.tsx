@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -22,7 +23,8 @@ const ContractDetails = () => {
     const fetchContractData = async () => {
       setLoading(true);
       try {
-        const data = await searchByKennitala("any-kennitala");
+        // Use a valid kennitala format (10 digits) to avoid validation errors
+        const data = await searchByKennitala("1234567890");
         setContractData(data);
         
         if (data) {

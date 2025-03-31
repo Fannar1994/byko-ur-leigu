@@ -16,6 +16,12 @@ export async function searchByKennitala(kennitala: string): Promise<SearchResult
     throw new Error("Engir samningar fundust fyrir þessa kennitölu.");
   }
 
+  // Generate contract ids and numbers based on kennitala to ensure consistency
+  const contractId1 = `c1-${kennitala.substring(0, 4)}`;
+  const contractId2 = `c2-${kennitala.substring(0, 4)}`;
+  const contractNumber1 = `C-${kennitala.substring(0, 6)}`;
+  const contractNumber2 = `C-${kennitala.substring(0, 4)}-B`;
+
   // Mock data for demonstration
   return {
     renter: {
@@ -24,28 +30,28 @@ export async function searchByKennitala(kennitala: string): Promise<SearchResult
     },
     contracts: [
       {
-        id: "c1",
-        contractNumber: `C-${kennitala.substring(0, 6)}`,
+        id: contractId1,
+        contractNumber: contractNumber1,
         status: "Virkur",
         startDate: "2023-06-15",
         endDate: "2023-12-15",
         totalValue: 150000,
-        location: "Hafnarfjörður" // Add location
+        location: "Hafnarfjörður"
       },
       {
-        id: "c2",
-        contractNumber: `C-${kennitala.substring(0, 4)}-B`,
+        id: contractId2,
+        contractNumber: contractNumber2,
         status: "Lokið",
         startDate: "2022-11-01",
         endDate: "2023-02-01",
         totalValue: 75000,
-        location: "Reykjavík" // Add location
+        location: "Reykjavík"
       }
     ],
     rentalItems: [
       {
-        id: "i1",
-        contractId: "c1",
+        id: `i1-${kennitala.substring(0, 4)}`,
+        contractId: contractId1,
         itemName: "Gröfuvél XL2000",
         category: "Þungar vinnuvélar",
         serialNumber: "EX-2023-001",
@@ -54,8 +60,8 @@ export async function searchByKennitala(kennitala: string): Promise<SearchResult
         status: "Í leigu"
       },
       {
-        id: "i2",
-        contractId: "c1",
+        id: `i2-${kennitala.substring(0, 4)}`,
+        contractId: contractId1,
         itemName: "Steypuhrærivél",
         category: "Byggingartæki",
         serialNumber: "CM-2023-042",
@@ -64,8 +70,8 @@ export async function searchByKennitala(kennitala: string): Promise<SearchResult
         status: "Í leigu"
       },
       {
-        id: "i3",
-        contractId: "c1",
+        id: `i3-${kennitala.substring(0, 4)}`,
+        contractId: contractId1,
         itemName: "Öryggishjálmar (5 stk)",
         category: "Öryggisbúnaður",
         serialNumber: "SH-2023-105",
