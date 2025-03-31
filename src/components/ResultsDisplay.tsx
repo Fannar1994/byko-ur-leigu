@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -304,6 +305,15 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, onDataChange }
                       <tr>
                         <th 
                           className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider cursor-pointer"
+                          onClick={() => handleItemSort("serialNumber")}
+                        >
+                          <div className="flex items-center gap-1">
+                            <span>Leigunúmer</span>
+                            <SortIcon field="serialNumber" currentField={itemSortField} direction={itemSortDirection} />
+                          </div>
+                        </th>
+                        <th 
+                          className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider cursor-pointer"
                           onClick={() => handleItemSort("itemName")}
                         >
                           <div className="flex items-center gap-1">
@@ -318,15 +328,6 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, onDataChange }
                           <div className="flex items-center gap-1">
                             <span>Flokkur</span>
                             <SortIcon field="category" currentField={itemSortField} direction={itemSortDirection} />
-                          </div>
-                        </th>
-                        <th 
-                          className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider cursor-pointer"
-                          onClick={() => handleItemSort("serialNumber")}
-                        >
-                          <div className="flex items-center gap-1">
-                            <span>Leigunúmer</span>
-                            <SortIcon field="serialNumber" currentField={itemSortField} direction={itemSortDirection} />
                           </div>
                         </th>
                         <th 
@@ -365,13 +366,13 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, onDataChange }
                         return (
                           <tr key={item.id}>
                             <td className="px-6 py-4 whitespace-nowrap">
+                              <div className="text-sm text-white">{item.serialNumber}</div>
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap">
                               <div className="font-medium text-white">{item.itemName}</div>
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap">
                               <Badge variant="outline" className="text-white">{item.category}</Badge>
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap">
-                              <div className="text-sm text-white">{item.serialNumber}</div>
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap">
                               <div className="flex items-center gap-1 text-white">
