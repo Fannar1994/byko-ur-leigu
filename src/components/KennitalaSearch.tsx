@@ -52,8 +52,8 @@ const KennitalaSearch: React.FC<KennitalaSearchProps> = ({ onSearch, isLoading }
       <CardContent className="pt-6">
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <h2 className="text-xl font-semibold text-brand-800">Search Contracts by Kennitala</h2>
-            <p className="text-sm text-gray-500">
+            <h2 className="text-xl font-semibold text-white">Search Contracts by Kennitala</h2>
+            <p className="text-sm text-white">
               Enter a 10-digit Icelandic ID number to find associated rental contracts.
             </p>
           </div>
@@ -74,11 +74,11 @@ const KennitalaSearch: React.FC<KennitalaSearchProps> = ({ onSearch, isLoading }
             <Button 
               type="submit" 
               disabled={isLoading || kennitala.length !== 10} 
-              className="h-12 px-6 flex-shrink-0 bg-brand-600 hover:bg-brand-700"
+              className="h-12 px-6 flex-shrink-0 bg-white hover:bg-gray-100 text-black search-button"
             >
               {isLoading ? (
                 <div className="flex items-center gap-2">
-                  <div className="h-4 w-4 rounded-full border-2 border-white border-t-transparent animate-spin"></div>
+                  <div className="h-4 w-4 rounded-full border-2 border-black border-t-transparent animate-spin"></div>
                   <span>Searching...</span>
                 </div>
               ) : (

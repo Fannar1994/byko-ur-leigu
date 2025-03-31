@@ -100,5 +100,5 @@
 
 /* Custom styles for the KennitalaSearch component */
 .search-button {
-  @apply text-white !important;
+  @apply text-black !important;
 }
