@@ -21,8 +21,9 @@ export function formatCurrency(amount: number): string {
       style: 'currency',
       currency: 'ISK',
       minimumFractionDigits: 0,
-      maximumFractionDigits: 0
-    }).format(amount);
+      maximumFractionDigits: 0,
+      currencyDisplay: 'code'
+    }).format(amount).replace(',', '.');
   } catch (error) {
     console.error('Error formatting currency:', error);
     return `${amount} ISK`;

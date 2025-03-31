@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -26,7 +25,6 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, onDataChange }
   const [processingItemId, setProcessingItemId] = useState<string | null>(null);
   const [localRentalItems, setLocalRentalItems] = useState<RentalItem[]>([]);
 
-  // Initialize local state when results change
   React.useEffect(() => {
     if (results?.rentalItems) {
       setLocalRentalItems(results.rentalItems);
@@ -35,21 +33,18 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, onDataChange }
 
   if (!results) return null;
 
-  // Sort contracts
   const sortedContracts = [...results.contracts].sort((a, b) => {
     if (a[sortField] < b[sortField]) return sortDirection === "asc" ? -1 : 1;
     if (a[sortField] > b[sortField]) return sortDirection === "asc" ? 1 : -1;
     return 0;
   });
 
-  // Sort rental items
   const sortedItems = [...localRentalItems].sort((a, b) => {
     if (a[itemSortField] < b[itemSortField]) return itemSortDirection === "asc" ? -1 : 1;
     if (a[itemSortField] > b[itemSortField]) return itemSortDirection === "asc" ? 1 : -1;
     return 0;
   });
 
-  // Only show active rental items (items from active contracts)
   const activeContracts = results.contracts.filter(c => c.status === "Active" || c.status === "Virkur").map(c => c.id);
   const activeRentalItems = sortedItems.filter(item => 
     activeContracts.includes(item.contractId) && 
@@ -87,7 +82,6 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, onDataChange }
       const response = await offHireItem(itemId, noCharge);
       
       if (response.success) {
-        // Update local state
         setLocalRentalItems(prevItems => 
           prevItems.map(item => 
             item.id === itemId 
@@ -100,7 +94,6 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, onDataChange }
           description: response.message,
         });
         
-        // Notify parent component if needed
         if (onDataChange) {
           onDataChange();
         }
@@ -123,13 +116,11 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, onDataChange }
     }
   };
 
-  // Render sort icon
   const SortIcon = ({ field, currentField, direction }: { field: string, currentField: string, direction: "asc" | "desc" }) => {
     if (field !== currentField) return null;
     return direction === "asc" ? <ChevronUp size={16} /> : <ChevronDown size={16} />;
   };
 
-  // Get contract status badge color
   const getStatusColor = (status: Contract["status"]) => {
     switch (status) {
       case "Active":
@@ -142,7 +133,6 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, onDataChange }
     }
   };
 
-  // Get item status badge color
   const getItemStatusColor = (status?: string) => {
     switch (status) {
       case "On Rent": 
@@ -155,7 +145,6 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, onDataChange }
 
   return (
     <div className="space-y-6 w-full max-w-5xl mx-auto animate-fade-in">
-      {/* Renter Information */}
       <Card className="shadow-md">
         <CardHeader className="pb-2">
           <CardTitle className="text-xl font-semibold text-white">Upplýsingar um leigutaka</CardTitle>
@@ -174,7 +163,6 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, onDataChange }
         </CardContent>
       </Card>
 
-      {/* Contracts and Rental Items Tabs */}
       <Tabs defaultValue="contracts" className="w-full">
         <TabsList className="grid w-full grid-cols-2 mb-6">
           <TabsTrigger value="contracts" className="flex items-center gap-2">
@@ -187,7 +175,6 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, onDataChange }
           </TabsTrigger>
         </TabsList>
         
-        {/* Contracts Tab */}
         <TabsContent value="contracts" className="animate-fade-in">
           <Card>
             <CardHeader className="pb-2">
@@ -198,11 +185,11 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, onDataChange }
                 <div className="text-center py-6 text-gray-500">Engir samningar fundust</div>
               ) : (
                 <div className="overflow-x-auto">
-                  <table className="min-w-full divide-y divide-gray-200">
-                    <thead className="bg-gray-50 dark:bg-gray-800">
+                  <table className="min-w-full divide-y divide-gray-700">
+                    <thead className="bg-[#2A2A2A]">
                       <tr>
                         <th 
-                          className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider cursor-pointer"
+                          className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider cursor-pointer"
                           onClick={() => handleSort("contractNumber")}
                         >
                           <div className="flex items-center gap-1">
@@ -211,7 +198,7 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, onDataChange }
                           </div>
                         </th>
                         <th 
-                          className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider cursor-pointer"
+                          className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider cursor-pointer"
                           onClick={() => handleSort("status")}
                         >
                           <div className="flex items-center gap-1">
@@ -220,7 +207,7 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, onDataChange }
                           </div>
                         </th>
                         <th 
-                          className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider cursor-pointer"
+                          className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider cursor-pointer"
                           onClick={() => handleSort("startDate")}
                         >
                           <div className="flex items-center gap-1">
@@ -229,7 +216,7 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, onDataChange }
                           </div>
                         </th>
                         <th 
-                          className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider cursor-pointer"
+                          className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider cursor-pointer"
                           onClick={() => handleSort("endDate")}
                         >
                           <div className="flex items-center gap-1">
@@ -238,7 +225,7 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, onDataChange }
                           </div>
                         </th>
                         <th 
-                          className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider cursor-pointer"
+                          className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider cursor-pointer"
                           onClick={() => handleSort("totalValue")}
                         >
                           <div className="flex items-center gap-1">
@@ -248,11 +235,11 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, onDataChange }
                         </th>
                       </tr>
                     </thead>
-                    <tbody className="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-700">
+                    <tbody className="bg-[#2A2A2A] divide-y divide-gray-700">
                       {sortedContracts.map((contract) => (
                         <tr key={contract.id}>
                           <td className="px-6 py-4 whitespace-nowrap">
-                            <div className="font-medium text-brand-700 dark:text-brand-400">{contract.contractNumber}</div>
+                            <div className="font-medium text-brand-400">{contract.contractNumber}</div>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
                             <Badge className={getStatusColor(contract.status)}>
@@ -260,19 +247,19 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, onDataChange }
                             </Badge>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
-                            <div className="flex items-center gap-1">
+                            <div className="flex items-center gap-1 text-white">
                               <Calendar size={14} className="text-gray-400" />
                               <span>{formatDate(contract.startDate)}</span>
                             </div>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
-                            <div className="flex items-center gap-1">
+                            <div className="flex items-center gap-1 text-white">
                               <Calendar size={14} className="text-gray-400" />
                               <span>{formatDate(contract.endDate)}</span>
                             </div>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-right">
-                            <div className="font-medium">{formatCurrency(contract.totalValue)}</div>
+                            <div className="font-medium text-white">{formatCurrency(contract.totalValue).replace("ISK", "").trim()}</div>
                           </td>
                         </tr>
                       ))}
@@ -284,7 +271,6 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, onDataChange }
           </Card>
         </TabsContent>
         
-        {/* Rental Items Tab */}
         <TabsContent value="items" className="animate-fade-in">
           <Card>
             <CardHeader className="pb-2">
@@ -407,7 +393,6 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, onDataChange }
         </TabsContent>
       </Tabs>
 
-      {/* Off-Hire Dialog */}
       <OffHireDialog
         isOpen={offHireDialogOpen}
         item={selectedItem}
