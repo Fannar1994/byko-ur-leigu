@@ -44,11 +44,20 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-brand-50 to-white dark:from-gray-900 dark:to-gray-950">
-      <header className="py-6 px-4 bg-brand-800 text-white mb-8">
-        <div className="max-w-7xl mx-auto">
-          <h1 className="text-3xl font-bold">Kennitala Connect</h1>
-          <p className="text-brand-100">Search for rental contracts using Icelandic ID numbers</p>
+    <div className="min-h-screen bg-background dark">
+      <header className="py-6 px-4 bg-[#2A2A2A] text-white mb-8">
+        <div className="max-w-7xl mx-auto flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <img 
+              src="/lovable-uploads/32d6ed3c-0d96-4a87-b8ec-6d4abea3412c.png" 
+              alt="BYKO LEIGA" 
+              className="h-12"
+            />
+            <div className="hidden md:block">
+              <h1 className="text-3xl font-bold">Rental Contract System</h1>
+              <p className="text-primary">Search for rental contracts using Icelandic ID numbers</p>
+            </div>
+          </div>
         </div>
       </header>
       
@@ -57,7 +66,7 @@ const Index = () => {
         
         {isLoading && (
           <div className="flex justify-center py-12">
-            <div className="h-12 w-12 rounded-full border-4 border-brand-300 border-t-brand-600 animate-spin"></div>
+            <div className="h-12 w-12 rounded-full border-4 border-primary border-t-primary/20 animate-spin"></div>
           </div>
         )}
         
@@ -66,16 +75,16 @@ const Index = () => {
         )}
         
         {!isLoading && !searchResults && (
-          <div className="text-center py-12 text-gray-500 dark:text-gray-400">
+          <div className="text-center py-12 text-muted-foreground">
             <p>Enter a kennitala to search for rental contracts.</p>
             <p className="text-sm mt-2">For testing, use any 10-digit number.</p>
           </div>
         )}
       </main>
       
-      <footer className="bg-brand-800 text-white py-4 px-4">
+      <footer className="bg-[#2A2A2A] text-white py-4 px-4">
         <div className="container mx-auto text-center text-sm">
-          <p>© {new Date().getFullYear()} Kennitala Connect | InspHire Integration</p>
+          <p>© {new Date().getFullYear()} BYKO LEIGA | Rental Management System</p>
         </div>
       </footer>
     </div>
