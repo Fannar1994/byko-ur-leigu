@@ -126,7 +126,7 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, onDataChange }
       case "Active":
       case "Virkur": return "bg-primary text-primary-foreground"; // Yellow
       case "Completed":
-      case "Lokið": return "bg-green-500 text-white"; // More intense green color
+      case "Lokið": return "bg-green-500 text-black"; // Green with black text
       case "Cancelled":
       case "Tiltekt": return "bg-white text-black"; // White
       default: return "bg-gray-100 text-gray-800";
