@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -188,7 +187,7 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, onDataChange }
                           onClick={() => handleSort("contractNumber")}
                         >
                           <div className="flex items-center gap-1">
-                            <span>Samningur #</span>
+                            <span>Samningsnúmer</span>
                             <SortIcon field="contractNumber" currentField={sortField} direction={sortDirection} />
                           </div>
                         </th>
@@ -206,7 +205,7 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, onDataChange }
                           onClick={() => handleSort("startDate")}
                         >
                           <div className="flex items-center gap-1">
-                            <span>Upphafsdagur</span>
+                            <span>Upphafsdagsetning</span>
                             <SortIcon field="startDate" currentField={sortField} direction={sortDirection} />
                           </div>
                         </th>
@@ -215,15 +214,15 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, onDataChange }
                           onClick={() => handleSort("endDate")}
                         >
                           <div className="flex items-center gap-1">
-                            <span>Lokadagur</span>
+                            <span>Lokadagsetning</span>
                             <SortIcon field="endDate" currentField={sortField} direction={sortDirection} />
                           </div>
                         </th>
                         <th 
-                          className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider cursor-pointer"
+                          className="px-6 py-3 text-center text-xs font-medium text-white uppercase tracking-wider cursor-pointer"
                           onClick={() => handleSort("totalValue")}
                         >
-                          <div className="flex items-center gap-1">
+                          <div className="flex items-center gap-1 justify-center">
                             <span>Virði</span>
                             <SortIcon field="totalValue" currentField={sortField} direction={sortDirection} />
                           </div>
@@ -253,7 +252,7 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, onDataChange }
                               <span>{formatDate(contract.endDate)}</span>
                             </div>
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-right">
+                          <td className="px-6 py-4 whitespace-nowrap text-center">
                             <div className="font-medium text-white">{formatCurrency(contract.totalValue).replace("ISK", "").trim()}</div>
                           </td>
                         </tr>
@@ -284,7 +283,7 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, onDataChange }
                           onClick={() => handleItemSort("itemName")}
                         >
                           <div className="flex items-center gap-1">
-                            <span>Vörunafn</span>
+                            <span>Vöruheiti</span>
                             <SortIcon field="itemName" currentField={itemSortField} direction={itemSortDirection} />
                           </div>
                         </th>
@@ -302,7 +301,7 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, onDataChange }
                           onClick={() => handleItemSort("serialNumber")}
                         >
                           <div className="flex items-center gap-1">
-                            <span>Raðnr. #</span>
+                            <span>Raðnúmer</span>
                             <SortIcon field="serialNumber" currentField={itemSortField} direction={itemSortDirection} />
                           </div>
                         </th>
@@ -311,15 +310,15 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, onDataChange }
                           onClick={() => handleItemSort("dueDate")}
                         >
                           <div className="flex items-center gap-1">
-                            <span>Skiladagur</span>
+                            <span>Skiladagsetning</span>
                             <SortIcon field="dueDate" currentField={itemSortField} direction={itemSortDirection} />
                           </div>
                         </th>
                         <th 
-                          className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider cursor-pointer"
+                          className="px-6 py-3 text-center text-xs font-medium text-white uppercase tracking-wider cursor-pointer"
                           onClick={() => handleItemSort("rentalRate")}
                         >
-                          <div className="flex items-center gap-1">
+                          <div className="flex items-center gap-1 justify-center">
                             <span>Verð</span>
                             <SortIcon field="rentalRate" currentField={itemSortField} direction={itemSortDirection} />
                           </div>
@@ -327,7 +326,7 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, onDataChange }
                         <th 
                           className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider"
                         >
-                          Samningur #
+                          Samningsnúmer
                         </th>
                         <th 
                           className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider"
