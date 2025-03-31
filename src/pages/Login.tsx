@@ -1,4 +1,3 @@
-
 import React, { useState, useContext } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -32,21 +31,18 @@ const Login = () => {
 
   return (
     <div className="min-h-screen bg-background dark flex flex-col">
-      <header className="py-4 px-0 bg-[#2A2A2A] text-white flex justify-center">
-        <div className="w-full flex items-center justify-center">
-          <img 
-            src="/lovable-uploads/3e1840af-2d2e-403d-81ae-e4201bb075c5.png" 
-            alt="BYKO LEIGA" 
-            className="h-32 w-auto mx-auto" 
-          />
-        </div>
-      </header>
-      
       <main className="flex-1 flex items-center justify-center p-4">
         <div className="w-full max-w-md space-y-8">
-          <div className="text-center">
-            <h2 className="text-3xl font-bold text-white">Innskráning</h2>
-            <p className="text-white mt-2">Skráðu þig inn á þinn aðgang</p>
+          <div className="flex flex-col items-center">
+            <img 
+              src="/lovable-uploads/3e1840af-2d2e-403d-81ae-e4201bb075c5.png" 
+              alt="BYKO LEIGA" 
+              className="h-32 w-auto mb-6 mx-auto" 
+            />
+            <div className="text-center">
+              <h2 className="text-3xl font-bold text-white">Innskráning</h2>
+              <p className="text-white mt-2">Skráðu þig inn á þinn aðgang</p>
+            </div>
           </div>
           
           <form onSubmit={handleLogin} className="space-y-6">
