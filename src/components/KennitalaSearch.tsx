@@ -74,7 +74,7 @@ const KennitalaSearch: React.FC<KennitalaSearchProps> = ({ onSearch, isLoading }
             <Button 
               type="submit" 
               disabled={isLoading || kennitala.length !== 10} 
-              className="h-12 px-6 flex-shrink-0 bg-white hover:bg-gray-100 text-black search-button"
+              className="h-12 px-6 flex-shrink-0 bg-primary hover:bg-primary/90 text-black search-button"
             >
               {isLoading ? (
                 <div className="flex items-center gap-2">

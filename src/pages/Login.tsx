@@ -47,13 +47,13 @@ const Login = () => {
       <main className="flex-1 flex items-center justify-center p-4">
         <div className="w-full max-w-md space-y-8">
           <div className="text-center">
-            <h2 className="text-3xl font-bold">Innskráning</h2>
+            <h2 className="text-3xl font-bold text-white">Innskráning</h2>
             <p className="text-muted-foreground mt-2">Skráðu þig inn á þinn aðgang</p>
           </div>
           
           <form onSubmit={handleLogin} className="space-y-6">
             <div className="space-y-2">
-              <Label htmlFor="username">Notandanafn</Label>
+              <Label htmlFor="username" className="text-white">Notandanafn</Label>
               <Input 
                 id="username"
                 type="text" 
@@ -65,7 +65,7 @@ const Login = () => {
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="password">Lykilorð</Label>
+              <Label htmlFor="password" className="text-white">Lykilorð</Label>
               <Input 
                 id="password"
                 type="password" 
