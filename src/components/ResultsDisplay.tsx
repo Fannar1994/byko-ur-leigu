@@ -223,8 +223,17 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, onDataChange }
                           onClick={() => handleSort("totalValue")}
                         >
                           <div className="flex items-center gap-1 justify-center">
-                            <span>Virði</span>
+                            <span>Núverandi dagsetning</span>
                             <SortIcon field="totalValue" currentField={sortField} direction={sortDirection} />
+                          </div>
+                        </th>
+                        <th 
+                          className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider cursor-pointer"
+                          onClick={() => handleSort("endDate")}
+                        >
+                          <div className="flex items-center gap-1">
+                            <span>Áætlaður skiladagur</span>
+                            <SortIcon field="endDate" currentField={sortField} direction={sortDirection} />
                           </div>
                         </th>
                       </tr>
@@ -253,7 +262,13 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, onDataChange }
                             </div>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-center">
-                            <div className="font-medium text-white">{formatCurrency(contract.totalValue).replace("ISK", "").trim()}</div>
+                            <div className="font-medium text-white">{formatDate(new Date().toISOString())}</div>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <div className="flex items-center gap-1 text-white">
+                              <Calendar size={14} className="text-gray-400" />
+                              <span>{formatDate(contract.endDate)}</span>
+                            </div>
                           </td>
                         </tr>
                       ))}
