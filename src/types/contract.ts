@@ -1,5 +1,4 @@
 
-
 export interface Renter {
   name: string;
   kennitala: string;
@@ -37,4 +36,3 @@ export interface OffHireResponse {
   message: string;
   itemId: string;
 }
-

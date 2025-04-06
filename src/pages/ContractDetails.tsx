@@ -30,6 +30,7 @@ const ContractDetails = () => {
   const [offHireDialogOpen, setOffHireDialogOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState<RentalItem | null>(null);
   const [processingItemId, setProcessingItemId] = useState<string | null>(null);
+  const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
   
   const lastKennitala = localStorage.getItem('lastSearchedKennitala') || '';
 
@@ -98,6 +99,10 @@ const ContractDetails = () => {
     );
     
     setPickedItems({});
+  };
+
+  const handleRowClick = (itemId: string) => {
+    setSelectedRowId(prevId => prevId === itemId ? null : itemId);
   };
 
   const handleGoBack = () => {
@@ -173,7 +178,8 @@ const ContractDetails = () => {
   const getStatusColor = (status?: string) => {
     switch (status) {
       case "Active":
-      case "Virkur": return "bg-primary text-primary-foreground";
+      case "Virkur": 
+      case "Í leigu": return "bg-primary text-primary-foreground";
       case "Completed":
       case "Lokið": return "bg-green-500 text-black";
       case "Cancelled":
@@ -286,26 +292,40 @@ const ContractDetails = () => {
                                   <TableHead className="text-white">Vöruheiti</TableHead>
                                   <TableHead className="text-white">Skiladagsetning</TableHead>
                                   <TableHead className="text-white">Staða</TableHead>
+                                  <TableHead className="text-white text-center">Talningar</TableHead>
                                 </TableRow>
                               </TableHeader>
                               <TableBody className="bg-[#2A2A2A]">
-                                {activeItems.map((item) => (
-                                  <TableRow key={item.id}>
-                                    <TableCell className="text-white">{item.serialNumber}</TableCell>
-                                    <TableCell className="font-medium text-white">{item.itemName}</TableCell>
-                                    <TableCell>
-                                      <div className="flex items-center gap-1 text-white">
-                                        <Calendar size={14} className="text-gray-400" />
-                                        <span>{formatDate(item.dueDate)}</span>
-                                      </div>
-                                    </TableCell>
-                                    <TableCell>
-                                      <Badge className={getStatusColor(item.status)}>
-                                        {item.status}
-                                      </Badge>
-                                    </TableCell>
-                                  </TableRow>
-                                ))}
+                                {activeItems.map((item) => {
+                                  const isSelected = selectedRowId === item.id;
+                                  
+                                  return (
+                                    <TableRow 
+                                      key={item.id} 
+                                      onClick={() => handleRowClick(item.id)}
+                                      className={isSelected 
+                                        ? "bg-primary hover:bg-primary/90 cursor-pointer" 
+                                        : "hover:bg-[#3A3A3A] cursor-pointer"}
+                                    >
+                                      <TableCell className={isSelected ? "text-black" : "text-white"}>{item.serialNumber}</TableCell>
+                                      <TableCell className={isSelected ? "font-medium text-black" : "font-medium text-white"}>{item.itemName}</TableCell>
+                                      <TableCell>
+                                        <div className={`flex items-center gap-1 ${isSelected ? "text-black" : "text-white"}`}>
+                                          <Calendar size={14} className={isSelected ? "text-black" : "text-gray-400"} />
+                                          <span>{formatDate(item.dueDate)}</span>
+                                        </div>
+                                      </TableCell>
+                                      <TableCell>
+                                        <Badge className={getStatusColor(item.status)}>
+                                          {item.status}
+                                        </Badge>
+                                      </TableCell>
+                                      <TableCell className="text-center">
+                                        <span className={isSelected ? "font-medium text-black" : "font-medium text-white"}>1</span>
+                                      </TableCell>
+                                    </TableRow>
+                                  );
+                                })}
                               </TableBody>
                             </UITable>
                           </div>
@@ -345,33 +365,56 @@ const ContractDetails = () => {
                                         <TableHead className="text-white">Leigunúmer</TableHead>
                                         <TableHead className="text-white">Vöruheiti</TableHead>
                                         <TableHead className="text-white">Skiladagsetning</TableHead>
+                                        <TableHead className="text-white text-center">Staða</TableHead>
+                                        <TableHead className="text-white text-center">Talningar</TableHead>
                                         <TableHead className="text-white text-center">Tiltekt</TableHead>
                                       </TableRow>
                                     </TableHeader>
                                     <TableBody className="bg-[#2A2A2A]">
-                                      {readyForPickItems.map((item) => (
-                                        <TableRow key={item.id} className={pickedItems[item.id] ? "bg-green-900/20" : ""}>
-                                          <TableCell className="text-white">{item.serialNumber}</TableCell>
-                                          <TableCell className="font-medium text-white">{item.itemName}</TableCell>
-                                          <TableCell>
-                                            <div className="flex items-center gap-1 text-white">
-                                              <Calendar size={14} className="text-gray-400" />
-                                              <span>{formatDate(item.dueDate)}</span>
-                                            </div>
-                                          </TableCell>
-                                          <TableCell className="text-center">
-                                            <Button
-                                              size="sm"
-                                              variant={pickedItems[item.id] ? "default" : "outline"}
-                                              onClick={() => toggleItemPicked(item.id)}
-                                              className="flex items-center gap-1"
-                                            >
-                                              <Package size={14} />
-                                              <span>{pickedItems[item.id] ? "Tilbúið" : "Merkja"}</span>
-                                            </Button>
-                                          </TableCell>
-                                        </TableRow>
-                                      ))}
+                                      {readyForPickItems.map((item) => {
+                                        const isSelected = selectedRowId === item.id;
+                                        const isPicked = pickedItems[item.id];
+                                        
+                                        return (
+                                          <TableRow 
+                                            key={item.id} 
+                                            onClick={() => handleRowClick(item.id)}
+                                            className={isSelected 
+                                              ? "bg-primary hover:bg-primary/90 cursor-pointer" 
+                                              : isPicked 
+                                                ? "bg-green-900/20 hover:bg-green-900/30 cursor-pointer"
+                                                : "hover:bg-[#3A3A3A] cursor-pointer"}
+                                          >
+                                            <TableCell className={isSelected ? "text-black" : "text-white"}>{item.serialNumber}</TableCell>
+                                            <TableCell className={isSelected ? "font-medium text-black" : "font-medium text-white"}>{item.itemName}</TableCell>
+                                            <TableCell>
+                                              <div className={`flex items-center gap-1 ${isSelected ? "text-black" : "text-white"}`}>
+                                                <Calendar size={14} className={isSelected ? "text-black" : "text-gray-400"} />
+                                                <span>{formatDate(item.dueDate)}</span>
+                                              </div>
+                                            </TableCell>
+                                            <TableCell className="text-center">
+                                              <Badge className={getStatusColor(item.status)}>
+                                                {item.status}
+                                              </Badge>
+                                            </TableCell>
+                                            <TableCell className="text-center">
+                                              <span className={isSelected ? "font-medium text-black" : "font-medium text-white"}>1</span>
+                                            </TableCell>
+                                            <TableCell className="text-center" onClick={(e) => e.stopPropagation()}>
+                                              <Button
+                                                size="sm"
+                                                variant={pickedItems[item.id] ? "default" : "outline"}
+                                                onClick={() => toggleItemPicked(item.id)}
+                                                className="flex items-center gap-1"
+                                              >
+                                                <Package size={14} />
+                                                <span>{pickedItems[item.id] ? "Tilbúið" : "Merkja"}</span>
+                                              </Button>
+                                            </TableCell>
+                                          </TableRow>
+                                        );
+                                      })}
                                     </TableBody>
                                   </UITable>
                                 </div>
@@ -389,26 +432,40 @@ const ContractDetails = () => {
                                         <TableHead className="text-white">Vöruheiti</TableHead>
                                         <TableHead className="text-white">Skiladagsetning</TableHead>
                                         <TableHead className="text-white text-center">Staða</TableHead>
+                                        <TableHead className="text-white text-center">Talningar</TableHead>
                                       </TableRow>
                                     </TableHeader>
                                     <TableBody className="bg-[#2A2A2A]">
-                                      {tiltektItems.map((item) => (
-                                        <TableRow key={item.id} className="bg-green-900/20">
-                                          <TableCell className="text-white">{item.serialNumber}</TableCell>
-                                          <TableCell className="font-medium text-white">{item.itemName}</TableCell>
-                                          <TableCell>
-                                            <div className="flex items-center gap-1 text-white">
-                                              <Calendar size={14} className="text-gray-400" />
-                                              <span>{formatDate(item.dueDate)}</span>
-                                            </div>
-                                          </TableCell>
-                                          <TableCell className="text-center">
-                                            <Badge className={getStatusColor(item.status)}>
-                                              Tilbúið til afhendingar
-                                            </Badge>
-                                          </TableCell>
-                                        </TableRow>
-                                      ))}
+                                      {tiltektItems.map((item) => {
+                                        const isSelected = selectedRowId === item.id;
+                                        
+                                        return (
+                                          <TableRow 
+                                            key={item.id} 
+                                            onClick={() => handleRowClick(item.id)}
+                                            className={isSelected 
+                                              ? "bg-primary hover:bg-primary/90 cursor-pointer" 
+                                              : "bg-green-900/20 hover:bg-green-900/30 cursor-pointer"}
+                                          >
+                                            <TableCell className={isSelected ? "text-black" : "text-white"}>{item.serialNumber}</TableCell>
+                                            <TableCell className={isSelected ? "font-medium text-black" : "font-medium text-white"}>{item.itemName}</TableCell>
+                                            <TableCell>
+                                              <div className={`flex items-center gap-1 ${isSelected ? "text-black" : "text-white"}`}>
+                                                <Calendar size={14} className={isSelected ? "text-black" : "text-gray-400"} />
+                                                <span>{formatDate(item.dueDate)}</span>
+                                              </div>
+                                            </TableCell>
+                                            <TableCell className="text-center">
+                                              <Badge className={getStatusColor(item.status)}>
+                                                Tilbúið til afhendingar
+                                              </Badge>
+                                            </TableCell>
+                                            <TableCell className="text-center">
+                                              <span className={isSelected ? "font-medium text-black" : "font-medium text-white"}>1</span>
+                                            </TableCell>
+                                          </TableRow>
+                                        );
+                                      })}
                                     </TableBody>
                                   </UITable>
                                 </div>
@@ -440,39 +497,53 @@ const ContractDetails = () => {
                                   <TableHead className="text-white">Vöruheiti</TableHead>
                                   <TableHead className="text-white">Skiladagsetning</TableHead>
                                   <TableHead className="text-white text-center">Staða</TableHead>
+                                  <TableHead className="text-white text-center">Talningar</TableHead>
                                   <TableHead className="text-white text-center">Aðgerðir</TableHead>
                                 </TableRow>
                               </TableHeader>
                               <TableBody className="bg-[#2A2A2A]">
-                                {offHiredItems.map((item) => (
-                                  <TableRow key={item.id}>
-                                    <TableCell className="text-white">{item.serialNumber}</TableCell>
-                                    <TableCell className="font-medium text-white">{item.itemName}</TableCell>
-                                    <TableCell>
-                                      <div className="flex items-center gap-1 text-white">
-                                        <Calendar size={14} className="text-gray-400" />
-                                        <span>{formatDate(item.dueDate)}</span>
-                                      </div>
-                                    </TableCell>
-                                    <TableCell className="text-center">
-                                      <Badge className="bg-red-100 text-red-800">
-                                        Úr leigu
-                                      </Badge>
-                                    </TableCell>
-                                    <TableCell className="text-center">
-                                      <Button
-                                        size="sm"
-                                        variant="destructive"
-                                        onClick={() => handleOffHireClick(item)}
-                                        disabled={processingItemId === item.id}
-                                        className="flex items-center gap-1"
-                                      >
-                                        <UserX size={14} />
-                                        <span>Skila</span>
-                                      </Button>
-                                    </TableCell>
-                                  </TableRow>
-                                ))}
+                                {offHiredItems.map((item) => {
+                                  const isSelected = selectedRowId === item.id;
+                                  
+                                  return (
+                                    <TableRow 
+                                      key={item.id}
+                                      onClick={() => handleRowClick(item.id)}
+                                      className={isSelected 
+                                        ? "bg-primary hover:bg-primary/90 cursor-pointer" 
+                                        : "hover:bg-[#3A3A3A] cursor-pointer"}
+                                    >
+                                      <TableCell className={isSelected ? "text-black" : "text-white"}>{item.serialNumber}</TableCell>
+                                      <TableCell className={isSelected ? "font-medium text-black" : "font-medium text-white"}>{item.itemName}</TableCell>
+                                      <TableCell>
+                                        <div className={`flex items-center gap-1 ${isSelected ? "text-black" : "text-white"}`}>
+                                          <Calendar size={14} className={isSelected ? "text-black" : "text-gray-400"} />
+                                          <span>{formatDate(item.dueDate)}</span>
+                                        </div>
+                                      </TableCell>
+                                      <TableCell className="text-center">
+                                        <Badge className="bg-red-100 text-red-800">
+                                          Úr leigu
+                                        </Badge>
+                                      </TableCell>
+                                      <TableCell className="text-center">
+                                        <span className={isSelected ? "font-medium text-black" : "font-medium text-white"}>1</span>
+                                      </TableCell>
+                                      <TableCell className="text-center" onClick={(e) => e.stopPropagation()}>
+                                        <Button
+                                          size="sm"
+                                          variant="destructive"
+                                          onClick={() => handleOffHireClick(item)}
+                                          disabled={processingItemId === item.id}
+                                          className="flex items-center gap-1"
+                                        >
+                                          <UserX size={14} />
+                                          <span>Skila</span>
+                                        </Button>
+                                      </TableCell>
+                                    </TableRow>
+                                  );
+                                })}
                               </TableBody>
                             </UITable>
                           </div>
