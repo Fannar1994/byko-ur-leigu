@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -10,6 +11,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import OffHireDialog from "@/components/OffHireDialog";
 import ContractInfo from "@/components/ContractInfo";
 import ItemTable from "@/components/ItemTable";
+import TabContent from "@/components/TabContent";
 
 const ContractDetails = () => {
   const { contractNumber } = useParams();
@@ -201,17 +203,11 @@ const ContractDetails = () => {
                   </TabsList>
                   
                   <TabsContent value="active">
-                    <Card>
-                      <CardHeader className="pb-2">
-                        <CardTitle className="text-xl font-semibold text-white">Vörur í leigu</CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <ItemTable 
-                          items={activeItems} 
-                          showContractColumn={false}
-                        />
-                      </CardContent>
-                    </Card>
+                    <TabContent 
+                      title="Vörur í leigu" 
+                      items={activeItems} 
+                      showContractColumn={false}
+                    />
                   </TabsContent>
                   
                   <TabsContent value="tiltekt">
@@ -263,20 +259,14 @@ const ContractDetails = () => {
                   </TabsContent>
                   
                   <TabsContent value="offhired">
-                    <Card>
-                      <CardHeader className="pb-2">
-                        <CardTitle className="text-xl font-semibold text-white">Vörur úr leigu</CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <ItemTable 
-                          items={offHiredItems}
-                          showContractColumn={false}
-                          showActions={true}
-                          onOffHireClick={handleOffHireClick}
-                          processingItemId={processingItemId}
-                        />
-                      </CardContent>
-                    </Card>
+                    <TabContent 
+                      title="Vörur úr leigu" 
+                      items={offHiredItems}
+                      showContractColumn={false}
+                      showActions={true}
+                      onOffHireClick={handleOffHireClick}
+                      processingItemId={processingItemId}
+                    />
                   </TabsContent>
                 </Tabs>
               </div>

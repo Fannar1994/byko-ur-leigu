@@ -90,7 +90,7 @@ const ItemTable: React.FC<ItemTableProps> = ({
                   ? "bg-primary text-black hover:bg-primary/90 cursor-pointer" 
                   : isPicked 
                     ? "bg-green-900/20 hover:bg-green-900/30 cursor-pointer"
-                    : "hover:bg-[#3A3A3A] cursor-pointer"}
+                    : "hover:bg-primary/90 hover:text-black cursor-pointer"}
               >
                 <TableCell className={isSelected ? "text-black" : "text-white"}>
                   {item.serialNumber}
