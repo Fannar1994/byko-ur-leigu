@@ -424,7 +424,7 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, onDataChange }
 
       <Tabs defaultValue="active" className="w-full">
         <TabsList className="w-full mb-6">
-          <TabsTrigger value="active" className="flex-1">Virkir Samningar</TabsTrigger>
+          <TabsTrigger value="active" className="flex-1">Í leigu</TabsTrigger>
           <TabsTrigger value="tiltekt" className="flex-1">Tiltekt</TabsTrigger>
           <TabsTrigger value="offhired" className="flex-1">Úr leiga</TabsTrigger>
         </TabsList>
@@ -432,12 +432,12 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, onDataChange }
         <TabsContent value="active" className="animate-fade-in">
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-xl font-semibold text-white">Virkir Samningar</CardTitle>
+              <CardTitle className="text-xl font-semibold text-white">Vörur í leigu</CardTitle>
             </CardHeader>
             <CardContent>
-              {activeContracts.length === 0 ? (
-                <div className="text-center py-6 text-gray-500">Engir virkir samningar fundust</div>
-              ) : renderContractsTable(activeContracts)}
+              {activeRentalItems.length === 0 ? (
+                <div className="text-center py-6 text-gray-500">Engar vörur í leigu fundust</div>
+              ) : renderItemsTable(activeRentalItems, false)}
             </CardContent>
           </Card>
         </TabsContent>

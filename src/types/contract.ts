@@ -7,7 +7,7 @@ export interface Renter {
 export interface Contract {
   id: string;
   contractNumber: string;
-  status: 'Active' | 'Completed' | 'Cancelled' | 'Virkur' | 'Lokið' | 'Tiltekt' | 'Úr leiga';
+  status: 'Active' | 'Completed' | 'Cancelled' | 'Virkur' | 'Lokið' | 'Tiltekt' | 'Úr leiga' | 'Í leigu';
   startDate: string;
   endDate: string;
   totalValue: number;
