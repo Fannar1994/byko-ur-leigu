@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -6,10 +5,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
-import { ChevronLeft, Calendar, Check, Package, MapPin, Table } from "lucide-react";
+import { ChevronLeft, Calendar, Check, Package, MapPin, Table, UserX } from "lucide-react";
 import { formatDate } from "@/utils/formatters";
 import { SearchResults, RentalItem } from "@/types/contract";
-import { searchByKennitala } from "@/services/api";
+import { searchByKennitala, offHireItem } from "@/services/api";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Table as UITable,
@@ -19,6 +18,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import OffHireDialog from "@/components/OffHireDialog";
 
 const ContractDetails = () => {
   const { contractNumber } = useParams();
@@ -28,15 +28,16 @@ const ContractDetails = () => {
   const [localRentalItems, setLocalRentalItems] = useState<RentalItem[]>([]);
   const [pickedItems, setPickedItems] = useState<Record<string, boolean>>({});
   const [countValues, setCountValues] = useState<Record<string, string>>({});
+  const [offHireDialogOpen, setOffHireDialogOpen] = useState(false);
+  const [selectedItem, setSelectedItem] = useState<RentalItem | null>(null);
+  const [processingItemId, setProcessingItemId] = useState<string | null>(null);
   
-  // Get the lastKennitala from localStorage if available
   const lastKennitala = localStorage.getItem('lastSearchedKennitala') || '';
 
   useEffect(() => {
     const fetchContractData = async () => {
       setLoading(true);
       try {
-        // Use a valid kennitala format from localStorage or fallback to default
         const kennitala = lastKennitala || "1234567890";
         const data = await searchByKennitala(kennitala);
         setContractData(data);
@@ -45,7 +46,6 @@ const ContractDetails = () => {
           const contract = data.contracts.find(c => c.contractNumber === contractNumber);
           
           if (contract) {
-            // Filter items by contract ID
             const contractItems = data.rentalItems.filter(item => 
               item.contractId === contract.id
             );
@@ -97,7 +97,6 @@ const ContractDetails = () => {
       description: `${pickedCount} vörur merktar sem tilbúnar til afhendingar.`,
     });
     
-    // Update the status of picked items
     setLocalRentalItems(prev => 
       prev.map(item => 
         pickedItems[item.id] 
@@ -106,18 +105,58 @@ const ContractDetails = () => {
       )
     );
     
-    // Clear picked items after processing
     setPickedItems({});
   };
 
   const handleGoBack = () => {
-    // Navigate back to the index page with the kennitala query parameter
     navigate('/?kennitala=' + lastKennitala);
+  };
+
+  const handleOffHireClick = (item: RentalItem) => {
+    setSelectedItem(item);
+    setOffHireDialogOpen(true);
+  };
+
+  const handleOffHireConfirm = async (itemId: string, noCharge: boolean) => {
+    setOffHireDialogOpen(false);
+    setProcessingItemId(itemId);
+    
+    try {
+      const response = await offHireItem(itemId, noCharge);
+      
+      if (response.success) {
+        setLocalRentalItems(prevItems => 
+          prevItems.map(item => 
+            item.id === itemId 
+              ? { ...item, status: "Úr leiga" } 
+              : item
+          )
+        );
+        
+        toast.success("Aðgerð tókst", {
+          description: response.message,
+        });
+      } else {
+        toast.error("Villa", {
+          description: response.message || "Ekki tókst að skila vöru.",
+        });
+      }
+    } catch (error) {
+      let errorMessage = "Óþekkt villa kom upp.";
+      if (error instanceof Error) {
+        errorMessage = error.message;
+      }
+      
+      toast.error("Villa", {
+        description: errorMessage,
+      });
+    } finally {
+      setProcessingItemId(null);
+    }
   };
 
   const contract = contractData?.contracts.find(c => c.contractNumber === contractNumber);
 
-  // Filter items based on their status
   const activeItems = localRentalItems.filter(item => item.status !== "Tiltekt" && item.status !== "Úr leiga" && item.status !== "Off-Hired");
   const pickupReadyItems = localRentalItems.filter(item => item.status === "Tiltekt");
   const offHiredItems = localRentalItems.filter(item => item.status === "Úr leiga" || item.status === "Off-Hired");
@@ -125,13 +164,13 @@ const ContractDetails = () => {
   const getStatusColor = (status?: string) => {
     switch (status) {
       case "Active":
-      case "Virkur": return "bg-primary text-primary-foreground"; // Yellow
+      case "Virkur": return "bg-primary text-primary-foreground";
       case "Completed":
-      case "Lokið": return "bg-green-500 text-black"; // Green with black text
+      case "Lokið": return "bg-green-500 text-black";
       case "Cancelled":
-      case "Tiltekt": return "bg-white text-black"; // White
+      case "Tiltekt": return "bg-white text-black";
       case "Úr leiga":
-      case "Off-Hired": return "bg-red-100 text-red-800"; // Red light
+      case "Off-Hired": return "bg-red-100 text-red-800";
       default: return "bg-gray-100 text-gray-800";
     }
   };
@@ -356,6 +395,7 @@ const ContractDetails = () => {
                                   <TableHead className="text-white">Vöruheiti</TableHead>
                                   <TableHead className="text-white">Skiladagsetning</TableHead>
                                   <TableHead className="text-white text-center">Staða</TableHead>
+                                  <TableHead className="text-white text-center">Aðgerðir</TableHead>
                                 </TableRow>
                               </TableHeader>
                               <TableBody className="bg-[#2A2A2A]">
@@ -373,6 +413,18 @@ const ContractDetails = () => {
                                       <Badge className="bg-red-100 text-red-800">
                                         Úr leigu
                                       </Badge>
+                                    </TableCell>
+                                    <TableCell className="text-center">
+                                      <Button
+                                        size="sm"
+                                        variant="destructive"
+                                        onClick={() => handleOffHireClick(item)}
+                                        disabled={processingItemId === item.id}
+                                        className="flex items-center gap-1"
+                                      >
+                                        <UserX size={14} />
+                                        <span>Skila</span>
+                                      </Button>
                                     </TableCell>
                                   </TableRow>
                                 ))}
@@ -404,6 +456,13 @@ const ContractDetails = () => {
           <p>BYKO Leiga</p>
         </div>
       </footer>
+
+      <OffHireDialog
+        isOpen={offHireDialogOpen}
+        item={selectedItem}
+        onClose={() => setOffHireDialogOpen(false)}
+        onConfirm={handleOffHireConfirm}
+      />
     </div>
   );
 };

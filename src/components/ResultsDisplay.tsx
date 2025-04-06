@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -49,11 +48,9 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, onDataChange }
     return 0;
   });
 
-  // Filter contracts by status
   const activeContracts = sortedContracts.filter(c => c.status === "Active" || c.status === "Virkur");
   const contractIds = results.contracts.map(c => c.id);
   
-  // Filter items by status
   const activeRentalItems = sortedItems.filter(item => 
     contractIds.includes(item.contractId) && 
     (item.status === "On Rent" || item.status === "Í leigu")
@@ -466,7 +463,7 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, onDataChange }
             <CardContent>
               {offHiredItems.length === 0 ? (
                 <div className="text-center py-6 text-gray-500">Engar vörur eru skráðar úr leigu</div>
-              ) : renderItemsTable(offHiredItems, false)}
+              ) : renderItemsTable(offHiredItems, true)}
             </CardContent>
           </Card>
         </TabsContent>
