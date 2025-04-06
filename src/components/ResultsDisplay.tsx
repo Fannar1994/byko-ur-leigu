@@ -212,7 +212,7 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, onDataChange }
         </thead>
         <tbody className="bg-[#2A2A2A] divide-y divide-gray-700">
           {contracts.map((contract) => (
-            <tr key={contract.id}>
+            <tr key={contract.id} className="hover:bg-primary/90 hover:text-black cursor-pointer">
               <td className="px-6 py-4 whitespace-nowrap">
                 <Link 
                   to={`/contract/${contract.contractNumber}`}

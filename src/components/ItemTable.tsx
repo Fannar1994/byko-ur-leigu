@@ -87,7 +87,7 @@ const ItemTable: React.FC<ItemTableProps> = ({
                 key={item.id} 
                 onClick={() => handleRowClick(item.id)}
                 className={isSelected 
-                  ? "bg-primary hover:bg-primary/90 cursor-pointer" 
+                  ? "bg-primary text-black hover:bg-primary/90 cursor-pointer" 
                   : isPicked 
                     ? "bg-green-900/20 hover:bg-green-900/30 cursor-pointer"
                     : "hover:bg-[#3A3A3A] cursor-pointer"}

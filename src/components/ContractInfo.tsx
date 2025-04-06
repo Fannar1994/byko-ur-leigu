@@ -62,10 +62,17 @@ const ContractInfo: React.FC<ContractInfoProps> = ({ contract, renter }) => {
             </div>
           </div>
           
-          <div className="col-span-3">
+          <div className="md:col-span-2">
             <div className="text-sm text-gray-500">Leigutaki</div>
             <div className="text-lg font-medium text-white">
               {renter.name} ({renter.kennitala})
+            </div>
+          </div>
+          
+          <div>
+            <div className="text-sm text-gray-500">Talningar</div>
+            <div className="text-lg font-medium text-white text-center">
+              0
             </div>
           </div>
         </div>
