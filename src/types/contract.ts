@@ -1,4 +1,5 @@
 
+
 export interface Renter {
   name: string;
   kennitala: string;
@@ -22,7 +23,7 @@ export interface RentalItem {
   serialNumber: string;
   dueDate: string;
   rentalRate: number;
-  status?: 'On Rent' | 'Off-Hired' | 'Pending Return' | 'Í leigu' | 'Tiltekt' | 'Úr leiga';
+  status?: 'On Rent' | 'Off-Hired' | 'Pending Return' | 'Í leigu' | 'Tiltekt' | 'Úr leiga' | 'Tilbúið til afhendingar';
 }
 
 export interface SearchResults {
@@ -36,3 +37,4 @@ export interface OffHireResponse {
   message: string;
   itemId: string;
 }
+

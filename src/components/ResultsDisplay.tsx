@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -26,7 +27,6 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, onDataChange }
   const [selectedItem, setSelectedItem] = useState<RentalItem | null>(null);
   const [processingItemId, setProcessingItemId] = useState<string | null>(null);
   const [localRentalItems, setLocalRentalItems] = useState<RentalItem[]>([]);
-  const [countValues, setCountValues] = useState<Record<string, string>>({});
 
   React.useEffect(() => {
     if (results?.rentalItems) {
@@ -58,7 +58,7 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, onDataChange }
   
   const tiltektItems = sortedItems.filter(item => 
     contractIds.includes(item.contractId) && 
-    item.status === "Tiltekt"
+    (item.status === "Tiltekt" || item.status === "Tilbúið til afhendingar")
   );
   
   const offHiredItems = sortedItems.filter(item => 
@@ -131,13 +131,6 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, onDataChange }
     }
   };
 
-  const handleCountChange = (itemId: string, value: string) => {
-    setCountValues(prev => ({
-      ...prev,
-      [itemId]: value
-    }));
-  };
-
   const SortIcon = ({ field, currentField, direction }: { field: string, currentField: string, direction: "asc" | "desc" }) => {
     if (field !== currentField) return null;
     return direction === "asc" ? <ChevronUp size={16} /> : <ChevronDown size={16} />;
@@ -164,6 +157,7 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, onDataChange }
       case "Úr leiga": return "bg-red-100 text-red-800";
       case "Pending Return": 
       case "Tiltekt": return "bg-white text-black"; // White
+      case "Tilbúið til afhendingar": return "bg-green-500 text-black"; // Green for ready items
       default: return "bg-gray-100 text-gray-800";
     }
   };
@@ -324,13 +318,9 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, onDataChange }
               </div>
             </th>
             <th 
-              className="px-6 py-3 text-center text-xs font-medium text-white uppercase tracking-wider cursor-pointer"
-              onClick={() => handleItemSort("rentalRate")}
+              className="px-6 py-3 text-center text-xs font-medium text-white uppercase tracking-wider"
             >
-              <div className="flex items-center gap-1 justify-center">
-                <span>Talning</span>
-                <SortIcon field="rentalRate" currentField={itemSortField} direction={itemSortDirection} />
-              </div>
+              <span>Staða</span>
             </th>
             {showActions && (
               <th 
@@ -372,13 +362,9 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, onDataChange }
                   </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-center">
-                  <Input
-                    type="number"
-                    value={countValues[item.id] || ''}
-                    onChange={(e) => handleCountChange(item.id, e.target.value)}
-                    className="w-24 mx-auto text-center bg-gray-800 border-gray-700 text-white"
-                    min="0"
-                  />
+                  <Badge className={getItemStatusColor(item.status)}>
+                    {item.status}
+                  </Badge>
                 </td>
                 {showActions && (
                   <td className="px-6 py-4 whitespace-nowrap">

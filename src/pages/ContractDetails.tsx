@@ -1,8 +1,8 @@
+
 import React, { useState, useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { ChevronLeft, Calendar, Check, Package, MapPin, Table, UserX } from "lucide-react";
@@ -27,7 +27,6 @@ const ContractDetails = () => {
   const [contractData, setContractData] = useState<SearchResults | null>(null);
   const [localRentalItems, setLocalRentalItems] = useState<RentalItem[]>([]);
   const [pickedItems, setPickedItems] = useState<Record<string, boolean>>({});
-  const [countValues, setCountValues] = useState<Record<string, string>>({});
   const [offHireDialogOpen, setOffHireDialogOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState<RentalItem | null>(null);
   const [processingItemId, setProcessingItemId] = useState<string | null>(null);
@@ -69,13 +68,6 @@ const ContractDetails = () => {
     fetchContractData();
   }, [contractNumber, lastKennitala]);
 
-  const handleCountChange = (itemId: string, value: string) => {
-    setCountValues(prev => ({
-      ...prev,
-      [itemId]: value
-    }));
-  };
-
   const toggleItemPicked = (itemId: string) => {
     setPickedItems(prev => ({
       ...prev,
@@ -100,7 +92,7 @@ const ContractDetails = () => {
     setLocalRentalItems(prev => 
       prev.map(item => 
         pickedItems[item.id] 
-          ? { ...item, status: "Tiltekt" } 
+          ? { ...item, status: "Tilbúið til afhendingar" } 
           : item
       )
     );
@@ -161,20 +153,21 @@ const ContractDetails = () => {
     item.status === "Í leigu" || item.status === "On Rent"
   );
   
-  const pickupReadyItems = localRentalItems.filter(item => 
-    item.status === "Tiltekt"
-  );
-  
-  const offHiredItems = localRentalItems.filter(item => 
-    item.status === "Úr leiga" || item.status === "Off-Hired"
-  );
-
-  const itemsForPicking = localRentalItems.filter(item => 
+  const readyForPickItems = localRentalItems.filter(item => 
     item.status !== "Tiltekt" && 
     item.status !== "Úr leiga" && 
     item.status !== "Off-Hired" &&
     item.status !== "Í leigu" &&
-    item.status !== "On Rent"
+    item.status !== "On Rent" &&
+    item.status !== "Tilbúið til afhendingar"
+  );
+  
+  const tiltektItems = localRentalItems.filter(item => 
+    item.status === "Tiltekt" || item.status === "Tilbúið til afhendingar"
+  );
+  
+  const offHiredItems = localRentalItems.filter(item => 
+    item.status === "Úr leiga" || item.status === "Off-Hired"
   );
 
   const getStatusColor = (status?: string) => {
@@ -185,6 +178,7 @@ const ContractDetails = () => {
       case "Lokið": return "bg-green-500 text-black";
       case "Cancelled":
       case "Tiltekt": return "bg-white text-black";
+      case "Tilbúið til afhendingar": return "bg-green-500 text-black";
       case "Úr leiga":
       case "Off-Hired": return "bg-red-100 text-red-800";
       default: return "bg-gray-100 text-gray-800";
@@ -269,8 +263,7 @@ const ContractDetails = () => {
                 <Tabs defaultValue="active" className="w-full">
                   <TabsList className="w-full mb-4">
                     <TabsTrigger value="active" className="flex-1">Í leigu</TabsTrigger>
-                    <TabsTrigger value="picking" className="flex-1">Tiltekt (Val)</TabsTrigger>
-                    <TabsTrigger value="pickup" className="flex-1">Tiltekt</TabsTrigger>
+                    <TabsTrigger value="tiltekt" className="flex-1">Tiltekt</TabsTrigger>
                     <TabsTrigger value="offhired" className="flex-1">Úr leiga</TabsTrigger>
                   </TabsList>
                   
@@ -292,7 +285,7 @@ const ContractDetails = () => {
                                   <TableHead className="text-white">Leigunúmer</TableHead>
                                   <TableHead className="text-white">Vöruheiti</TableHead>
                                   <TableHead className="text-white">Skiladagsetning</TableHead>
-                                  <TableHead className="text-white text-center">Talning</TableHead>
+                                  <TableHead className="text-white">Staða</TableHead>
                                 </TableRow>
                               </TableHeader>
                               <TableBody className="bg-[#2A2A2A]">
@@ -306,137 +299,121 @@ const ContractDetails = () => {
                                         <span>{formatDate(item.dueDate)}</span>
                                       </div>
                                     </TableCell>
-                                    <TableCell className="text-center">
-                                      <Input
-                                        type="number"
-                                        value={countValues[item.id] || ''}
-                                        onChange={(e) => handleCountChange(item.id, e.target.value)}
-                                        className="w-24 mx-auto text-center bg-gray-800 border-gray-700 text-white"
-                                        min="0"
-                                      />
-                                    </TableCell>
-                                  </TableRow>
-                                ))}
-                              </TableBody>
-                            </UITable>
-                          </div>
-                        )}
-                      </CardContent>
-                    </Card>
-                  </TabsContent>
-                  
-                  <TabsContent value="picking">
-                    <Card>
-                      <CardHeader className="pb-2">
-                        <CardTitle className="text-xl font-semibold text-white flex justify-between items-center">
-                          <span>Vörur fyrir tiltekt</span>
-                          <Button 
-                            className="ml-auto" 
-                            onClick={handleCompletePickup}
-                            disabled={!Object.values(pickedItems).some(Boolean)}
-                          >
-                            <Check className="h-4 w-4 mr-2" /> Staðfesta tiltekt
-                          </Button>
-                        </CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        {itemsForPicking.length === 0 ? (
-                          <div className="text-center py-6 text-gray-500">Engar vörur eru tilbúnar fyrir tiltekt</div>
-                        ) : (
-                          <div className="overflow-x-auto">
-                            <UITable>
-                              <TableHeader className="bg-[#2A2A2A]">
-                                <TableRow>
-                                  <TableHead className="text-white">Leigunúmer</TableHead>
-                                  <TableHead className="text-white">Vöruheiti</TableHead>
-                                  <TableHead className="text-white">Skiladagsetning</TableHead>
-                                  <TableHead className="text-white text-center">Talning</TableHead>
-                                  <TableHead className="text-white text-center">Tiltekt</TableHead>
-                                </TableRow>
-                              </TableHeader>
-                              <TableBody className="bg-[#2A2A2A]">
-                                {itemsForPicking.map((item) => (
-                                  <TableRow key={item.id} className={pickedItems[item.id] ? "bg-green-900/20" : ""}>
-                                    <TableCell className="text-white">{item.serialNumber}</TableCell>
-                                    <TableCell className="font-medium text-white">{item.itemName}</TableCell>
                                     <TableCell>
-                                      <div className="flex items-center gap-1 text-white">
-                                        <Calendar size={14} className="text-gray-400" />
-                                        <span>{formatDate(item.dueDate)}</span>
-                                      </div>
-                                    </TableCell>
-                                    <TableCell className="text-center">
-                                      <Input
-                                        type="number"
-                                        value={countValues[item.id] || ''}
-                                        onChange={(e) => handleCountChange(item.id, e.target.value)}
-                                        className="w-24 mx-auto text-center bg-gray-800 border-gray-700 text-white"
-                                        min="0"
-                                      />
-                                    </TableCell>
-                                    <TableCell className="text-center">
-                                      <Button
-                                        size="sm"
-                                        variant={pickedItems[item.id] ? "default" : "outline"}
-                                        onClick={() => toggleItemPicked(item.id)}
-                                        className="flex items-center gap-1"
-                                      >
-                                        <Package size={14} />
-                                        <span>{pickedItems[item.id] ? "Tilbúið" : "Merkja"}</span>
-                                      </Button>
-                                    </TableCell>
-                                  </TableRow>
-                                ))}
-                              </TableBody>
-                            </UITable>
-                          </div>
-                        )}
-                      </CardContent>
-                    </Card>
-                  </TabsContent>
-                  
-                  <TabsContent value="pickup">
-                    <Card>
-                      <CardHeader className="pb-2">
-                        <CardTitle className="text-xl font-semibold text-white flex items-center">
-                          <Table className="mr-2 h-5 w-5" />
-                          <span>Vörur í tiltekt</span>
-                        </CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        {pickupReadyItems.length === 0 ? (
-                          <div className="text-center py-6 text-gray-500">Engar vörur eru tilbúnar í tiltekt</div>
-                        ) : (
-                          <div className="overflow-x-auto">
-                            <UITable>
-                              <TableHeader className="bg-[#2A2A2A]">
-                                <TableRow>
-                                  <TableHead className="text-white">Leigunúmer</TableHead>
-                                  <TableHead className="text-white">Vöruheiti</TableHead>
-                                  <TableHead className="text-white">Skiladagsetning</TableHead>
-                                  <TableHead className="text-white text-center">Staða</TableHead>
-                                </TableRow>
-                              </TableHeader>
-                              <TableBody className="bg-[#2A2A2A]">
-                                {pickupReadyItems.map((item) => (
-                                  <TableRow key={item.id} className="bg-green-900/20">
-                                    <TableCell className="text-white">{item.serialNumber}</TableCell>
-                                    <TableCell className="font-medium text-white">{item.itemName}</TableCell>
-                                    <TableCell>
-                                      <div className="flex items-center gap-1 text-white">
-                                        <Calendar size={14} className="text-gray-400" />
-                                        <span>{formatDate(item.dueDate)}</span>
-                                      </div>
-                                    </TableCell>
-                                    <TableCell className="text-center">
-                                      <Badge className="bg-white text-black">
-                                        Tilbúið til afhendingar
+                                      <Badge className={getStatusColor(item.status)}>
+                                        {item.status}
                                       </Badge>
                                     </TableCell>
                                   </TableRow>
                                 ))}
                               </TableBody>
                             </UITable>
+                          </div>
+                        )}
+                      </CardContent>
+                    </Card>
+                  </TabsContent>
+                  
+                  <TabsContent value="tiltekt">
+                    <Card>
+                      <CardHeader className="pb-2">
+                        <CardTitle className="text-xl font-semibold text-white flex justify-between items-center">
+                          <span>Tiltekt</span>
+                          {readyForPickItems.length > 0 && (
+                            <Button 
+                              className="ml-auto" 
+                              onClick={handleCompletePickup}
+                              disabled={!Object.values(pickedItems).some(Boolean)}
+                            >
+                              <Check className="h-4 w-4 mr-2" /> Staðfesta tiltekt
+                            </Button>
+                          )}
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        {readyForPickItems.length === 0 && tiltektItems.length === 0 ? (
+                          <div className="text-center py-6 text-gray-500">Engar vörur eru tilbúnar fyrir tiltekt</div>
+                        ) : (
+                          <div className="space-y-8">
+                            {readyForPickItems.length > 0 && (
+                              <div>
+                                <h3 className="text-lg font-medium text-white mb-4">Vörur sem þarf að taka til</h3>
+                                <div className="overflow-x-auto">
+                                  <UITable>
+                                    <TableHeader className="bg-[#2A2A2A]">
+                                      <TableRow>
+                                        <TableHead className="text-white">Leigunúmer</TableHead>
+                                        <TableHead className="text-white">Vöruheiti</TableHead>
+                                        <TableHead className="text-white">Skiladagsetning</TableHead>
+                                        <TableHead className="text-white text-center">Tiltekt</TableHead>
+                                      </TableRow>
+                                    </TableHeader>
+                                    <TableBody className="bg-[#2A2A2A]">
+                                      {readyForPickItems.map((item) => (
+                                        <TableRow key={item.id} className={pickedItems[item.id] ? "bg-green-900/20" : ""}>
+                                          <TableCell className="text-white">{item.serialNumber}</TableCell>
+                                          <TableCell className="font-medium text-white">{item.itemName}</TableCell>
+                                          <TableCell>
+                                            <div className="flex items-center gap-1 text-white">
+                                              <Calendar size={14} className="text-gray-400" />
+                                              <span>{formatDate(item.dueDate)}</span>
+                                            </div>
+                                          </TableCell>
+                                          <TableCell className="text-center">
+                                            <Button
+                                              size="sm"
+                                              variant={pickedItems[item.id] ? "default" : "outline"}
+                                              onClick={() => toggleItemPicked(item.id)}
+                                              className="flex items-center gap-1"
+                                            >
+                                              <Package size={14} />
+                                              <span>{pickedItems[item.id] ? "Tilbúið" : "Merkja"}</span>
+                                            </Button>
+                                          </TableCell>
+                                        </TableRow>
+                                      ))}
+                                    </TableBody>
+                                  </UITable>
+                                </div>
+                              </div>
+                            )}
+
+                            {tiltektItems.length > 0 && (
+                              <div>
+                                <h3 className="text-lg font-medium text-white mb-4">Vörur tilbúnar til afhendingar</h3>
+                                <div className="overflow-x-auto">
+                                  <UITable>
+                                    <TableHeader className="bg-[#2A2A2A]">
+                                      <TableRow>
+                                        <TableHead className="text-white">Leigunúmer</TableHead>
+                                        <TableHead className="text-white">Vöruheiti</TableHead>
+                                        <TableHead className="text-white">Skiladagsetning</TableHead>
+                                        <TableHead className="text-white text-center">Staða</TableHead>
+                                      </TableRow>
+                                    </TableHeader>
+                                    <TableBody className="bg-[#2A2A2A]">
+                                      {tiltektItems.map((item) => (
+                                        <TableRow key={item.id} className="bg-green-900/20">
+                                          <TableCell className="text-white">{item.serialNumber}</TableCell>
+                                          <TableCell className="font-medium text-white">{item.itemName}</TableCell>
+                                          <TableCell>
+                                            <div className="flex items-center gap-1 text-white">
+                                              <Calendar size={14} className="text-gray-400" />
+                                              <span>{formatDate(item.dueDate)}</span>
+                                            </div>
+                                          </TableCell>
+                                          <TableCell className="text-center">
+                                            <Badge className={getStatusColor(item.status)}>
+                                              Tilbúið til afhendingar
+                                            </Badge>
+                                          </TableCell>
+                                        </TableRow>
+                                      ))}
+                                    </TableBody>
+                                  </UITable>
+                                </div>
+                              </div>
+                            )}
                           </div>
                         )}
                       </CardContent>
