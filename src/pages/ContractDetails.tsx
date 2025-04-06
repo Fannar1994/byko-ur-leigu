@@ -1,36 +1,27 @@
 
 import React, { useState, useEffect } from "react";
-import { useParams, Link, useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
-import { ChevronLeft, Calendar, Check, Package, MapPin, Table, UserX } from "lucide-react";
-import { formatDate } from "@/utils/formatters";
-import { SearchResults, RentalItem } from "@/types/contract";
+import { ChevronLeft, Check } from "lucide-react";
+import { RentalItem } from "@/types/contract";
 import { searchByKennitala, offHireItem } from "@/services/api";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  Table as UITable,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import OffHireDialog from "@/components/OffHireDialog";
+import ContractInfo from "@/components/ContractInfo";
+import ItemTable from "@/components/ItemTable";
 
 const ContractDetails = () => {
   const { contractNumber } = useParams();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
-  const [contractData, setContractData] = useState<SearchResults | null>(null);
+  const [contractData, setContractData] = useState<any | null>(null);
   const [localRentalItems, setLocalRentalItems] = useState<RentalItem[]>([]);
   const [pickedItems, setPickedItems] = useState<Record<string, boolean>>({});
   const [offHireDialogOpen, setOffHireDialogOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState<RentalItem | null>(null);
   const [processingItemId, setProcessingItemId] = useState<string | null>(null);
-  const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
   
   const lastKennitala = localStorage.getItem('lastSearchedKennitala') || '';
 
@@ -99,10 +90,6 @@ const ContractDetails = () => {
     );
     
     setPickedItems({});
-  };
-
-  const handleRowClick = (itemId: string) => {
-    setSelectedRowId(prevId => prevId === itemId ? null : itemId);
   };
 
   const handleGoBack = () => {
@@ -175,22 +162,6 @@ const ContractDetails = () => {
     item.status === "Úr leiga" || item.status === "Off-Hired"
   );
 
-  const getStatusColor = (status?: string) => {
-    switch (status) {
-      case "Active":
-      case "Virkur": 
-      case "Í leigu": return "bg-primary text-primary-foreground";
-      case "Completed":
-      case "Lokið": return "bg-green-500 text-black";
-      case "Cancelled":
-      case "Tiltekt": return "bg-white text-black";
-      case "Tilbúið til afhendingar": return "bg-green-500 text-black";
-      case "Úr leiga":
-      case "Off-Hired": return "bg-red-100 text-red-800";
-      default: return "bg-gray-100 text-gray-800";
-    }
-  };
-
   return (
     <div className="min-h-screen bg-background dark">
       <header className="py-4 px-0 bg-[#2A2A2A] text-white mb-8 flex justify-center">
@@ -219,52 +190,9 @@ const ContractDetails = () => {
           </div>
         ) : (
           <>
-            {contract && (
+            {contract && contractData && (
               <div className="space-y-6 animate-fade-in">
-                <Card className="shadow-md">
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-xl font-semibold text-white flex items-center justify-between">
-                      <span>Samningur {contractNumber}</span>
-                      <Badge className={getStatusColor(contract.status)}>
-                        {contract.status}
-                      </Badge>
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      <div>
-                        <div className="text-sm text-gray-500">Upphafsdagsetning</div>
-                        <div className="text-lg font-medium text-white flex items-center">
-                          <Calendar size={16} className="mr-2" />
-                          {formatDate(contract.startDate)}
-                        </div>
-                      </div>
-                      <div>
-                        <div className="text-sm text-gray-500">Lokadagsetning</div>
-                        <div className="text-lg font-medium text-white flex items-center">
-                          <Calendar size={16} className="mr-2" />
-                          {formatDate(contract.endDate)}
-                        </div>
-                      </div>
-                      <div>
-                        <div className="text-sm text-gray-500">Verkstaður</div>
-                        <div className="text-lg font-medium text-white flex items-center">
-                          <MapPin size={16} className="mr-2" />
-                          {contract.location || '-'}
-                        </div>
-                      </div>
-                      
-                      {contractData && (
-                        <div className="col-span-3">
-                          <div className="text-sm text-gray-500">Leigutaki</div>
-                          <div className="text-lg font-medium text-white">
-                            {contractData.renter.name} ({contractData.renter.kennitala})
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  </CardContent>
-                </Card>
+                <ContractInfo contract={contract} renter={contractData.renter} />
 
                 <Tabs defaultValue="active" className="w-full">
                   <TabsList className="w-full mb-4">
@@ -276,60 +204,13 @@ const ContractDetails = () => {
                   <TabsContent value="active">
                     <Card>
                       <CardHeader className="pb-2">
-                        <CardTitle className="text-xl font-semibold text-white flex items-center">
-                          <span>Vörur í leigu</span>
-                        </CardTitle>
+                        <CardTitle className="text-xl font-semibold text-white">Vörur í leigu</CardTitle>
                       </CardHeader>
                       <CardContent>
-                        {activeItems.length === 0 ? (
-                          <div className="text-center py-6 text-gray-500">Engar vörur eru í leigu í þessum samningi</div>
-                        ) : (
-                          <div className="overflow-x-auto">
-                            <UITable>
-                              <TableHeader className="bg-[#2A2A2A]">
-                                <TableRow>
-                                  <TableHead className="text-white">Leigunúmer</TableHead>
-                                  <TableHead className="text-white">Vöruheiti</TableHead>
-                                  <TableHead className="text-white">Skiladagsetning</TableHead>
-                                  <TableHead className="text-white">Staða</TableHead>
-                                  <TableHead className="text-white text-center">Talningar</TableHead>
-                                </TableRow>
-                              </TableHeader>
-                              <TableBody className="bg-[#2A2A2A]">
-                                {activeItems.map((item) => {
-                                  const isSelected = selectedRowId === item.id;
-                                  
-                                  return (
-                                    <TableRow 
-                                      key={item.id} 
-                                      onClick={() => handleRowClick(item.id)}
-                                      className={isSelected 
-                                        ? "bg-primary hover:bg-primary/90 cursor-pointer" 
-                                        : "hover:bg-[#3A3A3A] cursor-pointer"}
-                                    >
-                                      <TableCell className={isSelected ? "text-black" : "text-white"}>{item.serialNumber}</TableCell>
-                                      <TableCell className={isSelected ? "font-medium text-black" : "font-medium text-white"}>{item.itemName}</TableCell>
-                                      <TableCell>
-                                        <div className={`flex items-center gap-1 ${isSelected ? "text-black" : "text-white"}`}>
-                                          <Calendar size={14} className={isSelected ? "text-black" : "text-gray-400"} />
-                                          <span>{formatDate(item.dueDate)}</span>
-                                        </div>
-                                      </TableCell>
-                                      <TableCell>
-                                        <Badge className={getStatusColor(item.status)}>
-                                          {item.status}
-                                        </Badge>
-                                      </TableCell>
-                                      <TableCell className="text-center">
-                                        <span className={isSelected ? "font-medium text-black" : "font-medium text-white"}>1</span>
-                                      </TableCell>
-                                    </TableRow>
-                                  );
-                                })}
-                              </TableBody>
-                            </UITable>
-                          </div>
-                        )}
+                        <ItemTable 
+                          items={activeItems} 
+                          showContractColumn={false}
+                        />
                       </CardContent>
                     </Card>
                   </TabsContent>
@@ -358,117 +239,22 @@ const ContractDetails = () => {
                             {readyForPickItems.length > 0 && (
                               <div>
                                 <h3 className="text-lg font-medium text-white mb-4">Vörur sem þarf að taka til</h3>
-                                <div className="overflow-x-auto">
-                                  <UITable>
-                                    <TableHeader className="bg-[#2A2A2A]">
-                                      <TableRow>
-                                        <TableHead className="text-white">Leigunúmer</TableHead>
-                                        <TableHead className="text-white">Vöruheiti</TableHead>
-                                        <TableHead className="text-white">Skiladagsetning</TableHead>
-                                        <TableHead className="text-white text-center">Staða</TableHead>
-                                        <TableHead className="text-white text-center">Talningar</TableHead>
-                                        <TableHead className="text-white text-center">Tiltekt</TableHead>
-                                      </TableRow>
-                                    </TableHeader>
-                                    <TableBody className="bg-[#2A2A2A]">
-                                      {readyForPickItems.map((item) => {
-                                        const isSelected = selectedRowId === item.id;
-                                        const isPicked = pickedItems[item.id];
-                                        
-                                        return (
-                                          <TableRow 
-                                            key={item.id} 
-                                            onClick={() => handleRowClick(item.id)}
-                                            className={isSelected 
-                                              ? "bg-primary hover:bg-primary/90 cursor-pointer" 
-                                              : isPicked 
-                                                ? "bg-green-900/20 hover:bg-green-900/30 cursor-pointer"
-                                                : "hover:bg-[#3A3A3A] cursor-pointer"}
-                                          >
-                                            <TableCell className={isSelected ? "text-black" : "text-white"}>{item.serialNumber}</TableCell>
-                                            <TableCell className={isSelected ? "font-medium text-black" : "font-medium text-white"}>{item.itemName}</TableCell>
-                                            <TableCell>
-                                              <div className={`flex items-center gap-1 ${isSelected ? "text-black" : "text-white"}`}>
-                                                <Calendar size={14} className={isSelected ? "text-black" : "text-gray-400"} />
-                                                <span>{formatDate(item.dueDate)}</span>
-                                              </div>
-                                            </TableCell>
-                                            <TableCell className="text-center">
-                                              <Badge className={getStatusColor(item.status)}>
-                                                {item.status}
-                                              </Badge>
-                                            </TableCell>
-                                            <TableCell className="text-center">
-                                              <span className={isSelected ? "font-medium text-black" : "font-medium text-white"}>1</span>
-                                            </TableCell>
-                                            <TableCell className="text-center" onClick={(e) => e.stopPropagation()}>
-                                              <Button
-                                                size="sm"
-                                                variant={pickedItems[item.id] ? "default" : "outline"}
-                                                onClick={() => toggleItemPicked(item.id)}
-                                                className="flex items-center gap-1"
-                                              >
-                                                <Package size={14} />
-                                                <span>{pickedItems[item.id] ? "Tilbúið" : "Merkja"}</span>
-                                              </Button>
-                                            </TableCell>
-                                          </TableRow>
-                                        );
-                                      })}
-                                    </TableBody>
-                                  </UITable>
-                                </div>
+                                <ItemTable 
+                                  items={readyForPickItems} 
+                                  showContractColumn={false}
+                                  onTogglePicked={toggleItemPicked}
+                                  pickedItems={pickedItems}
+                                />
                               </div>
                             )}
 
                             {tiltektItems.length > 0 && (
                               <div>
                                 <h3 className="text-lg font-medium text-white mb-4">Vörur tilbúnar til afhendingar</h3>
-                                <div className="overflow-x-auto">
-                                  <UITable>
-                                    <TableHeader className="bg-[#2A2A2A]">
-                                      <TableRow>
-                                        <TableHead className="text-white">Leigunúmer</TableHead>
-                                        <TableHead className="text-white">Vöruheiti</TableHead>
-                                        <TableHead className="text-white">Skiladagsetning</TableHead>
-                                        <TableHead className="text-white text-center">Staða</TableHead>
-                                        <TableHead className="text-white text-center">Talningar</TableHead>
-                                      </TableRow>
-                                    </TableHeader>
-                                    <TableBody className="bg-[#2A2A2A]">
-                                      {tiltektItems.map((item) => {
-                                        const isSelected = selectedRowId === item.id;
-                                        
-                                        return (
-                                          <TableRow 
-                                            key={item.id} 
-                                            onClick={() => handleRowClick(item.id)}
-                                            className={isSelected 
-                                              ? "bg-primary hover:bg-primary/90 cursor-pointer" 
-                                              : "bg-green-900/20 hover:bg-green-900/30 cursor-pointer"}
-                                          >
-                                            <TableCell className={isSelected ? "text-black" : "text-white"}>{item.serialNumber}</TableCell>
-                                            <TableCell className={isSelected ? "font-medium text-black" : "font-medium text-white"}>{item.itemName}</TableCell>
-                                            <TableCell>
-                                              <div className={`flex items-center gap-1 ${isSelected ? "text-black" : "text-white"}`}>
-                                                <Calendar size={14} className={isSelected ? "text-black" : "text-gray-400"} />
-                                                <span>{formatDate(item.dueDate)}</span>
-                                              </div>
-                                            </TableCell>
-                                            <TableCell className="text-center">
-                                              <Badge className={getStatusColor(item.status)}>
-                                                Tilbúið til afhendingar
-                                              </Badge>
-                                            </TableCell>
-                                            <TableCell className="text-center">
-                                              <span className={isSelected ? "font-medium text-black" : "font-medium text-white"}>1</span>
-                                            </TableCell>
-                                          </TableRow>
-                                        );
-                                      })}
-                                    </TableBody>
-                                  </UITable>
-                                </div>
+                                <ItemTable 
+                                  items={tiltektItems} 
+                                  showContractColumn={false}
+                                />
                               </div>
                             )}
                           </div>
@@ -480,74 +266,16 @@ const ContractDetails = () => {
                   <TabsContent value="offhired">
                     <Card>
                       <CardHeader className="pb-2">
-                        <CardTitle className="text-xl font-semibold text-white flex items-center">
-                          <Table className="mr-2 h-5 w-5" />
-                          <span>Vörur úr leigu</span>
-                        </CardTitle>
+                        <CardTitle className="text-xl font-semibold text-white">Vörur úr leigu</CardTitle>
                       </CardHeader>
                       <CardContent>
-                        {offHiredItems.length === 0 ? (
-                          <div className="text-center py-6 text-gray-500">Engar vörur hafa verið skráðar úr leigu</div>
-                        ) : (
-                          <div className="overflow-x-auto">
-                            <UITable>
-                              <TableHeader className="bg-[#2A2A2A]">
-                                <TableRow>
-                                  <TableHead className="text-white">Leigunúmer</TableHead>
-                                  <TableHead className="text-white">Vöruheiti</TableHead>
-                                  <TableHead className="text-white">Skiladagsetning</TableHead>
-                                  <TableHead className="text-white text-center">Staða</TableHead>
-                                  <TableHead className="text-white text-center">Talningar</TableHead>
-                                  <TableHead className="text-white text-center">Aðgerðir</TableHead>
-                                </TableRow>
-                              </TableHeader>
-                              <TableBody className="bg-[#2A2A2A]">
-                                {offHiredItems.map((item) => {
-                                  const isSelected = selectedRowId === item.id;
-                                  
-                                  return (
-                                    <TableRow 
-                                      key={item.id}
-                                      onClick={() => handleRowClick(item.id)}
-                                      className={isSelected 
-                                        ? "bg-primary hover:bg-primary/90 cursor-pointer" 
-                                        : "hover:bg-[#3A3A3A] cursor-pointer"}
-                                    >
-                                      <TableCell className={isSelected ? "text-black" : "text-white"}>{item.serialNumber}</TableCell>
-                                      <TableCell className={isSelected ? "font-medium text-black" : "font-medium text-white"}>{item.itemName}</TableCell>
-                                      <TableCell>
-                                        <div className={`flex items-center gap-1 ${isSelected ? "text-black" : "text-white"}`}>
-                                          <Calendar size={14} className={isSelected ? "text-black" : "text-gray-400"} />
-                                          <span>{formatDate(item.dueDate)}</span>
-                                        </div>
-                                      </TableCell>
-                                      <TableCell className="text-center">
-                                        <Badge className="bg-red-100 text-red-800">
-                                          Úr leigu
-                                        </Badge>
-                                      </TableCell>
-                                      <TableCell className="text-center">
-                                        <span className={isSelected ? "font-medium text-black" : "font-medium text-white"}>1</span>
-                                      </TableCell>
-                                      <TableCell className="text-center" onClick={(e) => e.stopPropagation()}>
-                                        <Button
-                                          size="sm"
-                                          variant="destructive"
-                                          onClick={() => handleOffHireClick(item)}
-                                          disabled={processingItemId === item.id}
-                                          className="flex items-center gap-1"
-                                        >
-                                          <UserX size={14} />
-                                          <span>Skila</span>
-                                        </Button>
-                                      </TableCell>
-                                    </TableRow>
-                                  );
-                                })}
-                              </TableBody>
-                            </UITable>
-                          </div>
-                        )}
+                        <ItemTable 
+                          items={offHiredItems}
+                          showContractColumn={false}
+                          showActions={true}
+                          onOffHireClick={handleOffHireClick}
+                          processingItemId={processingItemId}
+                        />
                       </CardContent>
                     </Card>
                   </TabsContent>
