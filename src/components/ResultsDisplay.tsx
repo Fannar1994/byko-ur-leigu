@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -48,10 +49,24 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, onDataChange }
     return 0;
   });
 
-  const activeContracts = results.contracts.filter(c => c.status === "Active" || c.status === "Virkur").map(c => c.id);
+  // Filter contracts by status
+  const activeContracts = sortedContracts.filter(c => c.status === "Active" || c.status === "Virkur");
+  const contractIds = results.contracts.map(c => c.id);
+  
+  // Filter items by status
   const activeRentalItems = sortedItems.filter(item => 
-    activeContracts.includes(item.contractId) && 
-    item.status !== "Off-Hired"
+    contractIds.includes(item.contractId) && 
+    (item.status === "On Rent" || item.status === "Í leigu")
+  );
+  
+  const tiltektItems = sortedItems.filter(item => 
+    contractIds.includes(item.contractId) && 
+    item.status === "Tiltekt"
+  );
+  
+  const offHiredItems = sortedItems.filter(item => 
+    contractIds.includes(item.contractId) && 
+    (item.status === "Off-Hired" || item.status === "Úr leiga")
   );
 
   const handleSort = (field: keyof Contract) => {
@@ -88,7 +103,7 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, onDataChange }
         setLocalRentalItems(prevItems => 
           prevItems.map(item => 
             item.id === itemId 
-              ? { ...item, status: "Off-Hired" } 
+              ? { ...item, status: "Úr leiga" } 
               : item
           )
         );
@@ -139,6 +154,7 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, onDataChange }
       case "Lokið": return "bg-green-500 text-black"; // Green with black text
       case "Cancelled":
       case "Tiltekt": return "bg-white text-black"; // White
+      case "Úr leiga": return "bg-red-100 text-red-800"; // Red light
       default: return "bg-gray-100 text-gray-800";
     }
   };
@@ -147,12 +163,247 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, onDataChange }
     switch (status) {
       case "On Rent": 
       case "Í leigu": return "bg-primary text-primary-foreground"; // Yellow
-      case "Off-Hired": return "bg-red-100 text-red-800";
+      case "Off-Hired":
+      case "Úr leiga": return "bg-red-100 text-red-800";
       case "Pending Return": 
       case "Tiltekt": return "bg-white text-black"; // White
       default: return "bg-gray-100 text-gray-800";
     }
   };
+
+  const renderContractsTable = (contracts: Contract[]) => (
+    <div className="overflow-x-auto">
+      <table className="min-w-full divide-y divide-gray-700">
+        <thead className="bg-[#2A2A2A]">
+          <tr>
+            <th 
+              className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider cursor-pointer"
+              onClick={() => handleSort("contractNumber")}
+            >
+              <div className="flex items-center gap-1">
+                <span>Samningsnúmer</span>
+                <SortIcon field="contractNumber" currentField={sortField} direction={sortDirection} />
+              </div>
+            </th>
+            <th 
+              className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider cursor-pointer"
+              onClick={() => handleSort("status")}
+            >
+              <div className="flex items-center gap-1">
+                <span>Staða</span>
+                <SortIcon field="status" currentField={sortField} direction={sortDirection} />
+              </div>
+            </th>
+            <th 
+              className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider cursor-pointer"
+              onClick={() => handleSort("location")}
+            >
+              <div className="flex items-center gap-1">
+                <span>Verkstaður</span>
+                <SortIcon field="location" currentField={sortField} direction={sortDirection} />
+              </div>
+            </th>
+            <th 
+              className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider cursor-pointer"
+              onClick={() => handleSort("startDate")}
+            >
+              <div className="flex items-center gap-1">
+                <span>Upphafsdagsetning</span>
+                <SortIcon field="startDate" currentField={sortField} direction={sortDirection} />
+              </div>
+            </th>
+            <th 
+              className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider cursor-pointer"
+              onClick={() => handleSort("endDate")}
+            >
+              <div className="flex items-center gap-1">
+                <span>Lokadagsetning</span>
+                <SortIcon field="endDate" currentField={sortField} direction={sortDirection} />
+              </div>
+            </th>
+            <th 
+              className="px-6 py-3 text-center text-xs font-medium text-white uppercase tracking-wider cursor-pointer"
+            >
+              <div className="flex items-center gap-1 justify-center">
+                <span>Núverandi dagsetning</span>
+              </div>
+            </th>
+            <th 
+              className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider cursor-pointer"
+              onClick={() => handleSort("endDate")}
+            >
+              <div className="flex items-center gap-1">
+                <span>Áætlaður skiladagur</span>
+                <SortIcon field="endDate" currentField={sortField} direction={sortDirection} />
+              </div>
+            </th>
+          </tr>
+        </thead>
+        <tbody className="bg-[#2A2A2A] divide-y divide-gray-700">
+          {contracts.map((contract) => (
+            <tr key={contract.id}>
+              <td className="px-6 py-4 whitespace-nowrap">
+                <Link 
+                  to={`/contract/${contract.contractNumber}`}
+                  className="font-medium text-primary hover:underline"
+                >
+                  {contract.contractNumber}
+                </Link>
+              </td>
+              <td className="px-6 py-4 whitespace-nowrap">
+                <Badge className={getStatusColor(contract.status)}>
+                  {contract.status}
+                </Badge>
+              </td>
+              <td className="px-6 py-4 whitespace-nowrap">
+                <div className="flex items-center gap-1 text-white">
+                  <MapPin size={14} className="text-gray-400" />
+                  <span>{contract.location || '-'}</span>
+                </div>
+              </td>
+              <td className="px-6 py-4 whitespace-nowrap">
+                <div className="flex items-center gap-1 text-white">
+                  <Calendar size={14} className="text-gray-400" />
+                  <span>{formatDate(contract.startDate)}</span>
+                </div>
+              </td>
+              <td className="px-6 py-4 whitespace-nowrap">
+                <div className="flex items-center gap-1 text-white">
+                  <Calendar size={14} className="text-gray-400" />
+                  <span>{formatDate(contract.endDate)}</span>
+                </div>
+              </td>
+              <td className="px-6 py-4 whitespace-nowrap text-center">
+                <div className="font-medium text-white">{formatDate(new Date().toISOString())}</div>
+              </td>
+              <td className="px-6 py-4 whitespace-nowrap">
+                <div className="flex items-center gap-1 text-white">
+                  <Calendar size={14} className="text-gray-400" />
+                  <span>{formatDate(contract.endDate)}</span>
+                </div>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+
+  const renderItemsTable = (items: RentalItem[], showActions: boolean = true) => (
+    <div className="overflow-x-auto">
+      <table className="min-w-full divide-y divide-gray-700">
+        <thead className="bg-[#2A2A2A]">
+          <tr>
+            <th 
+              className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider cursor-pointer"
+              onClick={() => handleItemSort("serialNumber")}
+            >
+              <div className="flex items-center gap-1">
+                <span>Leigunúmer</span>
+                <SortIcon field="serialNumber" currentField={itemSortField} direction={itemSortDirection} />
+              </div>
+            </th>
+            <th 
+              className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider cursor-pointer"
+              onClick={() => handleItemSort("itemName")}
+            >
+              <div className="flex items-center gap-1">
+                <span>Vöruheiti</span>
+                <SortIcon field="itemName" currentField={itemSortField} direction={itemSortDirection} />
+              </div>
+            </th>
+            <th 
+              className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider"
+            >
+              <span>Samningsnúmer</span>
+            </th>
+            <th 
+              className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider cursor-pointer"
+              onClick={() => handleItemSort("dueDate")}
+            >
+              <div className="flex items-center gap-1">
+                <span>Skiladagsetning</span>
+                <SortIcon field="dueDate" currentField={itemSortField} direction={itemSortDirection} />
+              </div>
+            </th>
+            <th 
+              className="px-6 py-3 text-center text-xs font-medium text-white uppercase tracking-wider cursor-pointer"
+              onClick={() => handleItemSort("rentalRate")}
+            >
+              <div className="flex items-center gap-1 justify-center">
+                <span>Talning</span>
+                <SortIcon field="rentalRate" currentField={itemSortField} direction={itemSortDirection} />
+              </div>
+            </th>
+            {showActions && (
+              <th 
+                className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider"
+              >
+                Aðgerðir
+              </th>
+            )}
+          </tr>
+        </thead>
+        <tbody className="bg-[#2A2A2A] divide-y divide-gray-700">
+          {items.map((item) => {
+            const contract = results.contracts.find(c => c.id === item.contractId);
+            return (
+              <tr key={item.id}>
+                <td className="px-6 py-4 whitespace-nowrap">
+                  <div className="text-sm text-white">{item.serialNumber}</div>
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap">
+                  <div className="font-medium text-white">{item.itemName}</div>
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap">
+                  {contract && (
+                    <Link 
+                      to={`/contract/${contract.contractNumber}`}
+                      className="text-sm text-primary hover:underline"
+                    >
+                      {contract.contractNumber}
+                    </Link>
+                  )}
+                  {!contract && (
+                    <div className="text-sm text-white">-</div>
+                  )}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap">
+                  <div className="flex items-center gap-1 text-white">
+                    <Calendar size={14} className="text-gray-400" />
+                    <span>{formatDate(item.dueDate)}</span>
+                  </div>
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-center">
+                  <Input
+                    type="number"
+                    value={countValues[item.id] || ''}
+                    onChange={(e) => handleCountChange(item.id, e.target.value)}
+                    className="w-24 mx-auto text-center bg-gray-800 border-gray-700 text-white"
+                    min="0"
+                  />
+                </td>
+                {showActions && (
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <Button
+                      size="sm"
+                      variant="destructive"
+                      onClick={() => handleOffHireClick(item)}
+                      disabled={processingItemId === item.id}
+                      className="flex items-center gap-1"
+                    >
+                      <UserX size={14} />
+                      <span>Skila</span>
+                    </Button>
+                  </td>
+                )}
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </div>
+  );
 
   return (
     <div className="space-y-6 w-full max-w-5xl mx-auto animate-fade-in">
@@ -174,262 +425,48 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, onDataChange }
         </CardContent>
       </Card>
 
-      <Tabs defaultValue="contracts" className="w-full">
+      <Tabs defaultValue="active" className="w-full">
         <TabsList className="w-full mb-6">
-          <TabsTrigger value="contracts" className="flex-1">Allir samningar</TabsTrigger>
-          <TabsTrigger value="items" className="flex-1">Í leigu</TabsTrigger>
+          <TabsTrigger value="active" className="flex-1">Virkir Samningar</TabsTrigger>
+          <TabsTrigger value="tiltekt" className="flex-1">Tiltekt</TabsTrigger>
+          <TabsTrigger value="offhired" className="flex-1">Úr leiga</TabsTrigger>
         </TabsList>
         
-        <TabsContent value="contracts" className="animate-fade-in">
+        <TabsContent value="active" className="animate-fade-in">
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-xl font-semibold text-white">Allir samningar</CardTitle>
+              <CardTitle className="text-xl font-semibold text-white">Virkir Samningar</CardTitle>
             </CardHeader>
             <CardContent>
-              {sortedContracts.length === 0 ? (
-                <div className="text-center py-6 text-gray-500">Engir samningar fundust</div>
-              ) : (
-                <div className="overflow-x-auto">
-                  <table className="min-w-full divide-y divide-gray-700">
-                    <thead className="bg-[#2A2A2A]">
-                      <tr>
-                        <th 
-                          className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider cursor-pointer"
-                          onClick={() => handleSort("contractNumber")}
-                        >
-                          <div className="flex items-center gap-1">
-                            <span>Samningsnúmer</span>
-                            <SortIcon field="contractNumber" currentField={sortField} direction={sortDirection} />
-                          </div>
-                        </th>
-                        <th 
-                          className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider cursor-pointer"
-                          onClick={() => handleSort("status")}
-                        >
-                          <div className="flex items-center gap-1">
-                            <span>Staða</span>
-                            <SortIcon field="status" currentField={sortField} direction={sortDirection} />
-                          </div>
-                        </th>
-                        <th 
-                          className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider cursor-pointer"
-                          onClick={() => handleSort("location")}
-                        >
-                          <div className="flex items-center gap-1">
-                            <span>Verkstaður</span>
-                            <SortIcon field="location" currentField={sortField} direction={sortDirection} />
-                          </div>
-                        </th>
-                        <th 
-                          className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider cursor-pointer"
-                          onClick={() => handleSort("startDate")}
-                        >
-                          <div className="flex items-center gap-1">
-                            <span>Upphafsdagsetning</span>
-                            <SortIcon field="startDate" currentField={sortField} direction={sortDirection} />
-                          </div>
-                        </th>
-                        <th 
-                          className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider cursor-pointer"
-                          onClick={() => handleSort("endDate")}
-                        >
-                          <div className="flex items-center gap-1">
-                            <span>Lokadagsetning</span>
-                            <SortIcon field="endDate" currentField={sortField} direction={sortDirection} />
-                          </div>
-                        </th>
-                        <th 
-                          className="px-6 py-3 text-center text-xs font-medium text-white uppercase tracking-wider cursor-pointer"
-                          onClick={() => handleSort("totalValue")}
-                        >
-                          <div className="flex items-center gap-1 justify-center">
-                            <span>Núverandi dagsetning</span>
-                            <SortIcon field="totalValue" currentField={sortField} direction={sortDirection} />
-                          </div>
-                        </th>
-                        <th 
-                          className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider cursor-pointer"
-                          onClick={() => handleSort("endDate")}
-                        >
-                          <div className="flex items-center gap-1">
-                            <span>Áætlaður skiladagur</span>
-                            <SortIcon field="endDate" currentField={sortField} direction={sortDirection} />
-                          </div>
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody className="bg-[#2A2A2A] divide-y divide-gray-700">
-                      {sortedContracts.map((contract) => (
-                        <tr key={contract.id}>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <Link 
-                              to={`/contract/${contract.contractNumber}`}
-                              className="font-medium text-primary hover:underline"
-                            >
-                              {contract.contractNumber}
-                            </Link>
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <Badge className={getStatusColor(contract.status)}>
-                              {contract.status}
-                            </Badge>
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <div className="flex items-center gap-1 text-white">
-                              <MapPin size={14} className="text-gray-400" />
-                              <span>{contract.location || '-'}</span>
-                            </div>
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <div className="flex items-center gap-1 text-white">
-                              <Calendar size={14} className="text-gray-400" />
-                              <span>{formatDate(contract.startDate)}</span>
-                            </div>
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <div className="flex items-center gap-1 text-white">
-                              <Calendar size={14} className="text-gray-400" />
-                              <span>{formatDate(contract.endDate)}</span>
-                            </div>
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-center">
-                            <div className="font-medium text-white">{formatDate(new Date().toISOString())}</div>
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <div className="flex items-center gap-1 text-white">
-                              <Calendar size={14} className="text-gray-400" />
-                              <span>{formatDate(contract.endDate)}</span>
-                            </div>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              )}
+              {activeContracts.length === 0 ? (
+                <div className="text-center py-6 text-gray-500">Engir virkir samningar fundust</div>
+              ) : renderContractsTable(activeContracts)}
             </CardContent>
           </Card>
         </TabsContent>
         
-        <TabsContent value="items" className="animate-fade-in">
+        <TabsContent value="tiltekt" className="animate-fade-in">
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-xl font-semibold text-white">Í leigu</CardTitle>
+              <CardTitle className="text-xl font-semibold text-white">Vörur í tiltekt</CardTitle>
             </CardHeader>
             <CardContent>
-              {activeRentalItems.length === 0 ? (
-                <div className="text-center py-6 text-gray-500">Engar vörur eru í leigu</div>
-              ) : (
-                <div className="overflow-x-auto">
-                  <table className="min-w-full divide-y divide-gray-700">
-                    <thead className="bg-[#2A2A2A]">
-                      <tr>
-                        <th 
-                          className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider cursor-pointer"
-                          onClick={() => handleItemSort("serialNumber")}
-                        >
-                          <div className="flex items-center gap-1">
-                            <span>Leigunúmer</span>
-                            <SortIcon field="serialNumber" currentField={itemSortField} direction={itemSortDirection} />
-                          </div>
-                        </th>
-                        <th 
-                          className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider cursor-pointer"
-                          onClick={() => handleItemSort("itemName")}
-                        >
-                          <div className="flex items-center gap-1">
-                            <span>Vöruheiti</span>
-                            <SortIcon field="itemName" currentField={itemSortField} direction={itemSortDirection} />
-                          </div>
-                        </th>
-                        <th 
-                          className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider"
-                        >
-                          <span>Samningsnúmer</span>
-                        </th>
-                        <th 
-                          className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider cursor-pointer"
-                          onClick={() => handleItemSort("dueDate")}
-                        >
-                          <div className="flex items-center gap-1">
-                            <span>Skiladagsetning</span>
-                            <SortIcon field="dueDate" currentField={itemSortField} direction={itemSortDirection} />
-                          </div>
-                        </th>
-                        <th 
-                          className="px-6 py-3 text-center text-xs font-medium text-white uppercase tracking-wider cursor-pointer"
-                          onClick={() => handleItemSort("rentalRate")}
-                        >
-                          <div className="flex items-center gap-1 justify-center">
-                            <span>Talning</span>
-                            <SortIcon field="rentalRate" currentField={itemSortField} direction={itemSortDirection} />
-                          </div>
-                        </th>
-                        <th 
-                          className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider"
-                        >
-                          Aðgerðir
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody className="bg-[#2A2A2A] divide-y divide-gray-700">
-                      {activeRentalItems.map((item) => {
-                        const contract = results.contracts.find(c => c.id === item.contractId);
-                        return (
-                          <tr key={item.id}>
-                            <td className="px-6 py-4 whitespace-nowrap">
-                              <div className="text-sm text-white">{item.serialNumber}</div>
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap">
-                              <div className="font-medium text-white">{item.itemName}</div>
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap">
-                              {contract && (
-                                <Link 
-                                  to={`/contract/${contract.contractNumber}`}
-                                  className="text-sm text-primary hover:underline"
-                                >
-                                  {contract.contractNumber}
-                                </Link>
-                              )}
-                              {!contract && (
-                                <div className="text-sm text-white">-</div>
-                              )}
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap">
-                              <div className="flex items-center gap-1 text-white">
-                                <Calendar size={14} className="text-gray-400" />
-                                <span>{formatDate(item.dueDate)}</span>
-                              </div>
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-center">
-                              <Input
-                                type="number"
-                                value={countValues[item.id] || ''}
-                                onChange={(e) => handleCountChange(item.id, e.target.value)}
-                                className="w-24 mx-auto text-center bg-gray-800 border-gray-700 text-white"
-                                min="0"
-                              />
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap">
-                              <Button
-                                size="sm"
-                                variant="destructive"
-                                onClick={() => handleOffHireClick(item)}
-                                disabled={processingItemId === item.id}
-                                className="flex items-center gap-1"
-                              >
-                                <UserX size={14} />
-                                <span>Skila</span>
-                              </Button>
-                            </td>
-                          </tr>
-                        );
-                      })}
-                    </tbody>
-                  </table>
-                </div>
-              )}
+              {tiltektItems.length === 0 ? (
+                <div className="text-center py-6 text-gray-500">Engar vörur eru í tiltekt</div>
+              ) : renderItemsTable(tiltektItems, false)}
+            </CardContent>
+          </Card>
+        </TabsContent>
+        
+        <TabsContent value="offhired" className="animate-fade-in">
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-xl font-semibold text-white">Úr leiga</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {offHiredItems.length === 0 ? (
+                <div className="text-center py-6 text-gray-500">Engar vörur eru skráðar úr leigu</div>
+              ) : renderItemsTable(offHiredItems, false)}
             </CardContent>
           </Card>
         </TabsContent>

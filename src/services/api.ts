@@ -78,6 +78,48 @@ export async function searchByKennitala(kennitala: string): Promise<SearchResult
         dueDate: "2023-12-15",
         rentalRate: 500,
         status: "Í leigu"
+      },
+      // Add example items with Tiltekt status
+      {
+        id: `i4-${kennitala.substring(0, 4)}`,
+        contractId: contractId1,
+        itemName: "Rafmagnsborvél",
+        category: "Handverkfæri",
+        serialNumber: "ED-2023-201",
+        dueDate: "2023-12-10",
+        rentalRate: 3000,
+        status: "Tiltekt"
+      },
+      {
+        id: `i5-${kennitala.substring(0, 4)}`,
+        contractId: contractId2,
+        itemName: "Slípivél",
+        category: "Handverkfæri",
+        serialNumber: "SL-2023-056",
+        dueDate: "2023-02-01",
+        rentalRate: 2500,
+        status: "Tiltekt"
+      },
+      // Add example items with Úr leiga status
+      {
+        id: `i6-${kennitala.substring(0, 4)}`,
+        contractId: contractId2,
+        itemName: "Hillukerfi",
+        category: "Innréttingar",
+        serialNumber: "SH-2022-312",
+        dueDate: "2023-01-15",
+        rentalRate: 15000,
+        status: "Úr leiga"
+      },
+      {
+        id: `i7-${kennitala.substring(0, 4)}`,
+        contractId: contractId2,
+        itemName: "Byggingarkrani",
+        category: "Þungar vinnuvélar",
+        serialNumber: "CR-2022-008",
+        dueDate: "2023-01-20",
+        rentalRate: 50000,
+        status: "Úr leiga"
       }
     ]
   };

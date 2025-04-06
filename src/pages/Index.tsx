@@ -7,7 +7,7 @@ import { searchByKennitala } from "@/services/api";
 import { SearchResults } from "@/types/contract";
 import { AlertCircle, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { AuthContext } from "../App";
 
 const Index = () => {
@@ -16,15 +16,22 @@ const Index = () => {
   const [lastSearchedKennitala, setLastSearchedKennitala] = useState<string>("");
   const navigate = useNavigate();
   const { setIsAuthenticated } = useContext(AuthContext);
+  const [searchParams] = useSearchParams();
 
-  // Check for stored kennitala on initial load
+  // Check for URL parameters or stored kennitala on initial load
   useEffect(() => {
+    const urlKennitala = searchParams.get('kennitala');
     const storedKennitala = localStorage.getItem('lastSearchedKennitala');
-    if (storedKennitala) {
+    
+    // Prioritize URL parameter over stored value
+    if (urlKennitala) {
+      setLastSearchedKennitala(urlKennitala);
+      handleSearch(urlKennitala);
+    } else if (storedKennitala) {
       setLastSearchedKennitala(storedKennitala);
       handleSearch(storedKennitala);
     }
-  }, []);
+  }, [searchParams]);
 
   const handleLogout = () => {
     setIsAuthenticated(false);

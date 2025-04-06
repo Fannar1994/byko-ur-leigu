@@ -7,11 +7,11 @@ export interface Renter {
 export interface Contract {
   id: string;
   contractNumber: string;
-  status: 'Active' | 'Completed' | 'Cancelled' | 'Virkur' | 'Lokið' | 'Tiltekt';
+  status: 'Active' | 'Completed' | 'Cancelled' | 'Virkur' | 'Lokið' | 'Tiltekt' | 'Úr leiga';
   startDate: string;
   endDate: string;
   totalValue: number;
-  location?: string; // Add location field
+  location?: string;
 }
 
 export interface RentalItem {
@@ -22,7 +22,7 @@ export interface RentalItem {
   serialNumber: string;
   dueDate: string;
   rentalRate: number;
-  status?: 'On Rent' | 'Off-Hired' | 'Pending Return' | 'Í leigu' | 'Tiltekt';
+  status?: 'On Rent' | 'Off-Hired' | 'Pending Return' | 'Í leigu' | 'Tiltekt' | 'Úr leiga';
 }
 
 export interface SearchResults {

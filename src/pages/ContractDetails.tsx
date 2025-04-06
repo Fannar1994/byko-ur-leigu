@@ -86,6 +86,13 @@ const ContractDetails = () => {
   const handleCompletePickup = () => {
     const pickedCount = Object.values(pickedItems).filter(Boolean).length;
     
+    if (pickedCount === 0) {
+      toast.error("Engar vörur valdar", {
+        description: "Þú verður að velja að minnsta kosti eina vöru til að staðfesta tiltekt.",
+      });
+      return;
+    }
+    
     toast.success("Tiltekt lokið", {
       description: `${pickedCount} vörur merktar sem tilbúnar til afhendingar.`,
     });
@@ -98,6 +105,9 @@ const ContractDetails = () => {
           : item
       )
     );
+    
+    // Clear picked items after processing
+    setPickedItems({});
   };
 
   const handleGoBack = () => {
@@ -107,9 +117,10 @@ const ContractDetails = () => {
 
   const contract = contractData?.contracts.find(c => c.contractNumber === contractNumber);
 
-  // Filter for active and non-active items
-  const activeItems = localRentalItems.filter(item => item.status !== "Tiltekt");
+  // Filter items based on their status
+  const activeItems = localRentalItems.filter(item => item.status !== "Tiltekt" && item.status !== "Úr leiga" && item.status !== "Off-Hired");
   const pickupReadyItems = localRentalItems.filter(item => item.status === "Tiltekt");
+  const offHiredItems = localRentalItems.filter(item => item.status === "Úr leiga" || item.status === "Off-Hired");
 
   const getStatusColor = (status?: string) => {
     switch (status) {
@@ -119,6 +130,8 @@ const ContractDetails = () => {
       case "Lokið": return "bg-green-500 text-black"; // Green with black text
       case "Cancelled":
       case "Tiltekt": return "bg-white text-black"; // White
+      case "Úr leiga":
+      case "Off-Hired": return "bg-red-100 text-red-800"; // Red light
       default: return "bg-gray-100 text-gray-800";
     }
   };
@@ -198,10 +211,11 @@ const ContractDetails = () => {
                   </CardContent>
                 </Card>
 
-                <Tabs defaultValue="active">
+                <Tabs defaultValue="active" className="w-full">
                   <TabsList className="w-full mb-4">
                     <TabsTrigger value="active" className="flex-1">Virkir samningar</TabsTrigger>
                     <TabsTrigger value="pickup" className="flex-1">Tiltekt</TabsTrigger>
+                    <TabsTrigger value="offhired" className="flex-1">Úr leiga</TabsTrigger>
                   </TabsList>
                   
                   <TabsContent value="active">
@@ -310,6 +324,54 @@ const ContractDetails = () => {
                                     <TableCell className="text-center">
                                       <Badge className="bg-white text-black">
                                         Tilbúið til afhendingar
+                                      </Badge>
+                                    </TableCell>
+                                  </TableRow>
+                                ))}
+                              </TableBody>
+                            </UITable>
+                          </div>
+                        )}
+                      </CardContent>
+                    </Card>
+                  </TabsContent>
+                  
+                  <TabsContent value="offhired">
+                    <Card>
+                      <CardHeader className="pb-2">
+                        <CardTitle className="text-xl font-semibold text-white flex items-center">
+                          <Table className="mr-2 h-5 w-5" />
+                          <span>Vörur úr leigu</span>
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        {offHiredItems.length === 0 ? (
+                          <div className="text-center py-6 text-gray-500">Engar vörur hafa verið skráðar úr leigu</div>
+                        ) : (
+                          <div className="overflow-x-auto">
+                            <UITable>
+                              <TableHeader className="bg-[#2A2A2A]">
+                                <TableRow>
+                                  <TableHead className="text-white">Leigunúmer</TableHead>
+                                  <TableHead className="text-white">Vöruheiti</TableHead>
+                                  <TableHead className="text-white">Skiladagsetning</TableHead>
+                                  <TableHead className="text-white text-center">Staða</TableHead>
+                                </TableRow>
+                              </TableHeader>
+                              <TableBody className="bg-[#2A2A2A]">
+                                {offHiredItems.map((item) => (
+                                  <TableRow key={item.id}>
+                                    <TableCell className="text-white">{item.serialNumber}</TableCell>
+                                    <TableCell className="font-medium text-white">{item.itemName}</TableCell>
+                                    <TableCell>
+                                      <div className="flex items-center gap-1 text-white">
+                                        <Calendar size={14} className="text-gray-400" />
+                                        <span>{formatDate(item.dueDate)}</span>
+                                      </div>
+                                    </TableCell>
+                                    <TableCell className="text-center">
+                                      <Badge className="bg-red-100 text-red-800">
+                                        Úr leigu
                                       </Badge>
                                     </TableCell>
                                   </TableRow>
