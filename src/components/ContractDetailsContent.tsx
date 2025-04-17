@@ -68,6 +68,9 @@ const ContractDetailsContent: React.FC<ContractDetailsContentProps> = ({
   // Use our filter functions from contractService
   const activeItems = filterActiveItems(rentalItems);
   const tiltektItems = filterTiltektItems(rentalItems);
+  const offHiredItems = rentalItems.filter(item => 
+    item.status === "Off-Hired" || item.status === "Úr leiga"
+  );
 
   if (loading) {
     return <LoadingSpinner />;
@@ -109,6 +112,15 @@ const ContractDetailsContent: React.FC<ContractDetailsContentProps> = ({
             toggleItemPicked={toggleItemPicked}
             handleCompletePickup={handleCompletePickup}
             onItemCountChange={handleCountChange}
+          />
+        </TabsContent>
+        
+        <TabsContent value="offhired">
+          <TabContent 
+            title="Vörur úr leigu" 
+            items={offHiredItems} 
+            showContractColumn={false} 
+            showProject={true}
           />
         </TabsContent>
       </Tabs>
