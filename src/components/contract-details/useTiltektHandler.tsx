@@ -1,7 +1,8 @@
 
 import { useState } from "react";
-import { toast } from "sonner";
 import { RentalItem } from "@/types/contract";
+import { useStatusNotifications } from "@/hooks/useStatusNotifications";
+import { useItemStatusUpdater } from "@/hooks/useItemStatusUpdater";
 
 export function useTiltektHandler(
   rentalItems: RentalItem[],
@@ -9,6 +10,8 @@ export function useTiltektHandler(
   itemCounts: Record<string, number>
 ) {
   const [pickedItems, setPickedItems] = useState<Record<string, boolean>>({});
+  const { notifySuccess, notifyInfo } = useStatusNotifications();
+  const { updateMultipleItemStatus } = useItemStatusUpdater(rentalItems, onRentalItemsChange);
 
   const toggleItemPicked = (itemId: string) => {
     setPickedItems(prev => ({
@@ -19,31 +22,29 @@ export function useTiltektHandler(
 
   const handleCompletePickup = () => {
     const pickedCount = Object.values(pickedItems).filter(Boolean).length;
+    const pickedItemIds = Object.entries(pickedItems)
+      .filter(([_, isPicked]) => isPicked)
+      .map(([id]) => id);
     
-    toast.success("Tiltekt lokið", {
-      description: `${pickedCount} vörur merktar sem tilbúnar til afhendingar.`,
+    notifySuccess("Tiltekt lokið", 
+      `${pickedCount} vörur merktar sem tilbúnar til afhendingar.`
+    );
+    
+    // Create additional properties for each picked item
+    const additionalProps: Record<string, Partial<RentalItem>> = {};
+    pickedItemIds.forEach(id => {
+      additionalProps[id] = { count: itemCounts[id] || 1 };
     });
     
-    // Update rental items with new status and counts
-    onRentalItemsChange(
-      rentalItems.map(item => {
-        if (pickedItems[item.id]) {
-          return { 
-            ...item, 
-            status: "Tilbúið til afhendingar",
-            count: itemCounts[item.id] || 1
-          };
-        }
-        return item;
-      })
-    );
+    // Update all picked items at once
+    updateMultipleItemStatus(pickedItemIds, "Tilbúið til afhendingar", additionalProps);
     
     setPickedItems({});
     
     // Send notification (simulated)
-    toast.info("Tilkynning send", {
-      description: "Söluaðili hefur verið látinn vita að vörur séu tilbúnar.",
-    });
+    notifyInfo("Tilkynning send", 
+      "Söluaðili hefur verið látinn vita að vörur séu tilbúnar."
+    );
   };
 
   return {

@@ -1,51 +1,42 @@
 
 import { useState } from "react";
-import { toast } from "sonner";
 import { RentalItem } from "@/types/contract";
 import { performOffHire } from "@/services/contractService";
+import { useStatusNotifications } from "@/hooks/useStatusNotifications";
+import { useItemSelection } from "@/hooks/useItemSelection";
+import { useItemStatusUpdater } from "@/hooks/useItemStatusUpdater";
 
 export function useOffHireHandler(
   rentalItems: RentalItem[],
   onRentalItemsChange: (newItems: RentalItem[]) => void
 ) {
   const [offHireDialogOpen, setOffHireDialogOpen] = useState(false);
-  const [selectedItem, setSelectedItem] = useState<RentalItem | null>(null);
-  const [processingItemId, setProcessingItemId] = useState<string | null>(null);
+  const { notifySuccess, notifyInfo, notifyError } = useStatusNotifications();
+  const { selectedItem, processingItemId, selectItem, startProcessing, endProcessing } = useItemSelection();
+  const { updateItemStatus } = useItemStatusUpdater(rentalItems, onRentalItemsChange);
 
   const handleOffHireClick = (item: RentalItem) => {
-    setSelectedItem(item);
+    selectItem(item);
     setOffHireDialogOpen(true);
   };
 
   const handleOffHireConfirm = async (itemId: string, noCharge: boolean) => {
     setOffHireDialogOpen(false);
-    setProcessingItemId(itemId);
+    startProcessing(itemId);
     
     try {
       const response = await performOffHire(itemId, noCharge);
       
       if (response.success) {
-        // Update the item status and its count
-        onRentalItemsChange(
-          rentalItems.map(item => 
-            item.id === itemId 
-              ? { ...item, status: "Tiltekt" } 
-              : item
-          )
-        );
+        // Update the item status
+        updateItemStatus(itemId, "Tiltekt");
         
-        toast.success("Aðgerð tókst", {
-          description: `${response.message}`,
-        });
+        notifySuccess("Aðgerð tókst", response.message);
         
         // Send notification (simulated)
-        toast.info("Tilkynning send", {
-          description: "Leiguhugbúnaður hefur verið uppfærður með nýjum talningum.",
-        });
+        notifyInfo("Tilkynning send", "Leiguhugbúnaður hefur verið uppfærður með nýjum talningum.");
       } else {
-        toast.error("Villa", {
-          description: response.message || "Ekki tókst að skila vöru.",
-        });
+        notifyError("Villa", response.message || "Ekki tókst að skila vöru.");
       }
     } catch (error) {
       let errorMessage = "Óþekkt villa kom upp.";
@@ -53,11 +44,9 @@ export function useOffHireHandler(
         errorMessage = error.message;
       }
       
-      toast.error("Villa", {
-        description: errorMessage,
-      });
+      notifyError("Villa", errorMessage);
     } finally {
-      setProcessingItemId(null);
+      endProcessing();
     }
   };
 
