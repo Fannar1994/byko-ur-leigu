@@ -9,7 +9,7 @@ import TabContent from "@/components/TabContent";
 import RentalTabsNavigation from "@/components/RentalTabsNavigation";
 import PickableItemsSection from "@/components/PickableItemsSection";
 import OffHireDialog from "@/components/OffHireDialog";
-import { performOffHire, filterActiveItems, filterTiltektItems, filterOffHiredItems } from "@/services/contractService";
+import { performOffHire, filterActiveItems, filterTiltektItems } from "@/services/contractService";
 import LoadingSpinner from "./LoadingSpinner";
 
 interface ContractDetailsContentProps {
