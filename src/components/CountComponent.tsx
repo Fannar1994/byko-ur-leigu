@@ -1,61 +1,37 @@
 
 import React from 'react';
-import { Input } from '@/components/ui/input';
+import { Input } from "@/components/ui/input";
 
 interface CountComponentProps {
   count: number;
-  onCountChange?: (count: number) => void;
+  onCountChange: (newCount: number) => void;
   isUpdating?: boolean;
 }
 
 const CountComponent: React.FC<CountComponentProps> = ({ 
-  count = 1, 
-  onCountChange,
-  isUpdating = false
+  count, 
+  onCountChange, 
+  isUpdating = false 
 }) => {
-  const [localCount, setLocalCount] = React.useState<string>(count.toString());
-
-  React.useEffect(() => {
-    setLocalCount(count.toString());
-  }, [count]);
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    setLocalCount(value);
-  };
-
-  const handleInputBlur = () => {
-    const newCount = parseInt(localCount, 10);
-    if (!isNaN(newCount) && newCount >= 1 && onCountChange) {
-      onCountChange(newCount);
-    } else {
-      // Reset to previous valid count
-      setLocalCount(count.toString());
-    }
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
-      e.currentTarget.blur();
+    const numericValue = parseInt(value, 10);
+    
+    // Only update if the value is a valid number and greater than 0
+    if (!isNaN(numericValue) && numericValue >= 0) {
+      onCountChange(numericValue);
     }
   };
 
   return (
-    <div className="flex flex-col items-center">
-      <div className="text-sm text-gray-500 mb-1">Talningar</div>
-      <Input
-        className="w-16 h-8 text-center"
-        value={localCount}
-        onChange={handleInputChange}
-        onBlur={handleInputBlur}
-        onKeyDown={handleKeyDown}
-        disabled={isUpdating || !onCountChange}
-        type="number"
-        min="1"
-        step="1"
-        placeholder="0"
-      />
-    </div>
+    <Input 
+      type="number" 
+      min="0"
+      value={count}
+      onChange={handleChange}
+      className={`w-20 text-center ${isUpdating ? 'opacity-50' : ''}`}
+      disabled={isUpdating}
+    />
   );
 };
 
