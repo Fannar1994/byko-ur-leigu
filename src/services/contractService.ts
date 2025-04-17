@@ -1,6 +1,5 @@
-
 import { searchByKennitala, offHireItem } from "./api";
-import { RentalItem, SearchResults, ContractServiceError, OffHireResponse } from "@/types/contract";
+import { RentalItem, SearchResults, ContractServiceError, OffHireResponse, CountUpdate } from "@/types/contract";
 
 /**
  * Fetches contract data for a given kennitala
@@ -66,6 +65,51 @@ export async function performOffHire(itemId: string, noCharge: boolean): Promise
 }
 
 /**
+ * Updates the count for a specific rental item
+ * @param itemId ID of the item to update
+ * @param count The new count value
+ * @returns Promise with success status
+ * @throws ContractServiceError with code and descriptive message
+ */
+export async function updateItemCount(itemId: string, count: number): Promise<{success: boolean, message: string}> {
+  try {
+    // Input validation
+    if (!itemId) {
+      throw new Error("Item ID cannot be empty");
+    }
+    
+    if (count < 0) {
+      throw new Error("Count cannot be negative");
+    }
+    
+    // In a real implementation, this would call an API
+    // For now, we just simulate a successful update
+    console.log(`Updating count for item ${itemId} to ${count}`);
+    
+    // Simulate API delay
+    await new Promise(resolve => setTimeout(resolve, 500));
+    
+    return {
+      success: true,
+      message: `Talning uppfærð í ${count}.`
+    };
+  } catch (error) {
+    // Convert to typed error with additional context
+    const errorMessage = error instanceof Error ? error.message : "Unknown error occurred";
+    console.error(`Error updating item count: ${errorMessage}`);
+    
+    // Map to domain-specific error
+    const serviceError: ContractServiceError = {
+      code: "VALIDATION_ERROR",
+      message: errorMessage,
+      originalError: error instanceof Error ? error : new Error(String(error))
+    };
+    
+    throw serviceError;
+  }
+}
+
+/**
  * Filters rental items that are currently on rent
  * @param items Array of rental items to filter
  * @returns Array of active rental items
@@ -110,14 +154,14 @@ export function filterTiltektItems(items: RentalItem[]): RentalItem[] {
 }
 
 /**
- * Filters items that are off-hired
+ * Filters items that are in active status but ready for off-hire
  * @param items Array of rental items to filter
- * @returns Array of off-hired items
+ * @returns Array of items ready for off-hire
  */
 export function filterOffHiredItems(items: RentalItem[]): RentalItem[] {
   if (!Array.isArray(items)) return [];
   
   return items.filter(item => 
-    item.status === "Úr leiga" || item.status === "Off-Hired"
+    item.status === "Í leigu" || item.status === "On Rent"
   );
 }

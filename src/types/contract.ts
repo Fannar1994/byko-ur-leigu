@@ -12,6 +12,7 @@ export interface Contract {
   endDate: string;
   totalValue: number;
   location?: string;
+  project?: string; // Added project/Verk field
 }
 
 export interface RentalItem {
@@ -23,6 +24,7 @@ export interface RentalItem {
   dueDate: string;
   rentalRate: number;
   status?: 'On Rent' | 'Off-Hired' | 'Pending Return' | 'Í leigu' | 'Tiltekt' | 'Úr leiga' | 'Tilbúið til afhendingar';
+  count?: number; // Added count field for tracking quantities
 }
 
 export interface SearchResults {
@@ -44,4 +46,10 @@ export interface ContractServiceError {
   code: 'FETCH_ERROR' | 'OFFHIRE_ERROR' | 'VALIDATION_ERROR' | 'UNKNOWN_ERROR';
   message: string;
   originalError?: Error;
+}
+
+// Update contract service to include counting functions
+export interface CountUpdate {
+  itemId: string;
+  count: number;
 }

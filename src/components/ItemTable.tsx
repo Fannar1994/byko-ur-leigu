@@ -1,11 +1,12 @@
 
 import React, { useState } from "react";
-import { Calendar, UserX, Package } from "lucide-react";
+import { Calendar, UserX, Package, Minus, Plus } from "lucide-react";
 import { RentalItem } from "@/types/contract";
 import { Badge } from "@/components/ui/badge";
 import { formatDate } from "@/utils/formatters";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
+import { toast } from "sonner";
 import {
   Table,
   TableBody,
@@ -14,6 +15,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { updateItemCount } from "@/services/contractService";
 
 interface ItemTableProps {
   items: RentalItem[];
@@ -24,6 +26,8 @@ interface ItemTableProps {
   processingItemId?: string | null;
   onTogglePicked?: (itemId: string) => void;
   pickedItems?: Record<string, boolean>;
+  onItemCountChange?: (itemId: string, count: number) => void;
+  showProject?: boolean;
 }
 
 const ItemTable: React.FC<ItemTableProps> = ({
@@ -35,8 +39,21 @@ const ItemTable: React.FC<ItemTableProps> = ({
   processingItemId,
   onTogglePicked,
   pickedItems = {},
+  onItemCountChange,
+  showProject = false,
 }) => {
   const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
+  const [itemCounts, setItemCounts] = useState<Record<string, number>>({});
+  const [updatingCount, setUpdatingCount] = useState<string | null>(null);
+
+  // Initialize counts from items if they have count property
+  React.useEffect(() => {
+    const initialCounts: Record<string, number> = {};
+    items.forEach(item => {
+      initialCounts[item.id] = item.count || 1;
+    });
+    setItemCounts(initialCounts);
+  }, [items]);
 
   const handleRowClick = (itemId: string) => {
     setSelectedRowId(prevId => prevId === itemId ? null : itemId);
@@ -52,6 +69,53 @@ const ItemTable: React.FC<ItemTableProps> = ({
       case "Tiltekt": return "bg-white text-black"; // White
       case "Tilbúið til afhendingar": return "bg-green-500 text-black"; // Green for ready items
       default: return "bg-gray-100 text-gray-800";
+    }
+  };
+
+  const handleCountChange = async (itemId: string, increment: boolean) => {
+    if (updatingCount === itemId) return;
+
+    const currentCount = itemCounts[itemId] || 1;
+    const newCount = increment ? currentCount + 1 : Math.max(1, currentCount - 1);
+    
+    // Update local state immediately for UI responsiveness
+    setItemCounts(prev => ({
+      ...prev,
+      [itemId]: newCount
+    }));
+
+    // If there's a handler provided by parent, call it
+    if (onItemCountChange) {
+      onItemCountChange(itemId, newCount);
+      return;
+    }
+
+    try {
+      setUpdatingCount(itemId);
+      const result = await updateItemCount(itemId, newCount);
+      
+      if (result.success) {
+        toast.success(result.message);
+      } else {
+        // Revert on failure
+        setItemCounts(prev => ({
+          ...prev,
+          [itemId]: currentCount
+        }));
+        toast.error("Villa við að uppfæra talningu");
+      }
+    } catch (error) {
+      toast.error("Villa kom upp", {
+        description: error instanceof Error ? error.message : "Óþekkt villa"
+      });
+      
+      // Revert on error
+      setItemCounts(prev => ({
+        ...prev,
+        [itemId]: currentCount
+      }));
+    } finally {
+      setUpdatingCount(null);
     }
   };
 
@@ -71,6 +135,9 @@ const ItemTable: React.FC<ItemTableProps> = ({
             )}
             <TableHead className="text-white">Skiladagsetning</TableHead>
             <TableHead className="text-white text-center">Staða</TableHead>
+            {showProject && (
+              <TableHead className="text-white">Verk</TableHead>
+            )}
             <TableHead className="text-white text-center">Talningar</TableHead>
             {(showActions || onTogglePicked) && (
               <TableHead className="text-white text-center">Aðgerðir</TableHead>
@@ -81,6 +148,9 @@ const ItemTable: React.FC<ItemTableProps> = ({
           {items.map((item) => {
             const isSelected = selectedRowId === item.id;
             const isPicked = pickedItems[item.id];
+            const count = itemCounts[item.id] || 1;
+            const isProcessing = processingItemId === item.id;
+            const isUpdatingCount = updatingCount === item.id;
             
             return (
               <TableRow 
@@ -125,8 +195,35 @@ const ItemTable: React.FC<ItemTableProps> = ({
                     {item.status}
                   </Badge>
                 </TableCell>
-                <TableCell className="text-center">
-                  <span className={isSelected ? "font-medium text-black" : "font-medium text-white"}>1</span>
+                {showProject && (
+                  <TableCell className={isSelected ? "text-black" : "text-white"}>
+                    {item.contractId && contractNumbers ? "Verkefni A" : "-"}
+                  </TableCell>
+                )}
+                <TableCell className="text-center" onClick={(e) => e.stopPropagation()}>
+                  <div className="flex items-center justify-center gap-2">
+                    <Button 
+                      size="sm" 
+                      variant="outline" 
+                      className="h-8 w-8 p-0" 
+                      onClick={() => handleCountChange(item.id, false)}
+                      disabled={isUpdatingCount || (count <= 1)}
+                    >
+                      <Minus size={14} />
+                    </Button>
+                    <span className={`font-medium ${isSelected ? "text-black" : "text-white"}`}>
+                      {count}
+                    </span>
+                    <Button 
+                      size="sm" 
+                      variant="outline" 
+                      className="h-8 w-8 p-0" 
+                      onClick={() => handleCountChange(item.id, true)}
+                      disabled={isUpdatingCount}
+                    >
+                      <Plus size={14} />
+                    </Button>
+                  </div>
                 </TableCell>
                 {showActions && onOffHireClick && (
                   <TableCell className="text-center" onClick={(e) => e.stopPropagation()}>
@@ -134,7 +231,7 @@ const ItemTable: React.FC<ItemTableProps> = ({
                       size="sm"
                       variant="destructive"
                       onClick={() => onOffHireClick(item)}
-                      disabled={processingItemId === item.id}
+                      disabled={isProcessing}
                       className="flex items-center gap-1"
                     >
                       <UserX size={14} />

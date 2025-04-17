@@ -13,6 +13,7 @@ interface PickableItemsSectionProps {
   pickedItems: Record<string, boolean>;
   toggleItemPicked: (itemId: string) => void;
   handleCompletePickup: () => void;
+  onItemCountChange?: (itemId: string, count: number) => void;
 }
 
 const PickableItemsSection: React.FC<PickableItemsSectionProps> = ({
@@ -20,7 +21,8 @@ const PickableItemsSection: React.FC<PickableItemsSectionProps> = ({
   tiltektItems,
   pickedItems,
   toggleItemPicked,
-  handleCompletePickup
+  handleCompletePickup,
+  onItemCountChange
 }) => {
   const handlePickupConfirm = () => {
     const pickedCount = Object.values(pickedItems).filter(Boolean).length;
@@ -64,6 +66,7 @@ const PickableItemsSection: React.FC<PickableItemsSectionProps> = ({
                   showContractColumn={false}
                   onTogglePicked={toggleItemPicked}
                   pickedItems={pickedItems}
+                  onItemCountChange={onItemCountChange}
                 />
               </div>
             )}
@@ -74,6 +77,7 @@ const PickableItemsSection: React.FC<PickableItemsSectionProps> = ({
                 <ItemTable 
                   items={tiltektItems} 
                   showContractColumn={false}
+                  onItemCountChange={onItemCountChange}
                 />
               </div>
             )}
