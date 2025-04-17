@@ -12,8 +12,6 @@ export interface Contract {
   endDate: string;
   totalValue: number;
   location?: string;
-  project?: string; // Project/Verk field
-  totalCounts?: number; // Added totalCounts field
 }
 
 export interface RentalItem {
@@ -25,8 +23,6 @@ export interface RentalItem {
   dueDate: string;
   rentalRate: number;
   status?: 'On Rent' | 'Off-Hired' | 'Pending Return' | 'Í leigu' | 'Tiltekt' | 'Úr leiga' | 'Tilbúið til afhendingar';
-  count?: number; // Count field for tracking quantities
-  project?: string; // Added project field for items
 }
 
 export interface SearchResults {
@@ -39,19 +35,4 @@ export interface OffHireResponse {
   success: boolean;
   message: string;
   itemId: string;
-}
-
-/**
- * Domain-specific error type for contract service errors
- */
-export interface ContractServiceError {
-  code: 'FETCH_ERROR' | 'OFFHIRE_ERROR' | 'VALIDATION_ERROR' | 'UNKNOWN_ERROR';
-  message: string;
-  originalError?: Error;
-}
-
-// Update contract service to include counting functions
-export interface CountUpdate {
-  itemId: string;
-  count: number;
 }

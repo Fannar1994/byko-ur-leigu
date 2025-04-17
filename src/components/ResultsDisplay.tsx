@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
@@ -141,10 +142,12 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, onDataChange }
         
         <TabsContent value="offhired" className="animate-fade-in">
           <TabContent 
-            title="Úr leigu" 
+            title="Úr leiga" 
             items={offHiredItems} 
             contractNumbers={contractNumbersMap} 
-            showActions={false}
+            showActions={true}
+            onOffHireClick={handleOffHireClick}
+            processingItemId={processingItemId}
           />
         </TabsContent>
       </Tabs>

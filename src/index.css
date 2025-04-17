@@ -1,11 +1,12 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   :root {
-    --background: 0 0% 30%; /* Medium gray */
-    --foreground: 0 0% 98%;
+    --background: 0 0% 98%;
+    --foreground: 0 0% 12%;
 
     --card: 0 0% 100%;
     --card-foreground: 0 0% 12%;
@@ -45,16 +46,18 @@
   }
 
   .dark {
-    --background: 0 0% 20%; /* Darker gray */
-    --foreground: 0 0% 98%;
+    /* BYKO brand dark theme - based on the dark grey logo background */
+    --background: 0 0% 15%; /* Dark grey from logo */
+    --foreground: 0 0% 98%; /* Near-white text */
 
-    --card: 240 10% 15%; /* Match card background to overall background */
+    --card: 0 0% 20%; /* Slightly lighter card background */
     --card-foreground: 0 0% 98%;
 
     --popover: 0 0% 18%; /* Medium dark grey for popovers */
     --popover-foreground: 0 0% 98%;
 
-    --primary: 49 100% 50%;  /* BYKO Yellow */
+    /* BYKO Yellow for primary */
+    --primary: 49 100% 50%;
     --primary-foreground: 0 0% 12%;
 
     --secondary: 0 0% 25%; /* Lighter grey for secondary elements */
@@ -73,6 +76,7 @@
     --input: 0 0% 20%;
     --ring: 49 100% 50%; /* BYKO Yellow */
     
+    /* Sidebar refinements */
     --sidebar-background: 0 0% 12%; /* Darker sidebar for contrast */
     --sidebar-foreground: 0 0% 80%;
     --sidebar-primary: 49 100% 50%; /* BYKO Yellow */
@@ -82,7 +86,9 @@
     --sidebar-border: 0 0% 20%;
     --sidebar-ring: 49 100% 50%; /* BYKO Yellow */
   }
+}
 
+@layer base {
   * {
     @apply border-border;
   }
@@ -92,6 +98,7 @@
   }
 }
 
+/* Custom styles for the KennitalaSearch component */
 .search-button {
   @apply text-black !important;
 }

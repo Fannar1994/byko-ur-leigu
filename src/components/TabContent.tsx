@@ -3,7 +3,6 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import ItemTable from "@/components/ItemTable";
 import { RentalItem } from '@/types/contract';
-import { useTabContent } from '@/hooks/useTabContent';
 
 interface TabContentProps {
   title: string;
@@ -15,8 +14,6 @@ interface TabContentProps {
   onTogglePicked?: (itemId: string) => void;
   pickedItems?: Record<string, boolean>;
   showContractColumn?: boolean;
-  onItemCountChange?: (itemId: string, count: number) => void;
-  showProject?: boolean;
 }
 
 const TabContent: React.FC<TabContentProps> = ({
@@ -28,30 +25,24 @@ const TabContent: React.FC<TabContentProps> = ({
   processingItemId,
   onTogglePicked,
   pickedItems,
-  showContractColumn = true,
-  onItemCountChange,
-  showProject = false
+  showContractColumn = true
 }) => {
-  const { tableProps } = useTabContent({
-    items,
-    contractNumbers,
-    showActions,
-    onOffHireClick,
-    processingItemId,
-    onTogglePicked,
-    pickedItems,
-    showContractColumn,
-    onItemCountChange,
-    showProject
-  });
-
   return (
-    <Card className="bg-[#221F26] border-none shadow-lg">
+    <Card>
       <CardHeader className="pb-2">
         <CardTitle className="text-xl font-semibold text-white">{title}</CardTitle>
       </CardHeader>
-      <CardContent className="p-4">
-        <ItemTable {...tableProps} />
+      <CardContent>
+        <ItemTable 
+          items={items} 
+          contractNumbers={contractNumbers}
+          showActions={showActions}
+          onOffHireClick={onOffHireClick}
+          processingItemId={processingItemId}
+          onTogglePicked={onTogglePicked}
+          pickedItems={pickedItems}
+          showContractColumn={showContractColumn}
+        />
       </CardContent>
     </Card>
   );

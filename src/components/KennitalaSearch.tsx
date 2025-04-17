@@ -16,6 +16,7 @@ const KennitalaSearch: React.FC<KennitalaSearchProps> = ({ onSearch, isLoading, 
   const [kennitala, setKennitala] = useState(initialKennitala);
   const [error, setError] = useState("");
 
+  // Update kennitala if initialKennitala changes
   useEffect(() => {
     if (initialKennitala) {
       setKennitala(initialKennitala);
@@ -25,33 +26,42 @@ const KennitalaSearch: React.FC<KennitalaSearchProps> = ({ onSearch, isLoading, 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
+    // Clear previous error
     setError("");
     
+    // Validate kennitala
     if (!validateKennitala(kennitala)) {
       setError("Ógilt kennitölusnið. Vinsamlegast sláðu inn 10 stafa tölu.");
       return;
     }
     
+    // Pass the kennitala to the parent component
     onSearch(kennitala);
   };
 
+  // Format kennitala as the user types (adding hyphens)
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
+    
+    // Strip non-digit characters
     const digitsOnly = value.replace(/\D/g, "");
+    
+    // Limit to 10 digits
     const truncated = digitsOnly.substring(0, 10);
     
     setKennitala(truncated);
     
+    // Clear error if input changes
     if (error) setError("");
   };
 
   return (
-    <Card className="w-full max-w-3xl mx-auto bg-[#221F26] border-none shadow-md">
+    <Card className="w-full max-w-3xl mx-auto shadow-md">
       <CardContent className="pt-6">
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
             <h2 className="text-xl font-semibold text-white">Leita að samningum eftir kennitölu</h2>
-            <p className="text-sm text-white/70">
+            <p className="text-sm text-white">
               Sláðu inn 10 stafa kennitölu til að finna tengda leigusamninga.
             </p>
           </div>
@@ -72,11 +82,11 @@ const KennitalaSearch: React.FC<KennitalaSearchProps> = ({ onSearch, isLoading, 
             <Button 
               type="submit" 
               disabled={isLoading || kennitala.length !== 10} 
-              className="h-12 px-6 flex-shrink-0 bg-primary hover:bg-primary/90 text-primary-foreground search-button"
+              className="h-12 px-6 flex-shrink-0 bg-yellow-400 hover:bg-yellow-500 text-black search-button"
             >
               {isLoading ? (
                 <div className="flex items-center gap-2">
-                  <div className="h-4 w-4 rounded-full border-2 border-white border-t-transparent animate-spin"></div>
+                  <div className="h-4 w-4 rounded-full border-2 border-black border-t-transparent animate-spin"></div>
                   <span>Leita...</span>
                 </div>
               ) : (

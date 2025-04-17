@@ -7,7 +7,7 @@ const RentalTabsNavigation: React.FC = () => {
     <TabsList className="w-full mb-6">
       <TabsTrigger value="active" className="flex-1">Í leigu</TabsTrigger>
       <TabsTrigger value="tiltekt" className="flex-1">Tiltekt</TabsTrigger>
-      <TabsTrigger value="offhired" className="flex-1">Úr leigu</TabsTrigger>
+      <TabsTrigger value="offhired" className="flex-1">Úr leiga</TabsTrigger>
     </TabsList>
   );
 };
