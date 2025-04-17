@@ -5,7 +5,11 @@ export function useItemStatusUpdater(
   rentalItems: RentalItem[],
   onRentalItemsChange: (newItems: RentalItem[]) => void
 ) {
-  const updateItemStatus = (itemId: string, newStatus: string, additionalProps?: Partial<RentalItem>) => {
+  const updateItemStatus = (
+    itemId: string, 
+    newStatus: RentalItem['status'], 
+    additionalProps?: Partial<RentalItem>
+  ) => {
     onRentalItemsChange(
       rentalItems.map(item => 
         item.id === itemId 
@@ -15,7 +19,11 @@ export function useItemStatusUpdater(
     );
   };
   
-  const updateMultipleItemStatus = (itemIds: string[], newStatus: string, additionalProps?: Record<string, Partial<RentalItem>>) => {
+  const updateMultipleItemStatus = (
+    itemIds: string[], 
+    newStatus: RentalItem['status'], 
+    additionalProps?: Record<string, Partial<RentalItem>>
+  ) => {
     onRentalItemsChange(
       rentalItems.map(item => {
         if (itemIds.includes(item.id)) {
