@@ -1,0 +1,32 @@
+
+import React from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Renter } from '@/types/contract';
+
+interface RenterInfoCardProps {
+  renter: Renter;
+}
+
+const RenterInfoCard: React.FC<RenterInfoCardProps> = ({ renter }) => {
+  return (
+    <Card className="shadow-md">
+      <CardHeader className="pb-2">
+        <CardTitle className="text-xl font-semibold text-white">Upplýsingar um leigutaka</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <div className="text-sm text-gray-500">Nafn</div>
+            <div className="text-lg font-semibold text-white">{renter.name}</div>
+          </div>
+          <div>
+            <div className="text-sm text-gray-500">Kennitala</div>
+            <div className="text-lg text-white">{renter.kennitala}</div>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+};
+
+export default RenterInfoCard;

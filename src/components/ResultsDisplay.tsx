@@ -1,13 +1,15 @@
 
-import React, { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import React, { useState, useEffect } from "react";
+import { Card } from "@/components/ui/card";
+import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { SearchResults, Contract, RentalItem } from "@/types/contract";
 import { toast } from "sonner";
 import { offHireItem } from "@/services/api";
 import OffHireDialog from "./OffHireDialog";
 import TabContent from "./TabContent";
 import ContractsTableComponent from "./ContractsTableComponent";
+import RenterInfoCard from "./RenterInfoCard";
+import RentalTabsNavigation from "./RentalTabsNavigation";
 
 interface ResultsDisplayProps {
   results: SearchResults | null;
@@ -22,7 +24,7 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, onDataChange }
   const [processingItemId, setProcessingItemId] = useState<string | null>(null);
   const [localRentalItems, setLocalRentalItems] = useState<RentalItem[]>([]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (results?.rentalItems) {
       setLocalRentalItems(results.rentalItems);
     }
@@ -117,30 +119,10 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, onDataChange }
 
   return (
     <div className="space-y-6 w-full max-w-5xl mx-auto animate-fade-in">
-      <Card className="shadow-md">
-        <CardHeader className="pb-2">
-          <CardTitle className="text-xl font-semibold text-white">Upplýsingar um leigutaka</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <div className="text-sm text-gray-500">Nafn</div>
-              <div className="text-lg font-semibold text-white">{results.renter.name}</div>
-            </div>
-            <div>
-              <div className="text-sm text-gray-500">Kennitala</div>
-              <div className="text-lg text-white">{results.renter.kennitala}</div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+      <RenterInfoCard renter={results.renter} />
 
       <Tabs defaultValue="active" className="w-full">
-        <TabsList className="w-full mb-6">
-          <TabsTrigger value="active" className="flex-1">Í leigu</TabsTrigger>
-          <TabsTrigger value="tiltekt" className="flex-1">Tiltekt</TabsTrigger>
-          <TabsTrigger value="offhired" className="flex-1">Úr leiga</TabsTrigger>
-        </TabsList>
+        <RentalTabsNavigation />
         
         <TabsContent value="active" className="animate-fade-in">
           <TabContent 

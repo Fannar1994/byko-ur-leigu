@@ -7,11 +7,12 @@ import { toast } from "sonner";
 import { ChevronLeft, Check } from "lucide-react";
 import { RentalItem } from "@/types/contract";
 import { searchByKennitala, offHireItem } from "@/services/api";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsContent } from "@/components/ui/tabs";
 import OffHireDialog from "@/components/OffHireDialog";
 import ContractInfo from "@/components/ContractInfo";
 import ItemTable from "@/components/ItemTable";
 import TabContent from "@/components/TabContent";
+import RentalTabsNavigation from "@/components/RentalTabsNavigation";
 
 const ContractDetails = () => {
   const { contractNumber } = useParams();
@@ -196,17 +197,13 @@ const ContractDetails = () => {
                 <ContractInfo contract={contract} renter={contractData.renter} />
 
                 <Tabs defaultValue="active" className="w-full">
-                  <TabsList className="w-full mb-4">
-                    <TabsTrigger value="active" className="flex-1">Í leigu</TabsTrigger>
-                    <TabsTrigger value="tiltekt" className="flex-1">Tiltekt</TabsTrigger>
-                    <TabsTrigger value="offhired" className="flex-1">Úr leiga</TabsTrigger>
-                  </TabsList>
+                  <RentalTabsNavigation />
                   
                   <TabsContent value="active">
                     <TabContent 
                       title="Vörur í leigu" 
                       items={activeItems} 
-                      showContractColumn={false}
+                      showContractColumn={false} 
                     />
                   </TabsContent>
                   
