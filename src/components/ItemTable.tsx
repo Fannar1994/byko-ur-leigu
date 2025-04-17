@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { formatDate } from "@/utils/formatters";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
+import CountComponent from "./CountComponent";
 import {
   Table,
   TableBody,
@@ -24,6 +25,7 @@ interface ItemTableProps {
   processingItemId?: string | null;
   onTogglePicked?: (itemId: string) => void;
   pickedItems?: Record<string, boolean>;
+  onCountChange?: (itemId: string, count: number) => void;
 }
 
 const ItemTable: React.FC<ItemTableProps> = ({
@@ -35,11 +37,18 @@ const ItemTable: React.FC<ItemTableProps> = ({
   processingItemId,
   onTogglePicked,
   pickedItems = {},
+  onCountChange,
 }) => {
   const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
 
   const handleRowClick = (itemId: string) => {
     setSelectedRowId(prevId => prevId === itemId ? null : itemId);
+  };
+
+  const handleCountChange = (itemId: string) => (count: number) => {
+    if (onCountChange) {
+      onCountChange(itemId, count);
+    }
   };
 
   const getItemStatusColor = (status?: string) => {
@@ -125,8 +134,11 @@ const ItemTable: React.FC<ItemTableProps> = ({
                     {item.status}
                   </Badge>
                 </TableCell>
-                <TableCell className="text-center">
-                  <span className={isSelected ? "font-medium text-black" : "font-medium text-white"}>1</span>
+                <TableCell className="text-center" onClick={(e) => e.stopPropagation()}>
+                  <CountComponent 
+                    itemId={item.id}
+                    onCountChange={handleCountChange(item.id)}
+                  />
                 </TableCell>
                 {showActions && onOffHireClick && (
                   <TableCell className="text-center" onClick={(e) => e.stopPropagation()}>

@@ -1,17 +1,45 @@
 
-import React from 'react';
+import React, { useState } from 'react';
+import { Input } from "@/components/ui/input";
 
 interface CountComponentProps {
   count?: number;
+  onCountChange?: (count: number) => void;
+  itemId?: string;
 }
 
-const CountComponent: React.FC<CountComponentProps> = ({ count = 0 }) => {
+const CountComponent: React.FC<CountComponentProps> = ({ 
+  count, 
+  onCountChange,
+  itemId
+}) => {
+  const [localCount, setLocalCount] = useState<string>(count ? count.toString() : '');
+  
+  const handleCountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = e.target.value;
+    setLocalCount(newValue);
+    
+    if (onCountChange && newValue !== '') {
+      const numericValue = parseInt(newValue, 10);
+      if (!isNaN(numericValue)) {
+        onCountChange(numericValue);
+      }
+    }
+  };
+
   return (
-    <div>
-      <div className="text-sm text-gray-500">Talningar</div>
-      <div className="text-lg font-medium text-white text-center">
-        {count}
-      </div>
+    <div className="w-full">
+      <div className="text-sm text-gray-500 mb-1">Talningar</div>
+      <Input
+        type="number"
+        value={localCount}
+        onChange={handleCountChange}
+        placeholder=""
+        className="w-16 h-8 text-center text-white bg-transparent"
+        min="0"
+        aria-label="Talningar"
+        id={`count-${itemId}`}
+      />
     </div>
   );
 };
