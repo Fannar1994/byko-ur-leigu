@@ -3,6 +3,7 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import ItemTable from "@/components/ItemTable";
 import { RentalItem } from '@/types/contract';
+import { useTabContent } from '@/hooks/useTabContent';
 
 interface TabContentProps {
   title: string;
@@ -31,24 +32,26 @@ const TabContent: React.FC<TabContentProps> = ({
   onItemCountChange,
   showProject = false
 }) => {
+  const { tableProps } = useTabContent({
+    items,
+    contractNumbers,
+    showActions,
+    onOffHireClick,
+    processingItemId,
+    onTogglePicked,
+    pickedItems,
+    showContractColumn,
+    onItemCountChange,
+    showProject
+  });
+
   return (
     <Card className="bg-[#221F26] border-none">
       <CardHeader className="pb-2">
         <CardTitle className="text-xl font-semibold text-white">{title}</CardTitle>
       </CardHeader>
       <CardContent>
-        <ItemTable 
-          items={items} 
-          contractNumbers={contractNumbers}
-          showActions={showActions}
-          onOffHireClick={onOffHireClick}
-          processingItemId={processingItemId}
-          onTogglePicked={onTogglePicked}
-          pickedItems={pickedItems}
-          showContractColumn={showContractColumn}
-          onItemCountChange={onItemCountChange}
-          showProject={showProject}
-        />
+        <ItemTable {...tableProps} />
       </CardContent>
     </Card>
   );
