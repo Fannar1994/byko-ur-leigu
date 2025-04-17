@@ -1,7 +1,5 @@
 
-import React, { useState } from "react";
-import { toast } from "sonner";
-import { Button } from "@/components/ui/button";
+import React from "react";
 import { Contract, RentalItem, Renter } from "@/types/contract";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 import ContractInfo from "@/components/ContractInfo";
@@ -9,8 +7,11 @@ import TabContent from "@/components/TabContent";
 import RentalTabsNavigation from "@/components/RentalTabsNavigation";
 import PickableItemsSection from "@/components/PickableItemsSection";
 import OffHireDialog from "@/components/OffHireDialog";
-import { performOffHire, filterActiveItems, filterTiltektItems } from "@/services/contractService";
+import { filterActiveItems, filterTiltektItems } from "@/services/contractService";
 import LoadingSpinner from "./LoadingSpinner";
+import { useOffHireHandler } from "./contract-details/useOffHireHandler";
+import { useItemCounts } from "./contract-details/useItemCounts";
+import { useTiltektHandler } from "./contract-details/useTiltektHandler";
 
 interface ContractDetailsContentProps {
   loading: boolean;
@@ -27,118 +28,27 @@ const ContractDetailsContent: React.FC<ContractDetailsContentProps> = ({
   rentalItems,
   onRentalItemsChange
 }) => {
-  const [pickedItems, setPickedItems] = useState<Record<string, boolean>>({});
-  const [offHireDialogOpen, setOffHireDialogOpen] = useState(false);
-  const [selectedItem, setSelectedItem] = useState<RentalItem | null>(null);
-  const [processingItemId, setProcessingItemId] = useState<string | null>(null);
-  const [itemCounts, setItemCounts] = useState<Record<string, number>>({});
+  // Use our custom hooks to manage state and handlers
+  const { 
+    itemCounts, 
+    handleItemCountChange 
+  } = useItemCounts(rentalItems);
 
-  // Initialize counts
-  React.useEffect(() => {
-    const initialCounts: Record<string, number> = {};
-    rentalItems.forEach(item => {
-      initialCounts[item.id] = item.count || 1;
-    });
-    setItemCounts(initialCounts);
-  }, [rentalItems]);
+  // Use the offhire handler
+  const {
+    offHireDialogOpen,
+    selectedItem,
+    processingItemId,
+    handleOffHireClick,
+    handleOffHireConfirm,
+    setOffHireDialogOpen
+  } = useOffHireHandler(rentalItems, onRentalItemsChange);
 
-  const toggleItemPicked = (itemId: string) => {
-    setPickedItems(prev => ({
-      ...prev,
-      [itemId]: !prev[itemId]
-    }));
-  };
-
-  const handleCompletePickup = () => {
-    const pickedCount = Object.values(pickedItems).filter(Boolean).length;
+  // Create a wrapper for handling item count changes from our components
+  const handleCountChange = (itemId: string, count: number) => {
+    handleItemCountChange(itemId, count);
     
-    toast.success("Tiltekt lokið", {
-      description: `${pickedCount} vörur merktar sem tilbúnar til afhendingar.`,
-    });
-    
-    // Update rental items with new status and counts
-    onRentalItemsChange(
-      rentalItems.map(item => {
-        if (pickedItems[item.id]) {
-          return { 
-            ...item, 
-            status: "Tilbúið til afhendingar",
-            count: itemCounts[item.id] || 1
-          };
-        }
-        return item;
-      })
-    );
-    
-    setPickedItems({});
-    
-    // Send notification (simulated)
-    toast.info("Tilkynning send", {
-      description: "Söluaðili hefur verið látinn vita að vörur séu tilbúnar.",
-    });
-  };
-
-  const handleOffHireClick = (item: RentalItem) => {
-    setSelectedItem({
-      ...item,
-      count: itemCounts[item.id] || 1
-    });
-    setOffHireDialogOpen(true);
-  };
-
-  const handleOffHireConfirm = async (itemId: string, noCharge: boolean) => {
-    setOffHireDialogOpen(false);
-    setProcessingItemId(itemId);
-    
-    try {
-      const count = itemCounts[itemId] || 1;
-      const response = await performOffHire(itemId, noCharge);
-      
-      if (response.success) {
-        // Update the item status and its count
-        onRentalItemsChange(
-          rentalItems.map(item => 
-            item.id === itemId 
-              ? { ...item, status: "Tiltekt", count } 
-              : item
-          )
-        );
-        
-        toast.success("Aðgerð tókst", {
-          description: `${count} ${count > 1 ? 'einingar' : 'eining'} ${response.message}`,
-        });
-        
-        // Send notification (simulated)
-        toast.info("Tilkynning send", {
-          description: "Leiguhugbúnaður hefur verið uppfærður með nýjum talningum.",
-        });
-      } else {
-        toast.error("Villa", {
-          description: response.message || "Ekki tókst að skila vöru.",
-        });
-      }
-    } catch (error) {
-      let errorMessage = "Óþekkt villa kom upp.";
-      if (error instanceof Error) {
-        errorMessage = error.message;
-      }
-      
-      toast.error("Villa", {
-        description: errorMessage,
-      });
-    } finally {
-      setProcessingItemId(null);
-    }
-  };
-
-  const handleItemCountChange = (itemId: string, count: number) => {
-    setItemCounts(prev => ({
-      ...prev,
-      [itemId]: count
-    }));
-    
-    // Optional: Update the count in the rentalItems array if needed
-    // This can be useful if you want to persist the count when changing tabs
+    // Update the rentalItems array with the new count
     onRentalItemsChange(
       rentalItems.map(item => 
         item.id === itemId 
@@ -148,10 +58,16 @@ const ContractDetailsContent: React.FC<ContractDetailsContentProps> = ({
     );
   };
 
+  // Use the tiltekt handler
+  const {
+    pickedItems,
+    toggleItemPicked,
+    handleCompletePickup
+  } = useTiltektHandler(rentalItems, onRentalItemsChange, itemCounts);
+
   // Use our filter functions from contractService
   const activeItems = filterActiveItems(rentalItems);
   const tiltektItems = filterTiltektItems(rentalItems);
-  const offHireReadyItems = filterActiveItems(rentalItems); // Show only "Í leigu" items in Úr Leiga tab
 
   if (loading) {
     return <LoadingSpinner />;
@@ -178,7 +94,7 @@ const ContractDetailsContent: React.FC<ContractDetailsContentProps> = ({
             items={activeItems} 
             showContractColumn={false} 
             showProject={true}
-            onItemCountChange={handleItemCountChange}
+            onItemCountChange={handleCountChange}
             onOffHireClick={handleOffHireClick}
             processingItemId={processingItemId}
             showActions={true}
@@ -192,7 +108,7 @@ const ContractDetailsContent: React.FC<ContractDetailsContentProps> = ({
             pickedItems={pickedItems}
             toggleItemPicked={toggleItemPicked}
             handleCompletePickup={handleCompletePickup}
-            onItemCountChange={handleItemCountChange}
+            onItemCountChange={handleCountChange}
           />
         </TabsContent>
       </Tabs>
