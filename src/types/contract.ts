@@ -36,3 +36,12 @@ export interface OffHireResponse {
   message: string;
   itemId: string;
 }
+
+/**
+ * Domain-specific error type for contract service errors
+ */
+export interface ContractServiceError {
+  code: 'FETCH_ERROR' | 'OFFHIRE_ERROR' | 'VALIDATION_ERROR' | 'UNKNOWN_ERROR';
+  message: string;
+  originalError?: Error;
+}
