@@ -1,4 +1,5 @@
 
+import { useState } from 'react';
 import { RentalItem } from '@/types/contract';
 
 interface UseTabContentProps {
@@ -26,19 +27,30 @@ export function useTabContent({
   onItemCountChange,
   showProject
 }: UseTabContentProps) {
+  const [updatingItem, setUpdatingItem] = useState<string | null>(null);
+
+  // Handle counts for all items in this tab view
+  const handleCountChange = (itemId: string, count: number) => {
+    if (onItemCountChange) {
+      setUpdatingItem(itemId);
+      onItemCountChange(itemId, count);
+      setTimeout(() => setUpdatingItem(null), 500);
+    }
+  };
+
   // Organize props for ItemTable to make them more manageable
   const tableProps = {
     items,
     contractNumbers,
     showActions,
     onOffHireClick,
-    processingItemId,
+    processingItemId: processingItemId || updatingItem,
     onTogglePicked,
     pickedItems,
     showContractColumn,
-    onItemCountChange,
+    onItemCountChange: handleCountChange,
     showProject
   };
 
-  return { tableProps };
+  return { tableProps, updatingItem };
 }

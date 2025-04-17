@@ -77,6 +77,7 @@ const CountComponent: React.FC<CountComponentProps> = ({
           type="number"
           min="1"
           step="1"
+          placeholder="0"
         />
         <Button 
           size="sm" 

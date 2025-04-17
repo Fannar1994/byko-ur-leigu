@@ -51,7 +51,7 @@ const ItemRow: React.FC<ItemRowProps> = ({
       case "Off-Hired":
       case "Úr leiga": return "bg-red-100 text-red-800";
       case "Pending Return": 
-      case "Tiltekt": return "bg-primary text-white"; // Yellow for Tiltekt
+      case "Tiltekt": return "bg-primary text-primary-foreground"; // Yellow for Tiltekt
       case "Tilbúið til afhendingar": return "bg-green-500 text-black"; // Green for ready items
       default: return "bg-gray-100 text-gray-800";
     }

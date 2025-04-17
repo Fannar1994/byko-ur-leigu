@@ -70,9 +70,9 @@ const ContractInfo: React.FC<ContractInfoProps> = ({ contract, renter }) => {
           </div>
           
           <div>
-            <div className="text-sm text-gray-500">Talningar</div>
+            <div className="text-sm text-gray-500">Heildar Talningar</div>
             <div className="text-lg font-medium text-white text-center">
-              0
+              {contract.totalCounts || 0}
             </div>
           </div>
         </div>
