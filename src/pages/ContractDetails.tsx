@@ -1,18 +1,17 @@
 
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { ChevronLeft, Check } from "lucide-react";
+import { ChevronLeft } from "lucide-react";
 import { RentalItem } from "@/types/contract";
 import { searchByKennitala, offHireItem } from "@/services/api";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 import OffHireDialog from "@/components/OffHireDialog";
 import ContractInfo from "@/components/ContractInfo";
-import ItemTable from "@/components/ItemTable";
 import TabContent from "@/components/TabContent";
 import RentalTabsNavigation from "@/components/RentalTabsNavigation";
+import PickableItemsSection from "@/components/PickableItemsSection";
 
 const ContractDetails = () => {
   const { contractNumber } = useParams();
@@ -71,13 +70,6 @@ const ContractDetails = () => {
 
   const handleCompletePickup = () => {
     const pickedCount = Object.values(pickedItems).filter(Boolean).length;
-    
-    if (pickedCount === 0) {
-      toast.error("Engar vörur valdar", {
-        description: "Þú verður að velja að minnsta kosti eina vöru til að staðfesta tiltekt.",
-      });
-      return;
-    }
     
     toast.success("Tiltekt lokið", {
       description: `${pickedCount} vörur merktar sem tilbúnar til afhendingar.`,
@@ -208,51 +200,13 @@ const ContractDetails = () => {
                   </TabsContent>
                   
                   <TabsContent value="tiltekt">
-                    <Card>
-                      <CardHeader className="pb-2">
-                        <CardTitle className="text-xl font-semibold text-white flex justify-between items-center">
-                          <span>Tiltekt</span>
-                          {readyForPickItems.length > 0 && (
-                            <Button 
-                              className="ml-auto" 
-                              onClick={handleCompletePickup}
-                              disabled={!Object.values(pickedItems).some(Boolean)}
-                            >
-                              <Check className="h-4 w-4 mr-2" /> Staðfesta tiltekt
-                            </Button>
-                          )}
-                        </CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        {readyForPickItems.length === 0 && tiltektItems.length === 0 ? (
-                          <div className="text-center py-6 text-gray-500">Engar vörur eru tilbúnar fyrir tiltekt</div>
-                        ) : (
-                          <div className="space-y-8">
-                            {readyForPickItems.length > 0 && (
-                              <div>
-                                <h3 className="text-lg font-medium text-white mb-4">Vörur sem þarf að taka til</h3>
-                                <ItemTable 
-                                  items={readyForPickItems} 
-                                  showContractColumn={false}
-                                  onTogglePicked={toggleItemPicked}
-                                  pickedItems={pickedItems}
-                                />
-                              </div>
-                            )}
-
-                            {tiltektItems.length > 0 && (
-                              <div>
-                                <h3 className="text-lg font-medium text-white mb-4">Vörur tilbúnar til afhendingar</h3>
-                                <ItemTable 
-                                  items={tiltektItems} 
-                                  showContractColumn={false}
-                                />
-                              </div>
-                            )}
-                          </div>
-                        )}
-                      </CardContent>
-                    </Card>
+                    <PickableItemsSection
+                      readyForPickItems={readyForPickItems}
+                      tiltektItems={tiltektItems}
+                      pickedItems={pickedItems}
+                      toggleItemPicked={toggleItemPicked}
+                      handleCompletePickup={handleCompletePickup}
+                    />
                   </TabsContent>
                   
                   <TabsContent value="offhired">
