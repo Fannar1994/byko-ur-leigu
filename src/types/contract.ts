@@ -12,7 +12,8 @@ export interface Contract {
   endDate: string;
   totalValue: number;
   location?: string;
-  project?: string; // Added project/Verk field
+  project?: string; // Project/Verk field
+  totalCounts?: number; // Added totalCounts field
 }
 
 export interface RentalItem {
@@ -24,7 +25,8 @@ export interface RentalItem {
   dueDate: string;
   rentalRate: number;
   status?: 'On Rent' | 'Off-Hired' | 'Pending Return' | 'Í leigu' | 'Tiltekt' | 'Úr leiga' | 'Tilbúið til afhendingar';
-  count?: number; // Added count field for tracking quantities
+  count?: number; // Count field for tracking quantities
+  project?: string; // Added project field for items
 }
 
 export interface SearchResults {

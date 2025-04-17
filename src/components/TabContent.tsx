@@ -32,7 +32,7 @@ const TabContent: React.FC<TabContentProps> = ({
   showProject = false
 }) => {
   return (
-    <Card>
+    <Card className="bg-[#221F26] border-none">
       <CardHeader className="pb-2">
         <CardTitle className="text-xl font-semibold text-white">{title}</CardTitle>
       </CardHeader>

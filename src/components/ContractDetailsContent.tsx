@@ -99,7 +99,7 @@ const ContractDetailsContent: React.FC<ContractDetailsContentProps> = ({
         onRentalItemsChange(
           rentalItems.map(item => 
             item.id === itemId 
-              ? { ...item, status: "Úr leiga", count } 
+              ? { ...item, status: "Tiltekt", count } 
               : item
           )
         );
@@ -179,6 +179,9 @@ const ContractDetailsContent: React.FC<ContractDetailsContentProps> = ({
             showContractColumn={false} 
             showProject={true}
             onItemCountChange={handleItemCountChange}
+            onOffHireClick={handleOffHireClick}
+            processingItemId={processingItemId}
+            showActions={true}
           />
         </TabsContent>
         
@@ -189,18 +192,6 @@ const ContractDetailsContent: React.FC<ContractDetailsContentProps> = ({
             pickedItems={pickedItems}
             toggleItemPicked={toggleItemPicked}
             handleCompletePickup={handleCompletePickup}
-            onItemCountChange={handleItemCountChange}
-          />
-        </TabsContent>
-        
-        <TabsContent value="offhired">
-          <TabContent 
-            title="Vörur úr leigu" 
-            items={offHireReadyItems}
-            showContractColumn={false}
-            showActions={true}
-            onOffHireClick={handleOffHireClick}
-            processingItemId={processingItemId}
             onItemCountChange={handleItemCountChange}
           />
         </TabsContent>

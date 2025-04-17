@@ -1,7 +1,8 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { Plus, Minus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 
 interface CountComponentProps {
   count: number;
@@ -14,6 +15,12 @@ const CountComponent: React.FC<CountComponentProps> = ({
   onCountChange,
   isUpdating = false
 }) => {
+  const [localCount, setLocalCount] = React.useState<string>(count.toString());
+
+  React.useEffect(() => {
+    setLocalCount(count.toString());
+  }, [count]);
+
   const handleIncrement = () => {
     if (onCountChange) {
       onCountChange(count + 1);
@@ -26,30 +33,59 @@ const CountComponent: React.FC<CountComponentProps> = ({
     }
   };
 
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setLocalCount(value);
+  };
+
+  const handleInputBlur = () => {
+    const newCount = parseInt(localCount, 10);
+    if (!isNaN(newCount) && newCount >= 1 && onCountChange) {
+      onCountChange(newCount);
+    } else {
+      // Reset to previous valid count
+      setLocalCount(count.toString());
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      e.currentTarget.blur();
+    }
+  };
+
   return (
-    <div>
-      <div className="text-sm text-gray-500">Talningar</div>
-      <div className="flex items-center justify-center gap-2 mt-1">
+    <div className="flex flex-col items-center">
+      <div className="text-sm text-gray-500 mb-1">Talningar</div>
+      <div className="flex items-center gap-2">
         <Button 
           size="sm" 
           variant="outline" 
-          className="h-6 w-6 p-0" 
+          className="h-8 w-8 p-0" 
           onClick={handleDecrement}
           disabled={isUpdating || count <= 1 || !onCountChange}
         >
-          <Minus size={12} />
+          <Minus size={14} />
         </Button>
-        <div className="text-lg font-medium text-white text-center min-w-[24px]">
-          {count}
-        </div>
+        <Input
+          className="w-16 h-8 text-center"
+          value={localCount}
+          onChange={handleInputChange}
+          onBlur={handleInputBlur}
+          onKeyDown={handleKeyDown}
+          disabled={isUpdating || !onCountChange}
+          type="number"
+          min="1"
+          step="1"
+        />
         <Button 
           size="sm" 
           variant="outline" 
-          className="h-6 w-6 p-0" 
+          className="h-8 w-8 p-0" 
           onClick={handleIncrement}
           disabled={isUpdating || !onCountChange}
         >
-          <Plus size={12} />
+          <Plus size={14} />
         </Button>
       </div>
     </div>

@@ -1,3 +1,4 @@
+
 import { searchByKennitala, offHireItem } from "./api";
 import { RentalItem, SearchResults, ContractServiceError, OffHireResponse, CountUpdate } from "@/types/contract";
 
@@ -154,14 +155,15 @@ export function filterTiltektItems(items: RentalItem[]): RentalItem[] {
 }
 
 /**
- * Filters items that are in active status but ready for off-hire
- * @param items Array of rental items to filter
- * @returns Array of items ready for off-hire
+ * Updates the total counts for a contract
+ * @param contractId ID of the contract
+ * @param items Array of rental items
+ * @returns Total number of items counted
  */
-export function filterOffHiredItems(items: RentalItem[]): RentalItem[] {
-  if (!Array.isArray(items)) return [];
+export function calculateTotalCounts(contractId: string, items: RentalItem[]): number {
+  if (!Array.isArray(items)) return 0;
   
-  return items.filter(item => 
-    item.status === "Í leigu" || item.status === "On Rent"
-  );
+  return items
+    .filter(item => item.contractId === contractId)
+    .reduce((total, item) => total + (item.count || 1), 0);
 }

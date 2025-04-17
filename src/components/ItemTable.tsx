@@ -1,6 +1,6 @@
 
 import React, { useState } from "react";
-import { Calendar, UserX, Package, Minus, Plus } from "lucide-react";
+import { Calendar, UserX, Package, Minus, Plus, Check } from "lucide-react";
 import { RentalItem } from "@/types/contract";
 import { Badge } from "@/components/ui/badge";
 import { formatDate } from "@/utils/formatters";
@@ -16,6 +16,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { updateItemCount } from "@/services/contractService";
+import { Input } from "@/components/ui/input";
+import CountComponent from "@/components/CountComponent";
 
 interface ItemTableProps {
   items: RentalItem[];
@@ -66,18 +68,15 @@ const ItemTable: React.FC<ItemTableProps> = ({
       case "Off-Hired":
       case "Úr leiga": return "bg-red-100 text-red-800";
       case "Pending Return": 
-      case "Tiltekt": return "bg-white text-black"; // White
+      case "Tiltekt": return "bg-primary text-white"; // Yellow for Tiltekt
       case "Tilbúið til afhendingar": return "bg-green-500 text-black"; // Green for ready items
       default: return "bg-gray-100 text-gray-800";
     }
   };
 
-  const handleCountChange = async (itemId: string, increment: boolean) => {
+  const handleCountChange = async (itemId: string, newCount: number) => {
     if (updatingCount === itemId) return;
 
-    const currentCount = itemCounts[itemId] || 1;
-    const newCount = increment ? currentCount + 1 : Math.max(1, currentCount - 1);
-    
     // Update local state immediately for UI responsiveness
     setItemCounts(prev => ({
       ...prev,
@@ -100,7 +99,7 @@ const ItemTable: React.FC<ItemTableProps> = ({
         // Revert on failure
         setItemCounts(prev => ({
           ...prev,
-          [itemId]: currentCount
+          [itemId]: prev[itemId] || 1
         }));
         toast.error("Villa við að uppfæra talningu");
       }
@@ -112,7 +111,7 @@ const ItemTable: React.FC<ItemTableProps> = ({
       // Revert on error
       setItemCounts(prev => ({
         ...prev,
-        [itemId]: currentCount
+        [itemId]: prev[itemId] || 1
       }));
     } finally {
       setUpdatingCount(null);
@@ -197,33 +196,15 @@ const ItemTable: React.FC<ItemTableProps> = ({
                 </TableCell>
                 {showProject && (
                   <TableCell className={isSelected ? "text-black" : "text-white"}>
-                    {item.contractId && contractNumbers ? "Verkefni A" : "-"}
+                    {item.contractId && contractNumbers ? item.project || "Verkefni A" : "-"}
                   </TableCell>
                 )}
                 <TableCell className="text-center" onClick={(e) => e.stopPropagation()}>
-                  <div className="flex items-center justify-center gap-2">
-                    <Button 
-                      size="sm" 
-                      variant="outline" 
-                      className="h-8 w-8 p-0" 
-                      onClick={() => handleCountChange(item.id, false)}
-                      disabled={isUpdatingCount || (count <= 1)}
-                    >
-                      <Minus size={14} />
-                    </Button>
-                    <span className={`font-medium ${isSelected ? "text-black" : "text-white"}`}>
-                      {count}
-                    </span>
-                    <Button 
-                      size="sm" 
-                      variant="outline" 
-                      className="h-8 w-8 p-0" 
-                      onClick={() => handleCountChange(item.id, true)}
-                      disabled={isUpdatingCount}
-                    >
-                      <Plus size={14} />
-                    </Button>
-                  </div>
+                  <CountComponent 
+                    count={count}
+                    onCountChange={(newCount) => handleCountChange(item.id, newCount)}
+                    isUpdating={isUpdatingCount}
+                  />
                 </TableCell>
                 {showActions && onOffHireClick && (
                   <TableCell className="text-center" onClick={(e) => e.stopPropagation()}>
@@ -247,8 +228,8 @@ const ItemTable: React.FC<ItemTableProps> = ({
                       onClick={() => onTogglePicked(item.id)}
                       className="flex items-center gap-1"
                     >
-                      <Package size={14} />
-                      <span>{pickedItems[item.id] ? "Tilbúið" : "Merkja"}</span>
+                      {pickedItems[item.id] ? <Check size={14} /> : <Package size={14} />}
+                      <span>{pickedItems[item.id] ? "Bekræfta" : "Merkja"}</span>
                     </Button>
                   </TableCell>
                 )}
