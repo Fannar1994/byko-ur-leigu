@@ -46,11 +46,11 @@ const TabContent: React.FC<TabContentProps> = ({
   });
 
   return (
-    <Card className="bg-[#221F26] border-none">
+    <Card className="bg-[#221F26] border-none shadow-lg">
       <CardHeader className="pb-2">
         <CardTitle className="text-xl font-semibold text-white">{title}</CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent className="p-4">
         <ItemTable {...tableProps} />
       </CardContent>
     </Card>

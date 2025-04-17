@@ -9,11 +9,11 @@ interface RenterInfoCardProps {
 
 const RenterInfoCard: React.FC<RenterInfoCardProps> = ({ renter }) => {
   return (
-    <Card className="bg-[#221F26] border-none shadow-md">
+    <Card className="bg-[#221F26] border-none shadow-lg">
       <CardHeader className="pb-2">
         <CardTitle className="text-xl font-semibold text-white">Upplýsingar um leigutaka</CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent className="p-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <div className="text-sm text-white/70">Nafn</div>
