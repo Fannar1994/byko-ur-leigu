@@ -15,9 +15,16 @@ const CountComponent: React.FC<CountComponentProps> = ({
 }) => {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
+    
+    // If the value is empty, set count to 0
+    if (value === '') {
+      onCountChange(0);
+      return;
+    }
+    
     const numericValue = parseInt(value, 10);
     
-    // Only update if the value is a valid number and greater than 0
+    // Only update if the value is a valid number
     if (!isNaN(numericValue) && numericValue >= 0) {
       onCountChange(numericValue);
     }
@@ -27,7 +34,7 @@ const CountComponent: React.FC<CountComponentProps> = ({
     <Input 
       type="number" 
       min="0"
-      value={count}
+      value={count || ''}
       onChange={handleChange}
       className={`w-20 text-center appearance-none [-moz-appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none ${isUpdating ? 'opacity-50' : ''}`}
       disabled={isUpdating}
