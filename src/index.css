@@ -1,5 +1,8 @@
 
-/* Add this to the existing CSS file */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 @layer base {
   /* Remove number input arrows */
   input[type="number"]::-webkit-inner-spin-button,
