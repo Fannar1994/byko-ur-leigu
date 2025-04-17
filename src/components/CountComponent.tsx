@@ -29,7 +29,7 @@ const CountComponent: React.FC<CountComponentProps> = ({
       min="0"
       value={count}
       onChange={handleChange}
-      className={`w-20 text-center ${isUpdating ? 'opacity-50' : ''}`}
+      className={`w-20 text-center appearance-none [-moz-appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none ${isUpdating ? 'opacity-50' : ''}`}
       disabled={isUpdating}
     />
   );
