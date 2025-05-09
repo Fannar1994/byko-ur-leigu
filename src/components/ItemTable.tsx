@@ -35,7 +35,7 @@ const ItemTable: React.FC<ItemTableProps> = ({
   contractNumbers,
   showActions = false,
   showContractColumn = true,
-  showCountColumn = false, // Default is now false
+  showCountColumn = false, // Default is explicitly false 
   showLocationColumn = false,
   onOffHireClick,
   processingItemId,
