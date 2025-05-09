@@ -27,6 +27,7 @@ interface ItemTableProps {
   onTogglePicked?: (itemId: string) => void;
   pickedItems?: Record<string, boolean>;
   onCountChange?: (itemId: string, count: number) => void;
+  onStatusClick?: (item: RentalItem, count: number) => void;
 }
 
 const ItemTable: React.FC<ItemTableProps> = ({
@@ -41,8 +42,10 @@ const ItemTable: React.FC<ItemTableProps> = ({
   onTogglePicked,
   pickedItems = {},
   onCountChange,
+  onStatusClick,
 }) => {
   const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
+  const [itemCounts, setItemCounts] = useState<Record<string, number>>({});
 
   const handleRowClick = (itemId: string) => {
     setSelectedRowId(prevId => prevId === itemId ? null : itemId);
@@ -51,6 +54,18 @@ const ItemTable: React.FC<ItemTableProps> = ({
   const handleCountChange = (itemId: string) => (count: number) => {
     if (onCountChange) {
       onCountChange(itemId, count);
+    }
+    // Store the count in local state
+    setItemCounts(prev => ({
+      ...prev,
+      [itemId]: count
+    }));
+  };
+
+  const handleStatusClick = (item: RentalItem) => {
+    if (onStatusClick && item.status === "Tiltekt") {
+      const count = itemCounts[item.id] || 0;
+      onStatusClick(item, count);
     }
   };
 
@@ -139,7 +154,13 @@ const ItemTable: React.FC<ItemTableProps> = ({
                   </TableCell>
                 )}
                 <TableCell className="text-center">
-                  <Badge className={getItemStatusColor(item.status)}>
+                  <Badge 
+                    className={`${getItemStatusColor(item.status)} ${item.status === "Tiltekt" ? "cursor-pointer hover:bg-opacity-80" : ""}`}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleStatusClick(item);
+                    }}
+                  >
                     {item.status}
                   </Badge>
                 </TableCell>

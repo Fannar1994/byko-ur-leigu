@@ -21,6 +21,7 @@ interface ContractTabsProps {
   onOffHireClick: (item: RentalItem) => void;
   handleSort: (field: keyof Contract) => void;
   onCountChange?: (itemId: string, count: number) => void;
+  onItemStatusUpdate?: (itemId: string, newStatus: string, count: number) => void;
 }
 
 const ContractTabs: React.FC<ContractTabsProps> = ({
@@ -32,7 +33,8 @@ const ContractTabs: React.FC<ContractTabsProps> = ({
   onTogglePicked,
   onCompletePickup,
   onOffHireClick,
-  onCountChange
+  onCountChange,
+  onItemStatusUpdate
 }) => {
   return (
     <Tabs defaultValue="tiltekt" className="w-full">
@@ -47,6 +49,7 @@ const ContractTabs: React.FC<ContractTabsProps> = ({
           onCompletePickup={onCompletePickup}
           showCountColumn={true}
           onCountChange={onCountChange}
+          onStatusUpdate={onItemStatusUpdate}
         />
       </TabsContent>
       

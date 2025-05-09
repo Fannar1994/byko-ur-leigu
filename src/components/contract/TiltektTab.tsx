@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Check } from "lucide-react";
 import ItemTable from "../ItemTable";
 import { RentalItem } from "@/types/contract";
+import { toast } from "sonner";
 
 interface TiltektTabProps {
   readyForPickItems: RentalItem[];
@@ -14,6 +15,7 @@ interface TiltektTabProps {
   onCompletePickup: () => void;
   showCountColumn?: boolean;
   onCountChange?: (itemId: string, count: number) => void;
+  onStatusUpdate?: (itemId: string, newStatus: string, count: number) => void;
 }
 
 const TiltektTab: React.FC<TiltektTabProps> = ({ 
@@ -23,9 +25,26 @@ const TiltektTab: React.FC<TiltektTabProps> = ({
   onTogglePicked,
   onCompletePickup,
   showCountColumn = true,
-  onCountChange
+  onCountChange,
+  onStatusUpdate
 }) => {
   const hasPickedItems = Object.values(pickedItems).some(Boolean);
+  
+  const handleStatusClick = (item: RentalItem, count: number) => {
+    if (count <= 0) {
+      toast.error("Villa", {
+        description: "Þú verður að setja inn talningar áður en þú setur vöruna í leigu.",
+      });
+      return;
+    }
+    
+    if (onStatusUpdate) {
+      onStatusUpdate(item.id, "Í leigu", count);
+      toast.success("Aðgerð tókst", {
+        description: `${item.itemName} sett í leigu með ${count} talningar.`,
+      });
+    }
+  };
   
   return (
     <Card>
@@ -70,6 +89,7 @@ const TiltektTab: React.FC<TiltektTabProps> = ({
                   showContractColumn={false}
                   showCountColumn={showCountColumn}
                   onCountChange={onCountChange}
+                  onStatusClick={handleStatusClick}
                 />
               </div>
             )}

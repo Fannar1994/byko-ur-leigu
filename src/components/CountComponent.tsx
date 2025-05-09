@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Input } from "@/components/ui/input";
 
 interface CountComponentProps {
@@ -14,6 +14,12 @@ const CountComponent: React.FC<CountComponentProps> = ({
   itemId
 }) => {
   const [localCount, setLocalCount] = useState<string>(count ? count.toString() : '');
+  
+  useEffect(() => {
+    if (count !== undefined) {
+      setLocalCount(count.toString());
+    }
+  }, [count]);
   
   const handleCountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = e.target.value;

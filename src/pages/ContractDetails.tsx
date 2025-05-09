@@ -52,6 +52,14 @@ const ContractDetails = () => {
     });
   };
 
+  // New function to handle status update with count
+  const handleItemStatusUpdateWithCount = (itemId: string, newStatus: string, count: number) => {
+    // Update the item status first
+    handleItemStatusUpdate(itemId, newStatus as any);
+    console.log(`Item ${itemId} status changed to ${newStatus} with count ${count}`);
+    // Here you would normally also update the count in a database
+  };
+
   // Navigation
   const handleGoBack = () => {
     navigate('/?kennitala=' + lastKennitala);
@@ -92,6 +100,7 @@ const ContractDetails = () => {
                           onOffHireClick={handleOffHireClick}
                           handleSort={handleSort}
                           onCountChange={handleCountChange}
+                          onItemStatusUpdate={handleItemStatusUpdateWithCount}
                         />
                       )}
                     </PickupHandler>
