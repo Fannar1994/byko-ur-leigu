@@ -1,6 +1,6 @@
 
 import React, { useState } from "react";
-import { Calendar, UserX, Package } from "lucide-react";
+import { Calendar, UserX, Package, MapPin } from "lucide-react";
 import { RentalItem } from "@/types/contract";
 import { Badge } from "@/components/ui/badge";
 import { formatDate } from "@/utils/formatters";
@@ -36,6 +36,7 @@ const ItemTable: React.FC<ItemTableProps> = ({
   showActions = false,
   showContractColumn = true,
   showCountColumn = true,
+  showLocationColumn = false,
   onOffHireClick,
   processingItemId,
   onTogglePicked,
@@ -82,6 +83,9 @@ const ItemTable: React.FC<ItemTableProps> = ({
               <TableHead className="text-white">Samningsnúmer</TableHead>
             )}
             <TableHead className="text-white">Skiladagsetning</TableHead>
+            {showLocationColumn && (
+              <TableHead className="text-white">Verkstaður</TableHead>
+            )}
             <TableHead className="text-white text-center">Staða</TableHead>
             {showCountColumn && (
               <TableHead className="text-white text-center">Talningar</TableHead>
@@ -134,6 +138,14 @@ const ItemTable: React.FC<ItemTableProps> = ({
                     <span>{formatDate(item.dueDate)}</span>
                   </div>
                 </TableCell>
+                {showLocationColumn && (
+                  <TableCell className={isSelected ? "text-black" : "text-white"}>
+                    <div className="flex items-center gap-1">
+                      <MapPin size={14} className={isSelected ? "text-black" : "text-gray-400"} />
+                      <span>{item.location || "Óþekktur staður"}</span>
+                    </div>
+                  </TableCell>
+                )}
                 <TableCell className="text-center">
                   <Badge className={getItemStatusColor(item.status)}>
                     {item.status}

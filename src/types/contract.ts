@@ -23,6 +23,7 @@ export interface RentalItem {
   dueDate: string;
   rentalRate: number;
   status?: 'On Rent' | 'Off-Hired' | 'Pending Return' | 'Í leigu' | 'Tiltekt' | 'Úr leiga' | 'Tilbúið til afhendingar';
+  location?: string;
 }
 
 export interface SearchResults {
