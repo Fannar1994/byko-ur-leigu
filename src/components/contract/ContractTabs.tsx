@@ -22,6 +22,7 @@ interface ContractTabsProps {
   onCompletePickup: () => void;
   onOffHireClick: (item: RentalItem) => void;
   handleSort: (field: keyof Contract) => void;
+  onCountChange?: (itemId: string, count: number) => void;
 }
 
 const ContractTabs: React.FC<ContractTabsProps> = ({
@@ -37,7 +38,8 @@ const ContractTabs: React.FC<ContractTabsProps> = ({
   onTogglePicked,
   onCompletePickup,
   onOffHireClick,
-  handleSort
+  handleSort,
+  onCountChange
 }) => {
   return (
     <Tabs defaultValue="active" className="w-full">
@@ -56,7 +58,9 @@ const ContractTabs: React.FC<ContractTabsProps> = ({
         <ActiveItemsTab 
           activeItems={activeItems} 
           handleOffHireClick={onOffHireClick} 
-          processingItemId={processingItemId} 
+          processingItemId={processingItemId}
+          onCountChange={onCountChange}
+          showCountColumn={false}
         />
       </TabsContent>
       
@@ -67,6 +71,8 @@ const ContractTabs: React.FC<ContractTabsProps> = ({
           pickedItems={pickedItems}
           onTogglePicked={onTogglePicked}
           onCompletePickup={onCompletePickup}
+          showCountColumn={true}
+          onCountChange={onCountChange}
         />
       </TabsContent>
       
@@ -75,6 +81,8 @@ const ContractTabs: React.FC<ContractTabsProps> = ({
           offHiredItems={offHiredItems}
           handleOffHireClick={onOffHireClick}
           processingItemId={processingItemId}
+          showCountColumn={true}
+          onCountChange={onCountChange}
         />
       </TabsContent>
     </Tabs>

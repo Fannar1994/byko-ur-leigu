@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
@@ -28,6 +27,12 @@ const ContractDetails = () => {
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("desc");
   
   const lastKennitala = localStorage.getItem('lastSearchedKennitala') || '';
+
+  // Add count change handler
+  const handleCountChange = (itemId: string, count: number) => {
+    console.log(`Item ${itemId} count changed to ${count}`);
+    // Here you would normally update a state or make an API call
+  };
 
   useEffect(() => {
     const fetchContractData = async () => {
@@ -203,6 +208,7 @@ const ContractDetails = () => {
                   onCompletePickup={handleCompletePickup}
                   onOffHireClick={handleOffHireClick}
                   handleSort={handleSort}
+                  onCountChange={handleCountChange}
                 />
               </div>
             ) : (

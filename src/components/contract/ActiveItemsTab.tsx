@@ -7,12 +7,16 @@ interface ActiveItemsTabProps {
   activeItems: RentalItem[];
   handleOffHireClick: (item: RentalItem) => void;
   processingItemId: string | null;
+  onCountChange?: (itemId: string, count: number) => void;
+  showCountColumn?: boolean;
 }
 
 const ActiveItemsTab: React.FC<ActiveItemsTabProps> = ({ 
   activeItems,
   handleOffHireClick,
-  processingItemId
+  processingItemId,
+  onCountChange,
+  showCountColumn = false
 }) => {
   return (
     <TabContent 
@@ -23,7 +27,8 @@ const ActiveItemsTab: React.FC<ActiveItemsTabProps> = ({
       onOffHireClick={handleOffHireClick}
       processingItemId={processingItemId}
       showLocationColumn={true}
-      showCountColumn={false}
+      showCountColumn={showCountColumn}
+      onCountChange={onCountChange}
     />
   );
 };

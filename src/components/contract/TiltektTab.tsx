@@ -12,6 +12,8 @@ interface TiltektTabProps {
   pickedItems: Record<string, boolean>;
   onTogglePicked: (itemId: string) => void;
   onCompletePickup: () => void;
+  showCountColumn?: boolean;
+  onCountChange?: (itemId: string, count: number) => void;
 }
 
 const TiltektTab: React.FC<TiltektTabProps> = ({ 
@@ -19,7 +21,9 @@ const TiltektTab: React.FC<TiltektTabProps> = ({
   tiltektItems, 
   pickedItems, 
   onTogglePicked,
-  onCompletePickup 
+  onCompletePickup,
+  showCountColumn = true,
+  onCountChange
 }) => {
   const hasPickedItems = Object.values(pickedItems).some(Boolean);
   
@@ -52,7 +56,8 @@ const TiltektTab: React.FC<TiltektTabProps> = ({
                   showContractColumn={false}
                   onTogglePicked={onTogglePicked}
                   pickedItems={pickedItems}
-                  showCountColumn={false}
+                  showCountColumn={showCountColumn}
+                  onCountChange={onCountChange}
                 />
               </div>
             )}
@@ -63,7 +68,8 @@ const TiltektTab: React.FC<TiltektTabProps> = ({
                 <ItemTable 
                   items={tiltektItems} 
                   showContractColumn={false}
-                  showCountColumn={false}
+                  showCountColumn={showCountColumn}
+                  onCountChange={onCountChange}
                 />
               </div>
             )}

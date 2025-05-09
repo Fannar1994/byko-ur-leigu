@@ -7,12 +7,16 @@ interface OffHiredItemsTabProps {
   offHiredItems: RentalItem[];
   handleOffHireClick: (item: RentalItem) => void;
   processingItemId: string | null;
+  showCountColumn?: boolean;
+  onCountChange?: (itemId: string, count: number) => void;
 }
 
 const OffHiredItemsTab: React.FC<OffHiredItemsTabProps> = ({ 
   offHiredItems,
   handleOffHireClick,
-  processingItemId
+  processingItemId,
+  showCountColumn = true,
+  onCountChange
 }) => {
   return (
     <TabContent 
@@ -23,7 +27,8 @@ const OffHiredItemsTab: React.FC<OffHiredItemsTabProps> = ({
       onOffHireClick={handleOffHireClick}
       processingItemId={processingItemId}
       showLocationColumn={true}
-      showCountColumn={false}
+      showCountColumn={showCountColumn}
+      onCountChange={onCountChange}
     />
   );
 };

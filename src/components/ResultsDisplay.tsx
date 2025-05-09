@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
@@ -23,6 +22,12 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, onDataChange }
   const [selectedItem, setSelectedItem] = useState<RentalItem | null>(null);
   const [processingItemId, setProcessingItemId] = useState<string | null>(null);
   const [localRentalItems, setLocalRentalItems] = useState<RentalItem[]>([]);
+  
+  // Add this for counting functionality
+  const handleCountChange = (itemId: string, count: number) => {
+    console.log(`Item ${itemId} count changed to ${count}`);
+    // Here you would typically update some state or call an API
+  };
 
   useEffect(() => {
     if (results?.rentalItems) {
@@ -135,7 +140,8 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, onDataChange }
             items={tiltektItems} 
             contractNumbers={contractNumbersMap} 
             showLocationColumn={true}
-            showCountColumn={false}
+            showCountColumn={true}
+            onCountChange={handleCountChange}
           />
         </TabsContent>
         
@@ -148,7 +154,8 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, onDataChange }
             onOffHireClick={handleOffHireClick}
             processingItemId={processingItemId}
             showLocationColumn={true}
-            showCountColumn={false}
+            showCountColumn={true}
+            onCountChange={handleCountChange}
           />
         </TabsContent>
       </Tabs>
