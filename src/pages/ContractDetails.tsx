@@ -4,19 +4,15 @@ import { useParams, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { RentalItem, Contract } from "@/types/contract";
 import { searchByKennitala, offHireItem } from "@/services/api";
-import { Tabs, TabsContent } from "@/components/ui/tabs";
 import OffHireDialog from "@/components/OffHireDialog";
 import ContractInfo from "@/components/ContractInfo";
-import TabContent from "@/components/TabContent";
-import RentalTabsNavigation from "@/components/RentalTabsNavigation";
-import ContractsTableComponent from "@/components/ContractsTableComponent";
 
 // Import refactored components
 import ContractHeader from "@/components/contract/ContractHeader";
 import ContractFooter from "@/components/contract/ContractFooter";
 import ContractLoading from "@/components/contract/ContractLoading";
 import ContractNotFound from "@/components/contract/ContractNotFound";
-import TiltektTab from "@/components/contract/TiltektTab";
+import ContractTabs from "@/components/contract/ContractTabs";
 
 const ContractDetails = () => {
   const { contractNumber } = useParams();
@@ -192,42 +188,22 @@ const ContractDetails = () => {
             {contract && contractData ? (
               <div className="space-y-6 animate-fade-in">
                 <ContractInfo contract={contract} renter={contractData.renter} />
-
-                <Tabs defaultValue="active" className="w-full">
-                  <RentalTabsNavigation />
-                  
-                  <TabsContent value="active">
-                    <ContractsTableComponent 
-                      contracts={contractData.contracts}
-                      sortField={sortField}
-                      sortDirection={sortDirection}
-                      handleSort={handleSort}
-                    />
-                  </TabsContent>
-                  
-                  <TabsContent value="tiltekt">
-                    <TiltektTab 
-                      readyForPickItems={readyForPickItems}
-                      tiltektItems={tiltektItems}
-                      pickedItems={pickedItems}
-                      onTogglePicked={toggleItemPicked}
-                      onCompletePickup={handleCompletePickup}
-                    />
-                  </TabsContent>
-                  
-                  <TabsContent value="offhired">
-                    <TabContent 
-                      title="Vörur úr leigu" 
-                      items={offHiredItems}
-                      showContractColumn={false}
-                      showActions={true}
-                      onOffHireClick={handleOffHireClick}
-                      processingItemId={processingItemId}
-                      showLocationColumn={true}
-                      showCountColumn={false}
-                    />
-                  </TabsContent>
-                </Tabs>
+                
+                <ContractTabs 
+                  contracts={contractData.contracts}
+                  activeItems={activeItems}
+                  readyForPickItems={readyForPickItems}
+                  tiltektItems={tiltektItems}
+                  offHiredItems={offHiredItems}
+                  pickedItems={pickedItems}
+                  processingItemId={processingItemId}
+                  sortField={sortField}
+                  sortDirection={sortDirection}
+                  onTogglePicked={toggleItemPicked}
+                  onCompletePickup={handleCompletePickup}
+                  onOffHireClick={handleOffHireClick}
+                  handleSort={handleSort}
+                />
               </div>
             ) : (
               <ContractNotFound contractNumber={contractNumber} onGoBack={handleGoBack} />
