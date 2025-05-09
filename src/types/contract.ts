@@ -1,7 +1,11 @@
-
 export interface Renter {
   name: string;
   kennitala: string;
+  address?: string;
+  city?: string;
+  postalCode?: string;
+  contactPerson?: string;
+  phone?: string;
 }
 
 export interface Contract {
