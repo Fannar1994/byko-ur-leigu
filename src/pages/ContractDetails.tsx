@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -255,6 +256,7 @@ const ContractDetails = () => {
                                   showContractColumn={false}
                                   onTogglePicked={toggleItemPicked}
                                   pickedItems={pickedItems}
+                                  showCountColumn={false}
                                 />
                               </div>
                             )}
@@ -265,6 +267,7 @@ const ContractDetails = () => {
                                 <ItemTable 
                                   items={tiltektItems} 
                                   showContractColumn={false}
+                                  showCountColumn={false}
                                 />
                               </div>
                             )}
@@ -283,6 +286,7 @@ const ContractDetails = () => {
                       onOffHireClick={handleOffHireClick}
                       processingItemId={processingItemId}
                       showLocationColumn={true}
+                      showCountColumn={false}
                     />
                   </TabsContent>
                 </Tabs>
