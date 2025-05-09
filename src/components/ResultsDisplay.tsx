@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
@@ -123,7 +124,7 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, onDataChange }
               contracts={sortedContracts}
               sortField={sortField}
               sortDirection={sortDirection}
-              onSort={handleSort}
+              handleSort={handleSort}
             />
           </Card>
         </TabsContent>

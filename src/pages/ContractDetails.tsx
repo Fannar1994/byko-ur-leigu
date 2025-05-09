@@ -1,11 +1,10 @@
-
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { ChevronLeft, Check } from "lucide-react";
-import { RentalItem } from "@/types/contract";
+import { RentalItem, Contract } from "@/types/contract";
 import { searchByKennitala, offHireItem } from "@/services/api";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 import OffHireDialog from "@/components/OffHireDialog";
@@ -25,6 +24,8 @@ const ContractDetails = () => {
   const [offHireDialogOpen, setOffHireDialogOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState<RentalItem | null>(null);
   const [processingItemId, setProcessingItemId] = useState<string | null>(null);
+  const [sortField, setSortField] = useState<keyof Contract>("startDate");
+  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("desc");
   
   const lastKennitala = localStorage.getItem('lastSearchedKennitala') || '';
 
@@ -142,6 +143,15 @@ const ContractDetails = () => {
     }
   };
 
+  const handleSort = (field: keyof Contract) => {
+    if (sortField === field) {
+      setSortDirection(sortDirection === "asc" ? "desc" : "asc");
+    } else {
+      setSortField(field);
+      setSortDirection("asc");
+    }
+  };
+
   const contract = contractData?.contracts.find(c => c.contractNumber === contractNumber);
 
   const activeItems = localRentalItems.filter(item => 
@@ -208,8 +218,9 @@ const ContractDetails = () => {
                       <CardContent>
                         <ContractsTableComponent 
                           contracts={contractData.contracts}
-                          sortField="startDate"
-                          sortDirection="desc"
+                          sortField={sortField}
+                          sortDirection={sortDirection}
+                          handleSort={handleSort}
                         />
                       </CardContent>
                     </Card>
