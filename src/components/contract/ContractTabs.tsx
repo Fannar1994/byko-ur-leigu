@@ -4,7 +4,6 @@ import { Tabs, TabsContent } from "@/components/ui/tabs";
 import RentalTabsNavigation from "@/components/RentalTabsNavigation";
 import ContractsTableComponent from "@/components/ContractsTableComponent";
 import { Contract, RentalItem } from "@/types/contract";
-import ActiveItemsTab from "./ActiveItemsTab";
 import TiltektTab from "./TiltektTab";
 import OffHiredItemsTab from "./OffHiredItemsTab";
 
@@ -51,16 +50,6 @@ const ContractTabs: React.FC<ContractTabsProps> = ({
           sortField={sortField}
           sortDirection={sortDirection}
           handleSort={handleSort}
-        />
-      </TabsContent>
-      
-      <TabsContent value="onrent">
-        <ActiveItemsTab 
-          activeItems={activeItems} 
-          handleOffHireClick={onOffHireClick} 
-          processingItemId={processingItemId}
-          onCountChange={onCountChange}
-          showCountColumn={false}
         />
       </TabsContent>
       
