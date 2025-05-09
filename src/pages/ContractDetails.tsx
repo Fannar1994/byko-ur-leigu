@@ -34,7 +34,7 @@ const ContractDetails = () => {
   };
 
   // Handle item status updates
-  const handleItemStatusUpdate = (itemId: string | string[], newStatus: string) => {
+  const handleItemStatusUpdate = (itemId: string | string[], newStatus: "On Rent" | "Off-Hired" | "Pending Return" | "Í leigu" | "Tiltekt" | "Úr leiga" | "Tilbúið til afhendingar") => {
     setLocalRentalItems(prevItems => {
       if (Array.isArray(itemId)) {
         return prevItems.map(item => 

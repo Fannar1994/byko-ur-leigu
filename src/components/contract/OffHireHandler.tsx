@@ -6,7 +6,10 @@ import { offHireItem } from "@/services/api";
 import OffHireDialog from "@/components/OffHireDialog";
 
 interface OffHireHandlerProps {
-  children: React.ReactNode;
+  children: (props: {
+    handleOffHireClick: (item: RentalItem) => void;
+    processingItemId: string | null;
+  }) => React.ReactNode;
   onItemStatusUpdate: (itemId: string, newStatus: string) => void;
 }
 

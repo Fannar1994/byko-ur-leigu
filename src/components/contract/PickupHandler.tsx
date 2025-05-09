@@ -4,7 +4,7 @@ import { toast } from "sonner";
 import { RentalItem } from "@/types/contract";
 
 interface PickupHandlerProps {
-  onItemStatusUpdate: (itemIds: string[], newStatus: string) => void;
+  onItemStatusUpdate: (itemIds: string[], newStatus: "On Rent" | "Off-Hired" | "Pending Return" | "Í leigu" | "Tiltekt" | "Úr leiga" | "Tilbúið til afhendingar") => void;
   children: (props: {
     pickedItems: Record<string, boolean>;
     toggleItemPicked: (itemId: string) => void;
