@@ -2,7 +2,6 @@
 import React from "react";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 import RentalTabsNavigation from "@/components/RentalTabsNavigation";
-import ContractsTableComponent from "@/components/ContractsTableComponent";
 import { Contract, RentalItem } from "@/types/contract";
 import TiltektTab from "./TiltektTab";
 import OffHiredItemsTab from "./OffHiredItemsTab";
@@ -25,33 +24,19 @@ interface ContractTabsProps {
 }
 
 const ContractTabs: React.FC<ContractTabsProps> = ({
-  contracts,
-  activeItems,
   readyForPickItems,
   tiltektItems,
   offHiredItems,
   pickedItems,
   processingItemId,
-  sortField,
-  sortDirection,
   onTogglePicked,
   onCompletePickup,
   onOffHireClick,
-  handleSort,
   onCountChange
 }) => {
   return (
-    <Tabs defaultValue="active" className="w-full">
+    <Tabs defaultValue="tiltekt" className="w-full">
       <RentalTabsNavigation />
-      
-      <TabsContent value="active">
-        <ContractsTableComponent 
-          contracts={contracts}
-          sortField={sortField}
-          sortDirection={sortDirection}
-          handleSort={handleSort}
-        />
-      </TabsContent>
       
       <TabsContent value="tiltekt">
         <TiltektTab 

@@ -1,9 +1,8 @@
 
 import React, { useState } from "react";
-import { Calendar, UserX, Package, MapPin } from "lucide-react";
+import { UserX, Package, MapPin } from "lucide-react";
 import { RentalItem } from "@/types/contract";
 import { Badge } from "@/components/ui/badge";
-import { formatDate } from "@/utils/formatters";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import CountComponent from "./CountComponent";
@@ -35,7 +34,7 @@ const ItemTable: React.FC<ItemTableProps> = ({
   contractNumbers,
   showActions = false,
   showContractColumn = true,
-  showCountColumn = false, // Default is explicitly false 
+  showCountColumn = false, 
   showLocationColumn = false,
   onOffHireClick,
   processingItemId,
@@ -58,12 +57,12 @@ const ItemTable: React.FC<ItemTableProps> = ({
   const getItemStatusColor = (status?: string) => {
     switch (status) {
       case "On Rent": 
-      case "Í leigu": return "bg-primary text-primary-foreground"; // Yellow
+      case "Í leigu": return "bg-primary text-primary-foreground"; 
       case "Off-Hired":
       case "Úr leiga": return "bg-red-100 text-red-800";
       case "Pending Return": 
-      case "Tiltekt": return "bg-white text-black"; // White
-      case "Tilbúið til afhendingar": return "bg-green-500 text-black"; // Green for ready items
+      case "Tiltekt": return "bg-white text-black"; 
+      case "Tilbúið til afhendingar": return "bg-green-500 text-black"; 
       default: return "bg-gray-100 text-gray-800";
     }
   };
@@ -82,7 +81,6 @@ const ItemTable: React.FC<ItemTableProps> = ({
             {showContractColumn && (
               <TableHead className="text-white">Samningsnúmer</TableHead>
             )}
-            <TableHead className="text-white">Skiladagsetning</TableHead>
             {showLocationColumn && (
               <TableHead className="text-white">Verkstaður</TableHead>
             )}
@@ -132,12 +130,6 @@ const ItemTable: React.FC<ItemTableProps> = ({
                     )}
                   </TableCell>
                 )}
-                <TableCell className={isSelected ? "text-black" : "text-white"}>
-                  <div className="flex items-center gap-1">
-                    <Calendar size={14} className={isSelected ? "text-black" : "text-gray-400"} />
-                    <span>{formatDate(item.dueDate)}</span>
-                  </div>
-                </TableCell>
                 {showLocationColumn && (
                   <TableCell className={isSelected ? "text-black" : "text-white"}>
                     <div className="flex items-center gap-1">
