@@ -1,19 +1,22 @@
 
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { ChevronLeft, Check } from "lucide-react";
 import { RentalItem, Contract } from "@/types/contract";
 import { searchByKennitala, offHireItem } from "@/services/api";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 import OffHireDialog from "@/components/OffHireDialog";
 import ContractInfo from "@/components/ContractInfo";
-import ItemTable from "@/components/ItemTable";
 import TabContent from "@/components/TabContent";
 import RentalTabsNavigation from "@/components/RentalTabsNavigation";
 import ContractsTableComponent from "@/components/ContractsTableComponent";
+
+// Import refactored components
+import ContractHeader from "@/components/contract/ContractHeader";
+import ContractFooter from "@/components/contract/ContractFooter";
+import ContractLoading from "@/components/contract/ContractLoading";
+import ContractNotFound from "@/components/contract/ContractNotFound";
+import TiltektTab from "@/components/contract/TiltektTab";
 
 const ContractDetails = () => {
   const { contractNumber } = useParams();
@@ -155,6 +158,7 @@ const ContractDetails = () => {
 
   const contract = contractData?.contracts.find(c => c.contractNumber === contractNumber);
 
+  // Filter items by status
   const activeItems = localRentalItems.filter(item => 
     item.status === "Í leigu" || item.status === "On Rent"
   );
@@ -178,33 +182,14 @@ const ContractDetails = () => {
 
   return (
     <div className="min-h-screen bg-background dark">
-      <header className="py-4 px-0 bg-[#2A2A2A] text-white mb-8 flex justify-center">
-        <div className="w-full flex items-center justify-center">
-          <img 
-            src="/lovable-uploads/3e1840af-2d2e-403d-81ae-e4201bb075c5.png" 
-            alt="BYKO LEIGA" 
-            className="h-32 w-auto mx-auto" 
-          />
-          <div className="absolute left-6">
-            <Button 
-              variant="outline" 
-              className="text-white border-white hover:bg-white/10"
-              onClick={handleGoBack}
-            >
-              <ChevronLeft className="mr-2 h-4 w-4" /> Til baka
-            </Button>
-          </div>
-        </div>
-      </header>
+      <ContractHeader onGoBack={handleGoBack} />
       
       <main className="container px-4 pb-12 max-w-7xl mx-auto space-y-8">
         {loading ? (
-          <div className="flex justify-center py-12">
-            <div className="h-12 w-12 rounded-full border-4 border-primary border-t-primary/20 animate-spin"></div>
-          </div>
+          <ContractLoading />
         ) : (
           <>
-            {contract && contractData && (
+            {contract && contractData ? (
               <div className="space-y-6 animate-fade-in">
                 <ContractInfo contract={contract} renter={contractData.renter} />
 
@@ -212,69 +197,22 @@ const ContractDetails = () => {
                   <RentalTabsNavigation />
                   
                   <TabsContent value="active">
-                    <Card>
-                      <CardHeader className="pb-2">
-                        <CardTitle className="text-xl font-semibold text-white">Samningar</CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <ContractsTableComponent 
-                          contracts={contractData.contracts}
-                          sortField={sortField}
-                          sortDirection={sortDirection}
-                          handleSort={handleSort}
-                        />
-                      </CardContent>
-                    </Card>
+                    <ContractsTableComponent 
+                      contracts={contractData.contracts}
+                      sortField={sortField}
+                      sortDirection={sortDirection}
+                      handleSort={handleSort}
+                    />
                   </TabsContent>
                   
                   <TabsContent value="tiltekt">
-                    <Card>
-                      <CardHeader className="pb-2">
-                        <CardTitle className="text-xl font-semibold text-white flex justify-between items-center">
-                          <span>Tiltekt</span>
-                          {readyForPickItems.length > 0 && (
-                            <Button 
-                              className="ml-auto" 
-                              onClick={handleCompletePickup}
-                              disabled={!Object.values(pickedItems).some(Boolean)}
-                            >
-                              <Check className="h-4 w-4 mr-2" /> Staðfesta tiltekt
-                            </Button>
-                          )}
-                        </CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        {readyForPickItems.length === 0 && tiltektItems.length === 0 ? (
-                          <div className="text-center py-6 text-gray-500">Engar vörur eru tilbúnar fyrir tiltekt</div>
-                        ) : (
-                          <div className="space-y-8">
-                            {readyForPickItems.length > 0 && (
-                              <div>
-                                <h3 className="text-lg font-medium text-white mb-4">Vörur sem þarf að taka til</h3>
-                                <ItemTable 
-                                  items={readyForPickItems} 
-                                  showContractColumn={false}
-                                  onTogglePicked={toggleItemPicked}
-                                  pickedItems={pickedItems}
-                                  showCountColumn={false}
-                                />
-                              </div>
-                            )}
-
-                            {tiltektItems.length > 0 && (
-                              <div>
-                                <h3 className="text-lg font-medium text-white mb-4">Vörur tilbúnar til afhendingar</h3>
-                                <ItemTable 
-                                  items={tiltektItems} 
-                                  showContractColumn={false}
-                                  showCountColumn={false}
-                                />
-                              </div>
-                            )}
-                          </div>
-                        )}
-                      </CardContent>
-                    </Card>
+                    <TiltektTab 
+                      readyForPickItems={readyForPickItems}
+                      tiltektItems={tiltektItems}
+                      pickedItems={pickedItems}
+                      onTogglePicked={toggleItemPicked}
+                      onCompletePickup={handleCompletePickup}
+                    />
                   </TabsContent>
                   
                   <TabsContent value="offhired">
@@ -291,25 +229,14 @@ const ContractDetails = () => {
                   </TabsContent>
                 </Tabs>
               </div>
-            )}
-
-            {!contract && !loading && (
-              <div className="text-center py-12 text-white">
-                <p>Samningur með númer {contractNumber} fannst ekki.</p>
-                <Button onClick={handleGoBack} className="mt-4">
-                  Til baka
-                </Button>
-              </div>
+            ) : (
+              <ContractNotFound contractNumber={contractNumber} onGoBack={handleGoBack} />
             )}
           </>
         )}
       </main>
       
-      <footer className="bg-[#2A2A2A] text-white py-4 px-4">
-        <div className="container mx-auto text-center text-sm">
-          <p>BYKO Leiga</p>
-        </div>
-      </footer>
+      <ContractFooter />
 
       <OffHireDialog
         isOpen={offHireDialogOpen}
