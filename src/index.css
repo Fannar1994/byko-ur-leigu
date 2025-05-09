@@ -86,6 +86,27 @@
     --sidebar-border: 0 0% 20%;
     --sidebar-ring: 49 100% 50%; /* BYKO Yellow */
   }
+  
+  /* Remove number input arrows */
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  input[type="number"] {
+    -moz-appearance: textfield;
+  }
+
+  .no-arrows {
+    -moz-appearance: textfield;
+  }
+
+  .no-arrows::-webkit-inner-spin-button,
+  .no-arrows::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
 }
 
 @layer base {

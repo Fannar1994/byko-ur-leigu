@@ -29,13 +29,12 @@ const CountComponent: React.FC<CountComponentProps> = ({
 
   return (
     <div className="w-full">
-      <div className="text-sm text-gray-500 mb-1">Talningar</div>
       <Input
         type="number"
         value={localCount}
         onChange={handleCountChange}
         placeholder=""
-        className="w-16 h-8 text-center text-white bg-transparent"
+        className="w-16 h-8 text-center text-white bg-transparent no-arrows"
         min="0"
         aria-label="Talningar"
         id={`count-${itemId}`}
