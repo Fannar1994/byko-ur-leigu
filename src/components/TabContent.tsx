@@ -29,7 +29,7 @@ const TabContent: React.FC<TabContentProps> = ({
   onTogglePicked,
   pickedItems,
   showContractColumn = true,
-  showCountColumn = true,
+  showCountColumn = false,
   showLocationColumn = true,
   onCountChange,
 }) => {

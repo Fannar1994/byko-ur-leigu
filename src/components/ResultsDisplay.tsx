@@ -135,6 +135,7 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, onDataChange }
             items={tiltektItems} 
             contractNumbers={contractNumbersMap} 
             showLocationColumn={true}
+            showCountColumn={false}
           />
         </TabsContent>
         
@@ -147,6 +148,7 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, onDataChange }
             onOffHireClick={handleOffHireClick}
             processingItemId={processingItemId}
             showLocationColumn={true}
+            showCountColumn={false}
           />
         </TabsContent>
       </Tabs>

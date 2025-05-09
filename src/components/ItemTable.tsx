@@ -35,7 +35,7 @@ const ItemTable: React.FC<ItemTableProps> = ({
   contractNumbers,
   showActions = false,
   showContractColumn = true,
-  showCountColumn = true,
+  showCountColumn = false,
   showLocationColumn = false,
   onOffHireClick,
   processingItemId,
