@@ -129,6 +129,7 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, onDataChange }
             title="Vörur í leigu" 
             items={activeRentalItems} 
             contractNumbers={contractNumbersMap} 
+            showCountColumn={false}
           />
         </TabsContent>
         

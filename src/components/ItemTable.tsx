@@ -21,6 +21,7 @@ interface ItemTableProps {
   contractNumbers?: Record<string, string>;
   showActions?: boolean;
   showContractColumn?: boolean;
+  showCountColumn?: boolean;
   onOffHireClick?: (item: RentalItem) => void;
   processingItemId?: string | null;
   onTogglePicked?: (itemId: string) => void;
@@ -33,6 +34,7 @@ const ItemTable: React.FC<ItemTableProps> = ({
   contractNumbers,
   showActions = false,
   showContractColumn = true,
+  showCountColumn = true,
   onOffHireClick,
   processingItemId,
   onTogglePicked,
@@ -80,7 +82,9 @@ const ItemTable: React.FC<ItemTableProps> = ({
             )}
             <TableHead className="text-white">Skiladagsetning</TableHead>
             <TableHead className="text-white text-center">Staða</TableHead>
-            <TableHead className="text-white text-center">Talningar</TableHead>
+            {showCountColumn && (
+              <TableHead className="text-white text-center">Talningar</TableHead>
+            )}
             {(showActions || onTogglePicked) && (
               <TableHead className="text-white text-center">Aðgerðir</TableHead>
             )}
@@ -134,12 +138,14 @@ const ItemTable: React.FC<ItemTableProps> = ({
                     {item.status}
                   </Badge>
                 </TableCell>
-                <TableCell className="text-center" onClick={(e) => e.stopPropagation()}>
-                  <CountComponent 
-                    itemId={item.id}
-                    onCountChange={handleCountChange(item.id)}
-                  />
-                </TableCell>
+                {showCountColumn && (
+                  <TableCell className="text-center" onClick={(e) => e.stopPropagation()}>
+                    <CountComponent 
+                      itemId={item.id}
+                      onCountChange={handleCountChange(item.id)}
+                    />
+                  </TableCell>
+                )}
                 {showActions && onOffHireClick && (
                   <TableCell className="text-center" onClick={(e) => e.stopPropagation()}>
                     <Button
