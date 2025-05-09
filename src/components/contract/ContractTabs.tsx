@@ -40,6 +40,10 @@ const ContractTabs: React.FC<ContractTabsProps> = ({
     <Tabs defaultValue="tiltekt" className="w-full">
       <RentalTabsNavigation />
       
+      <TabsContent value="active">
+        {/* This is intentionally empty as we're focusing on the other tabs */}
+      </TabsContent>
+      
       <TabsContent value="tiltekt">
         <TiltektTab 
           readyForPickItems={readyForPickItems}
