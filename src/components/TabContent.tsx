@@ -15,6 +15,7 @@ interface TabContentProps {
   pickedItems?: Record<string, boolean>;
   showContractColumn?: boolean;
   showCountColumn?: boolean;
+  showLocationColumn?: boolean;
   onCountChange?: (itemId: string, count: number) => void;
 }
 
@@ -29,6 +30,7 @@ const TabContent: React.FC<TabContentProps> = ({
   pickedItems,
   showContractColumn = true,
   showCountColumn = true,
+  showLocationColumn = true,
   onCountChange,
 }) => {
   return (
@@ -47,6 +49,7 @@ const TabContent: React.FC<TabContentProps> = ({
           pickedItems={pickedItems}
           showContractColumn={showContractColumn}
           showCountColumn={showCountColumn}
+          showLocationColumn={showLocationColumn}
           onCountChange={onCountChange}
         />
       </CardContent>

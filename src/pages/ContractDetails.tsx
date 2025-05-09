@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -204,6 +205,7 @@ const ContractDetails = () => {
                       items={activeItems} 
                       showContractColumn={false} 
                       showCountColumn={false}
+                      showLocationColumn={true}
                     />
                   </TabsContent>
                   
@@ -263,6 +265,7 @@ const ContractDetails = () => {
                       showActions={true}
                       onOffHireClick={handleOffHireClick}
                       processingItemId={processingItemId}
+                      showLocationColumn={true}
                     />
                   </TabsContent>
                 </Tabs>

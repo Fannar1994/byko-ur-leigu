@@ -130,6 +130,7 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, onDataChange }
             items={activeRentalItems} 
             contractNumbers={contractNumbersMap} 
             showCountColumn={false}
+            showLocationColumn={true}
           />
         </TabsContent>
         
@@ -138,6 +139,7 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, onDataChange }
             title="Vörur í tiltekt" 
             items={tiltektItems} 
             contractNumbers={contractNumbersMap} 
+            showLocationColumn={true}
           />
         </TabsContent>
         
@@ -149,6 +151,7 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, onDataChange }
             showActions={true}
             onOffHireClick={handleOffHireClick}
             processingItemId={processingItemId}
+            showLocationColumn={true}
           />
         </TabsContent>
       </Tabs>
