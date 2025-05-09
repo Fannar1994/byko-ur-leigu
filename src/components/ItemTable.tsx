@@ -22,6 +22,7 @@ interface ItemTableProps {
   showActions?: boolean;
   showContractColumn?: boolean;
   showCountColumn?: boolean;
+  showLocationColumn?: boolean;
   onOffHireClick?: (item: RentalItem) => void;
   processingItemId?: string | null;
   onTogglePicked?: (itemId: string) => void;
