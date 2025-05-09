@@ -13,6 +13,7 @@ import ContractInfo from "@/components/ContractInfo";
 import ItemTable from "@/components/ItemTable";
 import TabContent from "@/components/TabContent";
 import RentalTabsNavigation from "@/components/RentalTabsNavigation";
+import ContractsTableComponent from "@/components/ContractsTableComponent";
 
 const ContractDetails = () => {
   const { contractNumber } = useParams();
@@ -200,13 +201,18 @@ const ContractDetails = () => {
                   <RentalTabsNavigation />
                   
                   <TabsContent value="active">
-                    <TabContent 
-                      title="Vörur í leigu" 
-                      items={activeItems} 
-                      showContractColumn={false} 
-                      showCountColumn={false}
-                      showLocationColumn={true}
-                    />
+                    <Card>
+                      <CardHeader className="pb-2">
+                        <CardTitle className="text-xl font-semibold text-white">Samningar</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <ContractsTableComponent 
+                          contracts={contractData.contracts}
+                          sortField="startDate"
+                          sortDirection="desc"
+                        />
+                      </CardContent>
+                    </Card>
                   </TabsContent>
                   
                   <TabsContent value="tiltekt">

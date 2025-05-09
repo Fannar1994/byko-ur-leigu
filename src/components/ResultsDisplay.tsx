@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
@@ -38,18 +37,12 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, onDataChange }
     return 0;
   });
 
-  const activeContracts = sortedContracts.filter(c => c.status === "Active" || c.status === "Virkur" || c.status === "Í leigu");
   const contractIds = results.contracts.map(c => c.id);
   
   const contractNumbersMap: Record<string, string> = {};
   results.contracts.forEach(c => {
     contractNumbersMap[c.id] = c.contractNumber;
   });
-  
-  const activeRentalItems = localRentalItems.filter(item => 
-    contractIds.includes(item.contractId) && 
-    (item.status === "On Rent" || item.status === "Í leigu")
-  );
   
   const tiltektItems = localRentalItems.filter(item => 
     contractIds.includes(item.contractId) && 
@@ -125,13 +118,14 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, onDataChange }
         <RentalTabsNavigation />
         
         <TabsContent value="active" className="animate-fade-in">
-          <TabContent 
-            title="Vörur í leigu" 
-            items={activeRentalItems} 
-            contractNumbers={contractNumbersMap} 
-            showCountColumn={false}
-            showLocationColumn={true}
-          />
+          <Card>
+            <ContractsTableComponent 
+              contracts={sortedContracts}
+              sortField={sortField}
+              sortDirection={sortDirection}
+              onSort={handleSort}
+            />
+          </Card>
         </TabsContent>
         
         <TabsContent value="tiltekt" className="animate-fade-in">
