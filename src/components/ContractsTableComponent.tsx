@@ -104,11 +104,6 @@ const ContractsTableComponent: React.FC<ContractsTableProps> = ({
                 <SortIcon field="endDate" currentField={sortField} direction={sortDirection} />
               </div>
             </th>
-            <th 
-              className="px-6 py-3 text-center text-xs font-medium text-white uppercase tracking-wider"
-            >
-              <span>Talningar</span>
-            </th>
           </tr>
         </thead>
         <tbody className="bg-[#2A2A2A] divide-y divide-gray-700">
@@ -153,9 +148,6 @@ const ContractsTableComponent: React.FC<ContractsTableProps> = ({
                   <Calendar size={14} className="text-gray-400" />
                   <span>{formatDate(contract.endDate)}</span>
                 </div>
-              </td>
-              <td className="px-6 py-4 whitespace-nowrap text-center">
-                <div className="font-medium text-white">0</div>
               </td>
             </tr>
           ))}

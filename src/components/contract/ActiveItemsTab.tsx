@@ -16,7 +16,7 @@ const ActiveItemsTab: React.FC<ActiveItemsTabProps> = ({
   handleOffHireClick,
   processingItemId,
   onCountChange,
-  showCountColumn = false
+  showCountColumn = true
 }) => {
   return (
     <TabContent 
