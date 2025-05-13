@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { AuthContext } from "../App";
-import { loginToInspHire } from "../api/auth";
+import { loginToInspHire } from "../api/inspHireService";
 
 const Login = () => {
   const [username, setUsername] = useState("");
@@ -20,10 +20,12 @@ const Login = () => {
     setIsLoading(true);
     
     try {
-      const sessionId = await loginToInspHire(username, password);
+      const sessionData = await loginToInspHire(username, password);
       
-      // Save the session ID for future API requests
-      localStorage.setItem("inspSession", sessionId);
+      // Save the entire session data for future API requests
+      localStorage.setItem("inspSession", sessionData.sessionId);
+      localStorage.setItem("inspDepot", sessionData.depot);
+      localStorage.setItem("inspUsername", sessionData.username);
       
       setIsAuthenticated(true);
       toast.success("Innskráning tókst", {
