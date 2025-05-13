@@ -16,7 +16,9 @@ interface TabContentProps {
   showContractColumn?: boolean;
   showCountColumn?: boolean;
   showLocationColumn?: boolean;
+  showDepartmentColumn?: boolean;
   onCountChange?: (itemId: string, count: number) => void;
+  onStatusClick?: (item: RentalItem, count: number) => void;
 }
 
 const TabContent: React.FC<TabContentProps> = ({
@@ -29,9 +31,11 @@ const TabContent: React.FC<TabContentProps> = ({
   onTogglePicked,
   pickedItems,
   showContractColumn = true,
-  showCountColumn = false, // Default explicitly set to false
+  showCountColumn = false,
   showLocationColumn = true,
+  showDepartmentColumn = true,
   onCountChange,
+  onStatusClick,
 }) => {
   return (
     <Card>
@@ -50,7 +54,9 @@ const TabContent: React.FC<TabContentProps> = ({
           showContractColumn={showContractColumn}
           showCountColumn={showCountColumn}
           showLocationColumn={showLocationColumn}
+          showDepartmentColumn={showDepartmentColumn}
           onCountChange={onCountChange}
+          onStatusClick={onStatusClick}
         />
       </CardContent>
     </Card>

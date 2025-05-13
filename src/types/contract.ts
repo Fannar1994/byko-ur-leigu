@@ -1,3 +1,4 @@
+
 export interface Renter {
   name: string;
   kennitala: string;
@@ -16,6 +17,7 @@ export interface Contract {
   endDate: string;
   totalValue: number;
   location?: string;
+  department?: 'KOPA' | 'ÞORH' | 'GRAN' | 'KEFL' | 'SELF' | 'AKEY' | 'VER';
 }
 
 export interface RentalItem {
@@ -28,6 +30,7 @@ export interface RentalItem {
   rentalRate: number;
   status?: 'On Rent' | 'Off-Hired' | 'Pending Return' | 'Í leigu' | 'Tiltekt' | 'Úr leiga' | 'Tilbúið til afhendingar';
   location?: string;
+  department?: 'KOPA' | 'ÞORH' | 'GRAN' | 'KEFL' | 'SELF' | 'AKEY' | 'VER';
 }
 
 export interface SearchResults {

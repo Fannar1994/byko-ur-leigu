@@ -1,6 +1,6 @@
 
 import React, { useState } from "react";
-import { UserX, Package, MapPin } from "lucide-react";
+import { UserX, Package, MapPin, Building } from "lucide-react";
 import { RentalItem } from "@/types/contract";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -22,6 +22,7 @@ interface ItemTableProps {
   showContractColumn?: boolean;
   showCountColumn?: boolean;
   showLocationColumn?: boolean;
+  showDepartmentColumn?: boolean;
   onOffHireClick?: (item: RentalItem) => void;
   processingItemId?: string | null;
   onTogglePicked?: (itemId: string) => void;
@@ -37,6 +38,7 @@ const ItemTable: React.FC<ItemTableProps> = ({
   showContractColumn = true,
   showCountColumn = false, 
   showLocationColumn = false,
+  showDepartmentColumn = true,
   onOffHireClick,
   processingItemId,
   onTogglePicked,
@@ -82,6 +84,19 @@ const ItemTable: React.FC<ItemTableProps> = ({
     }
   };
 
+  const getDepartmentBadgeColor = (department?: string) => {
+    switch (department) {
+      case "KOPA": return "bg-blue-100 text-blue-800";
+      case "ÞORH": return "bg-green-100 text-green-800";
+      case "GRAN": return "bg-purple-100 text-purple-800";
+      case "KEFL": return "bg-orange-100 text-orange-800";
+      case "SELF": return "bg-pink-100 text-pink-800";
+      case "AKEY": return "bg-indigo-100 text-indigo-800";
+      case "VER": return "bg-yellow-100 text-yellow-800";
+      default: return "bg-gray-100 text-gray-800";
+    }
+  };
+
   if (items.length === 0) {
     return <div className="text-center py-6 text-gray-500">Engar vörur fundust</div>;
   }
@@ -95,6 +110,9 @@ const ItemTable: React.FC<ItemTableProps> = ({
             <TableHead className="text-white">Vöruheiti</TableHead>
             {showContractColumn && (
               <TableHead className="text-white">Samningsnúmer</TableHead>
+            )}
+            {showDepartmentColumn && (
+              <TableHead className="text-white">Deild</TableHead>
             )}
             {showLocationColumn && (
               <TableHead className="text-white">Verkstaður</TableHead>
@@ -143,6 +161,20 @@ const ItemTable: React.FC<ItemTableProps> = ({
                     {(!contractNumbers || !contractNumbers[item.contractId]) && (
                       <span>-</span>
                     )}
+                  </TableCell>
+                )}
+                {showDepartmentColumn && (
+                  <TableCell className={isSelected ? "text-black" : "text-white"}>
+                    <div className="flex items-center gap-1">
+                      <Building size={14} className={isSelected ? "text-black" : "text-gray-400"} />
+                      {item.department ? (
+                        <Badge className={getDepartmentBadgeColor(item.department)}>
+                          {item.department}
+                        </Badge>
+                      ) : (
+                        <span className="text-gray-400">-</span>
+                      )}
+                    </div>
                   </TableCell>
                 )}
                 {showLocationColumn && (

@@ -3,7 +3,7 @@ import React from 'react';
 import { Contract } from '@/types/contract';
 import { Badge } from "@/components/ui/badge";
 import { formatDate } from "@/utils/formatters";
-import { Calendar, MapPin, ChevronUp, ChevronDown } from "lucide-react";
+import { Calendar, MapPin, ChevronUp, ChevronDown, Building } from "lucide-react";
 import { Link } from "react-router-dom";
 
 interface ContractsTableProps {
@@ -33,6 +33,19 @@ const ContractsTableComponent: React.FC<ContractsTableProps> = ({
     }
   };
 
+  const getDepartmentBadgeColor = (department?: string) => {
+    switch (department) {
+      case "KOPA": return "bg-blue-100 text-blue-800";
+      case "ÞORH": return "bg-green-100 text-green-800";
+      case "GRAN": return "bg-purple-100 text-purple-800";
+      case "KEFL": return "bg-orange-100 text-orange-800";
+      case "SELF": return "bg-pink-100 text-pink-800";
+      case "AKEY": return "bg-indigo-100 text-indigo-800";
+      case "VER": return "bg-yellow-100 text-yellow-800";
+      default: return "bg-gray-100 text-gray-800";
+    }
+  };
+
   const SortIcon = ({ field, currentField, direction }: { field: string, currentField: string, direction: "asc" | "desc" }) => {
     if (field !== currentField) return null;
     return direction === "asc" ? <ChevronUp size={16} /> : <ChevronDown size={16} />;
@@ -50,6 +63,15 @@ const ContractsTableComponent: React.FC<ContractsTableProps> = ({
               <div className="flex items-center gap-1">
                 <span>Samningsnúmer</span>
                 <SortIcon field="contractNumber" currentField={sortField} direction={sortDirection} />
+              </div>
+            </th>
+            <th 
+              className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider cursor-pointer"
+              onClick={() => handleSort("department")}
+            >
+              <div className="flex items-center gap-1">
+                <span>Deild</span>
+                <SortIcon field="department" currentField={sortField} direction={sortDirection} />
               </div>
             </th>
             <th 
@@ -116,6 +138,18 @@ const ContractsTableComponent: React.FC<ContractsTableProps> = ({
                 >
                   {contract.contractNumber}
                 </Link>
+              </td>
+              <td className="px-6 py-4 whitespace-nowrap">
+                <div className="flex items-center gap-1">
+                  <Building size={14} className="text-gray-400" />
+                  {contract.department ? (
+                    <Badge className={getDepartmentBadgeColor(contract.department)}>
+                      {contract.department}
+                    </Badge>
+                  ) : (
+                    <span className="text-gray-400">-</span>
+                  )}
+                </div>
               </td>
               <td className="px-6 py-4 whitespace-nowrap">
                 <Badge className={getStatusColor(contract.status)}>
