@@ -49,7 +49,7 @@ export async function searchByKennitala(kennitala: string): Promise<SearchResult
 }
 
 // Mock implementation for development and testing
-function mockSearchByKennitala(kennitala: string): SearchResults {
+function mockSearchByKennitala(kennitala: string): Promise<SearchResults> {
   // Simulate API delay
   return new Promise((resolve) => {
     setTimeout(() => {
