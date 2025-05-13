@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { AuthContext } from "../App";
+import { loginToInspHire } from "../api/auth";
 
 const Login = () => {
   const [username, setUsername] = useState("");
@@ -18,16 +19,25 @@ const Login = () => {
     e.preventDefault();
     setIsLoading(true);
     
-    // Mock login - in a real app, you would call an API
-    setTimeout(() => {
-      setIsLoading(false);
-      // For demo, let any login work
+    try {
+      const sessionId = await loginToInspHire(username, password);
+      
+      // Save the session ID for future API requests
+      localStorage.setItem("inspSession", sessionId);
+      
       setIsAuthenticated(true);
       toast.success("Innskráning tókst", {
         description: "Velkomin/n aftur!",
       });
       navigate("/");
-    }, 1500);
+    } catch (error) {
+      console.error("Login error:", error);
+      toast.error("Innskráning mistókst", {
+        description: error instanceof Error ? error.message : "Villa kom upp við innskráningu",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (

@@ -3,6 +3,30 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { RentalItem } from "@/types/contract";
 
+export async function updateItemStatus(itemId: string, status: string) {
+  const baseUrl = import.meta.env.VITE_INSPHIRE_API;
+  const sessionId = localStorage.getItem("inspSession");
+
+  const response = await fetch(`${baseUrl}/api/contractitems/${itemId}`, {
+    method: "PUT",
+    headers: {
+      "EnableString": "BYKO",
+      "SessionID": sessionId!,
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      Status: status,
+      Memo: `Status updated to ${status}`
+    })
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to update item status");
+  }
+
+  return response.json();
+}
+
 interface PickupHandlerProps {
   onItemStatusUpdate: (itemIds: string[], newStatus: "On Rent" | "Off-Hired" | "Pending Return" | "Í leigu" | "Tiltekt" | "Úr leiga" | "Tilbúið til afhendingar") => void;
   children: (props: {

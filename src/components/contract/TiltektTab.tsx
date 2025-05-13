@@ -7,6 +7,25 @@ import ItemTable from "../ItemTable";
 import { RentalItem } from "@/types/contract";
 import { toast } from "sonner";
 
+export async function fetchContractItems(contractId: string) {
+  const baseUrl = import.meta.env.VITE_INSPHIRE_API;
+  const sessionId = localStorage.getItem("inspSession");
+
+  const response = await fetch(`${baseUrl}/api/contractitems?contract=${contractId}`, {
+    headers: {
+      "EnableString": "BYKO",
+      "SessionID": sessionId!,
+      "Content-Type": "application/json"
+    }
+  });
+
+  if (!response.ok) {
+    throw new Error("Could not fetch contract items");
+  }
+
+  return response.json();
+}
+
 interface TiltektTabProps {
   readyForPickItems: RentalItem[];
   tiltektItems: RentalItem[];
