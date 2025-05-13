@@ -63,6 +63,7 @@ export function OffHireHandler({ children, onItemStatusUpdate }: OffHireHandlerP
         }
       }
     } catch (error) {
+      console.error("Error in off-hire process:", error);
       let errorMessage = "Óþekkt villa kom upp.";
       if (error instanceof Error) {
         errorMessage = error.message;

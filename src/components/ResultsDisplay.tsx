@@ -4,12 +4,11 @@ import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { SearchResults, Contract, RentalItem } from "@/types/contract";
 import { toast } from "sonner";
-import { offHireItem } from "@/services/api";
-import OffHireDialog from "./OffHireDialog";
 import TabContent from "./TabContent";
 import ContractsTableComponent from "./ContractsTableComponent";
 import RenterInfoCard from "./RenterInfoCard";
 import RentalTabsNavigation from "./RentalTabsNavigation";
+import { OffHireHandler } from "./contract/OffHireHandler";
 
 interface ResultsDisplayProps {
   results: SearchResults | null;
@@ -19,9 +18,6 @@ interface ResultsDisplayProps {
 const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, onDataChange }) => {
   const [sortField, setSortField] = useState<keyof Contract>("startDate");
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("desc");
-  const [offHireDialogOpen, setOffHireDialogOpen] = useState(false);
-  const [selectedItem, setSelectedItem] = useState<RentalItem | null>(null);
-  const [processingItemId, setProcessingItemId] = useState<string | null>(null);
   const [localRentalItems, setLocalRentalItems] = useState<RentalItem[]>([]);
   
   // Add this for counting functionality
@@ -70,50 +66,18 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, onDataChange }
     }
   };
 
-  const handleOffHireClick = (item: RentalItem) => {
-    setSelectedItem(item);
-    setOffHireDialogOpen(true);
-  };
-
-  const handleOffHireConfirm = async (itemId: string, noCharge: boolean) => {
-    setOffHireDialogOpen(false);
-    setProcessingItemId(itemId);
+  // Update item status locally after off-hire
+  const handleItemStatusUpdate = (itemId: string, newStatus: string) => {
+    setLocalRentalItems(prevItems => 
+      prevItems.map(item => 
+        item.id === itemId 
+          ? { ...item, status: newStatus } 
+          : item
+      )
+    );
     
-    try {
-      const response = await offHireItem(itemId, noCharge);
-      
-      if (response.success) {
-        setLocalRentalItems(prevItems => 
-          prevItems.map(item => 
-            item.id === itemId 
-              ? { ...item, status: "Úr leiga" } 
-              : item
-          )
-        );
-        
-        toast.success("Aðgerð tókst", {
-          description: response.message,
-        });
-        
-        if (onDataChange) {
-          onDataChange();
-        }
-      } else {
-        toast.error("Villa", {
-          description: response.message || "Ekki tókst að skila vöru.",
-        });
-      }
-    } catch (error) {
-      let errorMessage = "Óþekkt villa kom upp.";
-      if (error instanceof Error) {
-        errorMessage = error.message;
-      }
-      
-      toast.error("Villa", {
-        description: errorMessage,
-      });
-    } finally {
-      setProcessingItemId(null);
+    if (onDataChange) {
+      onDataChange();
     }
   };
 
@@ -147,26 +111,23 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, onDataChange }
         </TabsContent>
         
         <TabsContent value="offhired" className="animate-fade-in">
-          <TabContent 
-            title="Úr leiga" 
-            items={offHiredItems} 
-            contractNumbers={contractNumbersMap} 
-            showActions={true}
-            onOffHireClick={handleOffHireClick}
-            processingItemId={processingItemId}
-            showLocationColumn={true}
-            showCountColumn={true}
-            onCountChange={handleCountChange}
-          />
+          <OffHireHandler onItemStatusUpdate={handleItemStatusUpdate}>
+            {({ handleOffHireClick, processingItemId }) => (
+              <TabContent 
+                title="Úr leiga" 
+                items={offHiredItems} 
+                contractNumbers={contractNumbersMap} 
+                showActions={true}
+                onOffHireClick={handleOffHireClick}
+                processingItemId={processingItemId}
+                showLocationColumn={true}
+                showCountColumn={true}
+                onCountChange={handleCountChange}
+              />
+            )}
+          </OffHireHandler>
         </TabsContent>
       </Tabs>
-
-      <OffHireDialog
-        isOpen={offHireDialogOpen}
-        item={selectedItem}
-        onClose={() => setOffHireDialogOpen(false)}
-        onConfirm={handleOffHireConfirm}
-      />
     </div>
   );
 };
