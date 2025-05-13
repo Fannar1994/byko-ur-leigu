@@ -6,7 +6,7 @@ const mockContracts: Contract[] = [
   {
     id: "C-12345",
     contractNumber: "12345",
-    status: "Active",
+    status: "Í leigu",
     startDate: "2023-01-01",
     endDate: "2023-12-31",
     totalValue: 45000,
@@ -36,7 +36,7 @@ const mockContracts: Contract[] = [
   {
     id: "C-89012",
     contractNumber: "89012",
-    status: "Active",
+    status: "Virkur",
     startDate: "2023-04-10",
     endDate: "2024-04-09",
     totalValue: 48000,
@@ -198,7 +198,7 @@ export const fetchContractByNumber = async (contractNumber: string): Promise<Con
   });
 };
 
-// Add these missing exports that are used in api.ts
+// Function to simulate searching by kennitala
 export const mockSearchByKennitala = (kennitala: string): Promise<SearchResults> => {
   return new Promise((resolve) => {
     setTimeout(() => {
