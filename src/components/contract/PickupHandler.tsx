@@ -6,7 +6,7 @@ import { prepareReportData } from "@/services/reportService";
 import { sendReport } from "@/services/microsoftService";
 
 interface PickupHandlerProps {
-  onItemStatusUpdate: (itemIds: string[], newStatus: "On Rent" | "Off-Hired" | "Pending Return" | "Í leigu" | "Tiltekt" | "Úr leiga" | "Tilbúið til afhendingar") => void;
+  onItemStatusUpdate: (itemIds: string[], newStatus: "Tiltekt" | "Úr leiga" | "Í leigu" | "On Rent" | "Off-Hired" | "Pending Return" | "Tilbúið til afhendingar") => void;
   children: (props: {
     pickedItems: Record<string, boolean>;
     toggleItemPicked: (itemId: string) => void;

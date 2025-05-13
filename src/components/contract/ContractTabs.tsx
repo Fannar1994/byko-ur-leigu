@@ -22,7 +22,7 @@ interface ContractTabsProps {
   onOffHireClick: (item: RentalItem) => void;
   handleSort: (field: keyof Contract) => void;
   onCountChange?: (itemId: string, count: number) => void;
-  onItemStatusUpdate?: (itemId: string, newStatus: string, count: number) => void;
+  onItemStatusUpdate?: (itemId: string, newStatus: "Tiltekt" | "Úr leiga" | "Í leigu" | "On Rent" | "Off-Hired" | "Pending Return" | "Tilbúið til afhendingar", count: number) => void;
 }
 
 const ContractTabs: React.FC<ContractTabsProps> = ({

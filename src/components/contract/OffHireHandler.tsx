@@ -11,7 +11,7 @@ interface OffHireHandlerProps {
     handleOffHireClick: (item: RentalItem) => void;
     processingItemId: string | null;
   }) => React.ReactNode;
-  onItemStatusUpdate: (itemId: string, newStatus: string) => void;
+  onItemStatusUpdate: (itemId: string, newStatus: "Tiltekt" | "Úr leiga" | "Í leigu" | "On Rent" | "Off-Hired" | "Pending Return" | "Tilbúið til afhendingar") => void;
 }
 
 export function OffHireHandler({ children, onItemStatusUpdate }: OffHireHandlerProps) {

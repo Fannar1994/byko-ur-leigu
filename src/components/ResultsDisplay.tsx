@@ -66,8 +66,8 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, onDataChange }
     }
   };
 
-  // Update item status locally after off-hire
-  const handleItemStatusUpdate = (itemId: string, newStatus: string) => {
+  // Update item status locally after off-hire - fixed to use proper type
+  const handleItemStatusUpdate = (itemId: string, newStatus: "Tiltekt" | "Úr leiga" | "Í leigu" | "On Rent" | "Off-Hired" | "Pending Return" | "Tilbúið til afhendingar") => {
     setLocalRentalItems(prevItems => 
       prevItems.map(item => 
         item.id === itemId 

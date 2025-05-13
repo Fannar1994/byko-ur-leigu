@@ -34,7 +34,7 @@ interface TiltektTabProps {
   onCompletePickup: () => void;
   showCountColumn?: boolean;
   onCountChange?: (itemId: string, count: number) => void;
-  onStatusUpdate?: (itemId: string, newStatus: string, count: number) => void;
+  onStatusUpdate?: (itemId: string, newStatus: "Tiltekt" | "Úr leiga" | "Í leigu" | "On Rent" | "Off-Hired" | "Pending Return" | "Tilbúið til afhendingar", count: number) => void;
 }
 
 const TiltektTab: React.FC<TiltektTabProps> = ({ 
