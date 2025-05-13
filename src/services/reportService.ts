@@ -1,6 +1,6 @@
-
 import ExcelJS from 'exceljs';
 import { RentalItem } from '@/types/contract';
+import { EMAIL_CONFIG } from "@/config/appConfig";
 
 /**
  * Generate an HTML table with the rental items data
@@ -141,3 +141,6 @@ export async function prepareReportData(items: RentalItem[], contractId: string,
     fileName
   };
 }
+
+// Export the email recipient from configuration
+export const EMAIL_RECIPIENT = EMAIL_CONFIG.recipient;
