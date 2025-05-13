@@ -25,8 +25,15 @@ export async function loginToInspHire(username: string, password: string) {
     body: JSON.stringify({ username, password })
   });
 
+  if (!response.ok) {
+    throw new Error("Login failed: Network response was not ok");
+  }
+
   const data = await response.json();
-  if (data.STATUS !== 1) throw new Error("Invalid login");
+  
+  if (data.STATUS !== 1) {
+    throw new Error(data.MESSAGE || "Invalid login credentials");
+  }
 
   return {
     sessionId: data.SESSIONID,
