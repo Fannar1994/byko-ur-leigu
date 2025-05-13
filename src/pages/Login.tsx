@@ -1,18 +1,46 @@
-import React, { useState, useContext } from "react";
+
+import React, { useState, useContext, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { AuthContext } from "../App";
-import { loginToInspHire } from "../api/inspHireService";
+import { loginToInspHire, testApiConnection } from "../api/inspHireService";
+import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
+import { API_CONFIG } from "@/config/appConfig";
 
 const Login = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [apiStatus, setApiStatus] = useState<{success?: boolean, error?: string, url?: string} | null>(null);
+  const [checkingConnection, setCheckingConnection] = useState(false);
   const navigate = useNavigate();
   const { setIsAuthenticated } = useContext(AuthContext);
+
+  // Test API connection when component mounts
+  useEffect(() => {
+    const checkConnection = async () => {
+      setCheckingConnection(true);
+      try {
+        const status = await testApiConnection();
+        setApiStatus(status);
+        
+        if (!status.success) {
+          toast.error("API Connection Issue", {
+            description: "Could not connect to inspHire API. Check network or configuration.",
+          });
+        }
+      } catch (error) {
+        console.error("Connection check error:", error);
+      } finally {
+        setCheckingConnection(false);
+      }
+    };
+    
+    checkConnection();
+  }, []);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -41,6 +69,28 @@ const Login = () => {
     }
   };
 
+  const retryConnection = async () => {
+    setCheckingConnection(true);
+    try {
+      const status = await testApiConnection();
+      setApiStatus(status);
+      
+      if (status.success) {
+        toast.success("Connection Restored", {
+          description: "API connection is now available.",
+        });
+      } else {
+        toast.error("Connection Failed", {
+          description: "Still unable to connect to the API.",
+        });
+      }
+    } catch (error) {
+      console.error("Connection retry error:", error);
+    } finally {
+      setCheckingConnection(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background dark flex flex-col">
       <main className="flex-1 flex items-center justify-center p-4">
@@ -57,6 +107,26 @@ const Login = () => {
             </div>
           </div>
           
+          {apiStatus && !apiStatus.success && (
+            <Alert variant="destructive" className="animate-pulse mb-4">
+              <AlertTitle>Villa í tengingu við API</AlertTitle>
+              <AlertDescription>
+                <p>Ekki náðist tenging við inspHire API.</p>
+                <p className="mt-2 text-xs font-mono">URL: {apiStatus.url}</p>
+                {apiStatus.error && <p className="mt-1 text-xs font-mono">Villa: {apiStatus.error}</p>}
+                <p className="mt-2">Núverandi API-URL: {API_CONFIG.inspHireApi}</p>
+                <Button 
+                  onClick={retryConnection} 
+                  variant="outline" 
+                  className="mt-2 w-full"
+                  disabled={checkingConnection}
+                >
+                  {checkingConnection ? "Athugar tengingu..." : "Reyna aftur"}
+                </Button>
+              </AlertDescription>
+            </Alert>
+          )}
+          
           <form onSubmit={handleLogin} className="space-y-6">
             <div className="space-y-2">
               <Label htmlFor="username" className="text-white">Notandanafn</Label>
@@ -68,6 +138,7 @@ const Login = () => {
                 onChange={(e) => setUsername(e.target.value)}
                 required
                 className="text-white placeholder-white/70"
+                disabled={apiStatus && !apiStatus.success}
               />
             </div>
             
@@ -81,13 +152,14 @@ const Login = () => {
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 className="text-white placeholder-white/70"
+                disabled={apiStatus && !apiStatus.success}
               />
             </div>
             
             <Button 
               type="submit" 
               className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
-              disabled={isLoading}
+              disabled={isLoading || (apiStatus && !apiStatus.success)}
             >
               {isLoading ? (
                 <>
