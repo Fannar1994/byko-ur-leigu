@@ -9,10 +9,14 @@ import { AuthContext } from "../App";
 import { loginToInspHire, testApiConnection } from "../api/inspHireService";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { API_CONFIG } from "@/config/appConfig";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Card } from "@/components/ui/card";
 
 const Login = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [mockUsername, setMockUsername] = useState("demo");
+  const [mockPassword, setMockPassword] = useState("demo123");
   const [isLoading, setIsLoading] = useState(false);
   const [apiStatus, setApiStatus] = useState<{success?: boolean, error?: string, url?: string} | null>(null);
   const [checkingConnection, setCheckingConnection] = useState(false);
@@ -66,6 +70,36 @@ const Login = () => {
       });
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleMockLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+    
+    // Simple validation for the mock login
+    if (mockUsername === "demo" && mockPassword === "demo123") {
+      // Create a mock session
+      localStorage.setItem("inspSession", "mock-session-id");
+      localStorage.setItem("inspDepot", "mock-depot");
+      localStorage.setItem("inspUsername", mockUsername);
+      
+      // Short delay to simulate API call
+      setTimeout(() => {
+        setIsAuthenticated(true);
+        toast.success("Demo innskráning tókst", {
+          description: "Þú ert skráð/ur inn með demo aðgang!",
+        });
+        navigate("/");
+        setIsLoading(false);
+      }, 800);
+    } else {
+      setTimeout(() => {
+        toast.error("Demo innskráning mistókst", {
+          description: "Notandanafn: demo, Lykilorð: demo123",
+        });
+        setIsLoading(false);
+      }, 800);
     }
   };
 
@@ -127,48 +161,108 @@ const Login = () => {
             </Alert>
           )}
           
-          <form onSubmit={handleLogin} className="space-y-6">
-            <div className="space-y-2">
-              <Label htmlFor="username" className="text-white">Notandanafn</Label>
-              <Input 
-                id="username"
-                type="text" 
-                placeholder="Sláðu inn notandanafn"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                required
-                className="text-white placeholder-white/70"
-                disabled={apiStatus && !apiStatus.success}
-              />
-            </div>
+          <Tabs defaultValue="mock" className="w-full">
+            <TabsList className="grid w-full grid-cols-2 mb-4">
+              <TabsTrigger value="mock">Demo Innskráning</TabsTrigger>
+              <TabsTrigger value="real">API Innskráning</TabsTrigger>
+            </TabsList>
             
-            <div className="space-y-2">
-              <Label htmlFor="password" className="text-white">Lykilorð</Label>
-              <Input 
-                id="password"
-                type="password" 
-                placeholder="Sláðu inn lykilorð"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                className="text-white placeholder-white/70"
-                disabled={apiStatus && !apiStatus.success}
-              />
-            </div>
+            <TabsContent value="mock">
+              <Card className="p-6">
+                <form onSubmit={handleMockLogin} className="space-y-6">
+                  <div className="space-y-2">
+                    <Label htmlFor="mockUsername" className="text-white">Demo Notandanafn</Label>
+                    <Input 
+                      id="mockUsername"
+                      type="text" 
+                      placeholder="demo"
+                      value={mockUsername}
+                      onChange={(e) => setMockUsername(e.target.value)}
+                      required
+                      className="text-white placeholder-white/70"
+                    />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="mockPassword" className="text-white">Demo Lykilorð</Label>
+                    <Input 
+                      id="mockPassword"
+                      type="password" 
+                      placeholder="demo123"
+                      value={mockPassword}
+                      onChange={(e) => setMockPassword(e.target.value)}
+                      required
+                      className="text-white placeholder-white/70"
+                    />
+                  </div>
+                  
+                  <Button 
+                    type="submit" 
+                    className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
+                    disabled={isLoading}
+                  >
+                    {isLoading ? (
+                      <>
+                        <div className="h-5 w-5 rounded-full border-2 border-current border-t-transparent animate-spin mr-2"></div>
+                        Skrái inn...
+                      </>
+                    ) : "Innskrá með demo"}
+                  </Button>
+                  
+                  <p className="text-sm text-white/70 text-center mt-4">
+                    Demo aðgangur: <span className="font-medium">demo / demo123</span>
+                  </p>
+                </form>
+              </Card>
+            </TabsContent>
             
-            <Button 
-              type="submit" 
-              className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
-              disabled={isLoading || (apiStatus && !apiStatus.success)}
-            >
-              {isLoading ? (
-                <>
-                  <div className="h-5 w-5 rounded-full border-2 border-current border-t-transparent animate-spin mr-2"></div>
-                  Skrái inn...
-                </>
-              ) : "Innskrá"}
-            </Button>
-          </form>
+            <TabsContent value="real">
+              <Card className="p-6">
+                <form onSubmit={handleLogin} className="space-y-6">
+                  <div className="space-y-2">
+                    <Label htmlFor="username" className="text-white">Notandanafn</Label>
+                    <Input 
+                      id="username"
+                      type="text" 
+                      placeholder="Sláðu inn notandanafn"
+                      value={username}
+                      onChange={(e) => setUsername(e.target.value)}
+                      required
+                      className="text-white placeholder-white/70"
+                      disabled={apiStatus && !apiStatus.success}
+                    />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="password" className="text-white">Lykilorð</Label>
+                    <Input 
+                      id="password"
+                      type="password" 
+                      placeholder="Sláðu inn lykilorð"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      required
+                      className="text-white placeholder-white/70"
+                      disabled={apiStatus && !apiStatus.success}
+                    />
+                  </div>
+                  
+                  <Button 
+                    type="submit" 
+                    className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
+                    disabled={isLoading || (apiStatus && !apiStatus.success)}
+                  >
+                    {isLoading ? (
+                      <>
+                        <div className="h-5 w-5 rounded-full border-2 border-current border-t-transparent animate-spin mr-2"></div>
+                        Skrái inn...
+                      </>
+                    ) : "Innskrá"}
+                  </Button>
+                </form>
+              </Card>
+            </TabsContent>
+          </Tabs>
         </div>
       </main>
       

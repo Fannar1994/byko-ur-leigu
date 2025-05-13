@@ -1,5 +1,5 @@
 
-import { SearchResults, OffHireResponse } from "@/types/contract";
+import { SearchResults, OffHireResponse, Contract, RentalItem } from "@/types/contract";
 
 // Mock implementation for development and testing
 export function mockSearchByKennitala(kennitala: string): Promise<SearchResults> {
@@ -21,119 +21,145 @@ export function mockSearchByKennitala(kennitala: string): Promise<SearchResults>
       const contractId2 = `c2-${kennitala.substring(0, 4)}`;
       const contractNumber1 = `C-${kennitala.substring(0, 6)}`;
       const contractNumber2 = `C-${kennitala.substring(0, 4)}-B`;
+      
+      // Generate more varied mock data
+      const contracts = generateMockContracts(kennitala);
+      const rentalItems = generateMockRentalItems(kennitala, contracts);
 
       // Mock data for demonstration
       resolve({
         renter: {
-          name: `Jón Jónsson ${kennitala.substring(0, 2)}`,
+          name: getRenterName(kennitala),
           kennitala
         },
-        contracts: [
-          {
-            id: contractId1,
-            contractNumber: contractNumber1,
-            status: "Virkur",
-            startDate: "2023-06-15",
-            endDate: "2023-12-15",
-            totalValue: 150000,
-            location: "Hafnarfjörður",
-            department: "KOPA"
-          },
-          {
-            id: contractId2,
-            contractNumber: contractNumber2,
-            status: "Lokið",
-            startDate: "2022-11-01",
-            endDate: "2023-02-01",
-            totalValue: 75000,
-            location: "Reykjavík",
-            department: "ÞORH"
-          }
-        ],
-        rentalItems: [
-          {
-            id: `i1-${kennitala.substring(0, 4)}`,
-            contractId: contractId1,
-            itemName: "Gröfuvél XL2000",
-            category: "Þungar vinnuvélar",
-            serialNumber: "EX-2023-001",
-            dueDate: "2023-12-15",
-            rentalRate: 25000,
-            status: "Í leigu",
-            department: "KOPA"
-          },
-          {
-            id: `i2-${kennitala.substring(0, 4)}`,
-            contractId: contractId1,
-            itemName: "Steypuhrærivél",
-            category: "Byggingartæki",
-            serialNumber: "CM-2023-042",
-            dueDate: "2023-12-15",
-            rentalRate: 8000,
-            status: "Í leigu",
-            department: "GRAN"
-          },
-          {
-            id: `i3-${kennitala.substring(0, 4)}`,
-            contractId: contractId1,
-            itemName: "Öryggishjálmar (5 stk)",
-            category: "Öryggisbúnaður",
-            serialNumber: "SH-2023-105",
-            dueDate: "2023-12-15",
-            rentalRate: 500,
-            status: "Í leigu",
-            department: "KOPA"
-          },
-          // Add example items with Tiltekt status
-          {
-            id: `i4-${kennitala.substring(0, 4)}`,
-            contractId: contractId1,
-            itemName: "Rafmagnsborvél",
-            category: "Handverkfæri",
-            serialNumber: "ED-2023-201",
-            dueDate: "2023-12-10",
-            rentalRate: 3000,
-            status: "Tiltekt",
-            department: "KEFL"
-          },
-          {
-            id: `i5-${kennitala.substring(0, 4)}`,
-            contractId: contractId2,
-            itemName: "Slípivél",
-            category: "Handverkfæri",
-            serialNumber: "SL-2023-056",
-            dueDate: "2023-02-01",
-            rentalRate: 2500,
-            status: "Tiltekt",
-            department: "SELF"
-          },
-          // Add example items with Úr leiga status
-          {
-            id: `i6-${kennitala.substring(0, 4)}`,
-            contractId: contractId2,
-            itemName: "Hillukerfi",
-            category: "Innréttingar",
-            serialNumber: "SH-2022-312",
-            dueDate: "2023-01-15",
-            rentalRate: 15000,
-            status: "Úr leiga",
-            department: "AKEY"
-          },
-          {
-            id: `i7-${kennitala.substring(0, 4)}`,
-            contractId: contractId2,
-            itemName: "Byggingarkrani",
-            category: "Þungar vinnuvélar",
-            serialNumber: "CR-2022-008",
-            dueDate: "2023-01-20",
-            rentalRate: 50000,
-            status: "Úr leiga",
-            department: "VER"
-          }
-        ]
+        contracts: contracts,
+        rentalItems: rentalItems
       });
     }, 1000);
   });
+}
+
+// Generate more varied mock contract data
+function generateMockContracts(kennitala: string): Contract[] {
+  const locations = ["Reykjavík", "Akureyri", "Selfoss", "Keflavík", "Hafnarfjörður", "Egilsstaðir"];
+  const departments = ["KOPA", "GRAN", "SELF", "KEFL", "VER", "AKEY", "ÞORH"];
+  
+  // Use last digit to vary the number of contracts (1-3)
+  const numContracts = (parseInt(kennitala.charAt(9)) % 3) + 1;
+  
+  const contracts: Contract[] = [];
+  
+  // Create active contract(s)
+  for (let i = 0; i < numContracts; i++) {
+    // Generate different start dates
+    const startMonths = [1, 3, 6, 9];
+    const startMonth = startMonths[i % startMonths.length];
+    const startDate = new Date();
+    startDate.setMonth(startDate.getMonth() - startMonth);
+    
+    // Generate different end dates
+    const endMonths = [1, 2, 3, 6];
+    const endMonth = endMonths[i % endMonths.length];
+    const endDate = new Date();
+    endDate.setMonth(endDate.getMonth() + endMonth);
+    
+    const status = i === 0 ? "Virkur" : (Math.random() > 0.5 ? "Virkur" : "Lokið");
+    
+    contracts.push({
+      id: `c${i+1}-${kennitala.substring(0, 4)}`,
+      contractNumber: `C-${kennitala.substring(0, 4)}-${String.fromCharCode(65 + i)}`,
+      status: status,
+      startDate: startDate.toISOString().split('T')[0],
+      endDate: endDate.toISOString().split('T')[0],
+      totalValue: Math.floor(Math.random() * 200000) + 50000,
+      location: locations[Math.floor(Math.random() * locations.length)],
+      department: departments[Math.floor(Math.random() * departments.length)]
+    });
+  }
+  
+  return contracts;
+}
+
+// Generate more varied mock rental items
+function generateMockRentalItems(kennitala: string, contracts: Contract[]): RentalItem[] {
+  const items: RentalItem[] = [];
+  const itemTypes = [
+    // Heavy equipment
+    { name: "Gröfuvél XL2000", category: "Þungar vinnuvélar", rate: 25000 },
+    { name: "Hjólavél ZT450", category: "Þungar vinnuvélar", rate: 18000 },
+    { name: "Lyftari 2T", category: "Þungar vinnuvélar", rate: 12000 },
+    { name: "Byggingarkrani", category: "Þungar vinnuvélar", rate: 50000 },
+    // Construction tools
+    { name: "Steypuhrærivél", category: "Byggingartæki", rate: 8000 },
+    { name: "Jarðvegsþjappa", category: "Byggingartæki", rate: 6500 },
+    { name: "Múrbrot", category: "Byggingartæki", rate: 4500 },
+    // Hand tools
+    { name: "Rafmagnsborvél", category: "Handverkfæri", rate: 3000 },
+    { name: "Slípivél", category: "Handverkfæri", rate: 2500 },
+    { name: "Rafsuðuvél", category: "Handverkfæri", rate: 3500 },
+    { name: "Naglabyssu sett", category: "Handverkfæri", rate: 2800 },
+    // Safety equipment
+    { name: "Öryggishjálmar (5 stk)", category: "Öryggisbúnaður", rate: 500 },
+    { name: "Fallvarnarbúnaður", category: "Öryggisbúnaður", rate: 1500 },
+    { name: "Vinnupallur 6m", category: "Öryggisbúnaður", rate: 8500 },
+    // Interior
+    { name: "Hillukerfi", category: "Innréttingar", rate: 15000 },
+    { name: "Skrifstofueining", category: "Innréttingar", rate: 12000 },
+  ];
+  
+  const statuses = ["Í leigu", "Tiltekt", "Úr leiga"];
+  const departments = ["KOPA", "GRAN", "SELF", "KEFL", "VER", "AKEY", "ÞORH"];
+  
+  // Generate items for each contract
+  contracts.forEach(contract => {
+    // Number of items per contract (4-8)
+    const numItems = Math.floor(Math.random() * 5) + 4;
+    
+    for (let i = 0; i < numItems; i++) {
+      const itemType = itemTypes[Math.floor(Math.random() * itemTypes.length)];
+      const status = contract.status === "Lokið" 
+        ? "Úr leiga" 
+        : statuses[Math.floor(Math.random() * (contract.status === "Virkur" ? 2 : 3))];
+      
+      const dueDate = new Date(contract.endDate);
+      if (status === "Tiltekt") {
+        // Make tiltekt items due sooner
+        dueDate.setDate(dueDate.getDate() - Math.floor(Math.random() * 10));
+      }
+      
+      items.push({
+        id: `i${i}-${contract.id}`,
+        contractId: contract.id,
+        itemName: itemType.name,
+        category: itemType.category,
+        serialNumber: `${itemType.category.charAt(0)}${itemType.name.charAt(0)}-${new Date().getFullYear()}-${String(Math.floor(Math.random() * 1000)).padStart(3, '0')}`,
+        dueDate: dueDate.toISOString().split('T')[0],
+        rentalRate: itemType.rate,
+        status: status,
+        department: departments[Math.floor(Math.random() * departments.length)]
+      });
+    }
+  });
+  
+  return items;
+}
+
+// Generate a realistic Icelandic name based on kennitala
+function getRenterName(kennitala: string): string {
+  const firstNames = ["Jón", "Guðmundur", "Sigurður", "Gunnar", "Ólafur", "Kristján", 
+                    "Árni", "Björn", "Stefán", "Einar", "Anna", "Kristín", 
+                    "Margrét", "Guðrún", "Sigrún", "Helga", "Katrín", "María"];
+  
+  const lastNames = ["Jónsson", "Guðmundsson", "Sigurðsson", "Gunnarsson", "Ólafsson",
+                    "Kristjánsson", "Árnason", "Björnsson", "Stefánsson", "Einarsson",
+                    "Jónsdóttir", "Guðmundsdóttir", "Sigurðardóttir", "Gunnarsdóttir", 
+                    "Ólafsdóttir", "Kristjánsdóttir", "Árnadóttir", "Björnsdóttir"];
+  
+  // Use digits from kennitala to select names (to ensure consistency)
+  const firstNameIndex = parseInt(kennitala.substring(0, 2)) % firstNames.length;
+  const lastNameIndex = parseInt(kennitala.substring(2, 4)) % lastNames.length;
+  
+  return `${firstNames[firstNameIndex]} ${lastNames[lastNameIndex]}`;
 }
 
 // Mock implementation for off-hire
