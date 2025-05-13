@@ -29,7 +29,7 @@ export function OffHireHandler({ children, onItemStatusUpdate }: OffHireHandlerP
     setProcessingItemId(itemId);
     
     try {
-      // Instead of making an API call to offHireItem, generate and send a report
+      // Generate and send a report for the off-hire operation
       if (selectedItem) {
         const contractId = selectedItem.contractId;
         const items = [selectedItem]; // We're off-hiring just one item
@@ -52,6 +52,10 @@ export function OffHireHandler({ children, onItemStatusUpdate }: OffHireHandlerP
         if (success) {
           // Update the local state to show the item as off-hired
           onItemStatusUpdate(itemId, "Úr leiga");
+          
+          toast.success("Skýrsla send", {
+            description: `Úr leigu skýrsla var send á ${noCharge ? 'án gjalds' : 'með gjaldi'}.`,
+          });
         } else {
           toast.error("Villa", {
             description: "Ekki tókst að senda skýrslu. Reyndu aftur eða hafðu samband við kerfisstjóra.",

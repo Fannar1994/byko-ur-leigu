@@ -5,27 +5,25 @@ import { toast } from 'sonner';
 
 // Microsoft Graph API configuration
 const RECIPIENT_EMAIL = 'leiga@byko.is';
-const SENDER_EMAIL = 'tilkynningar@byko.is'; // This should be replaced with the actual sender email
-
-interface EmailAttachment {
-  fileName: string;
-  content: Buffer | string;
-  contentType: string;
-}
 
 /**
  * Get an authenticated Microsoft Graph client
  */
 function getGraphClient(): Client {
-  // In a real implementation, this would use proper authentication.
-  // For now, we're simulating the API calls
-  
   return Client.init({
     authProvider: async (done) => {
-      // This is a placeholder for actual authentication logic
-      // In production, you would get a token from Microsoft identity platform
-      const mockToken = 'mock_token';
-      done(null, mockToken);
+      try {
+        // In a real implementation, we would get a token using proper auth flow
+        // For now, we're using a simpler approach that will work for our needs
+        const token = localStorage.getItem("ms_token");
+        if (!token) {
+          throw new Error("No Microsoft authentication token found");
+        }
+        done(null, token);
+      } catch (error) {
+        console.error("Error getting auth token:", error);
+        done(error as any, null);
+      }
     }
   });
 }
@@ -36,28 +34,17 @@ function getGraphClient(): Client {
 export async function sendReportEmail(
   contractId: string,
   htmlContent: string,
-  attachments: EmailAttachment[],
+  attachments: any[],
   operation: 'tiltekt' | 'offhire'
 ): Promise<boolean> {
   try {
-    // For demo purposes, we'll simulate a successful API call
-    // In a real implementation, this would use the Graph API to send an email
-    console.log(`Sending ${operation} report for contract ${contractId} to ${RECIPIENT_EMAIL}`);
-    
-    // Simulate API call delay
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    // Log what would be sent in a real implementation
-    console.log('Email content:', htmlContent);
-    console.log('Attachments:', attachments.map(a => a.fileName));
-    
-    // In a real implementation, you would use the Graph client like this:
-    /*
     const client = getGraphClient();
+    
+    const operationTitle = operation === 'tiltekt' ? 'Tiltekt' : 'Úr Leigu';
     
     await client.api('/me/sendMail').post({
       message: {
-        subject: `BYKO ${operation === 'tiltekt' ? 'Tiltekt' : 'Úr Leigu'} Skýrsla - Samningur ${contractId}`,
+        subject: `BYKO ${operationTitle} Skýrsla - Samningur ${contractId}`,
         body: {
           contentType: 'HTML',
           content: htmlContent
@@ -77,7 +64,6 @@ export async function sendReportEmail(
         }))
       }
     });
-    */
     
     return true;
   } catch (error) {
@@ -106,7 +92,7 @@ export async function sendReport(
   fileName: string,
   htmlReport: string
 ): Promise<boolean> {
-  const attachments: EmailAttachment[] = [
+  const attachments = [
     {
       fileName,
       content: excelBuffer,
@@ -114,12 +100,10 @@ export async function sendReport(
     }
   ];
   
-  const operationTitle = operation === 'tiltekt' ? 'Tiltekt' : 'Úr Leigu';
-  const subject = `BYKO ${operationTitle} Skýrsla - Samningur ${contractId}`;
-  
   const success = await sendReportEmail(contractId, htmlReport, attachments, operation);
   
   if (success) {
+    const operationTitle = operation === 'tiltekt' ? 'Tiltekt' : 'Úr Leigu';
     toast.success("Skýrsla send", {
       description: `${operationTitle} skýrsla fyrir samning ${contractId} var send á ${RECIPIENT_EMAIL}.`,
     });

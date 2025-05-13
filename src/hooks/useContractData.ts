@@ -14,8 +14,15 @@ export function useContractData(contractNumber: string | undefined) {
     const fetchContractData = async () => {
       setLoading(true);
       try {
-        const kennitala = lastKennitala || "1234567890";
-        const data = await searchByKennitala(kennitala);
+        if (!lastKennitala) {
+          toast.error("Engin kennitala", {
+            description: "Vinsamlegast leitaðu fyrst að kennitölu.",
+          });
+          setLoading(false);
+          return;
+        }
+        
+        const data = await searchByKennitala(lastKennitala);
         setContractData(data);
         
         if (data) {
