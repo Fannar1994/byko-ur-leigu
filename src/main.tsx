@@ -6,12 +6,7 @@ import { MS_AUTH_CONFIG } from './config/appConfig.ts'
 
 // Initialize Microsoft Authentication only if configuration exists
 if (MS_AUTH_CONFIG.clientId && MS_AUTH_CONFIG.tenantId) {
-  try {
-    // We'll skip initialization to avoid potential errors
-    console.log("Microsoft Authentication configuration found");
-  } catch (error) {
-    console.error("Failed to initialize Microsoft Authentication:", error);
-  }
+  console.log("Microsoft Authentication configuration found");
 }
 
 createRoot(document.getElementById("root")!).render(<App />);
