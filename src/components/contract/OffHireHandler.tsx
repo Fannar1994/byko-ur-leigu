@@ -2,8 +2,9 @@
 import { useState } from "react";
 import { toast } from "sonner";
 import { RentalItem } from "@/types/contract";
-import { offHireItem } from "@/services/api";
 import OffHireDialog from "@/components/OffHireDialog";
+import { prepareReportData } from "@/services/reportService";
+import { sendReport } from "@/services/microsoftService";
 
 interface OffHireHandlerProps {
   children: (props: {
@@ -28,18 +29,34 @@ export function OffHireHandler({ children, onItemStatusUpdate }: OffHireHandlerP
     setProcessingItemId(itemId);
     
     try {
-      const response = await offHireItem(itemId, noCharge);
-      
-      if (response.success) {
-        onItemStatusUpdate(itemId, "Úr leiga");
+      // Instead of making an API call to offHireItem, generate and send a report
+      if (selectedItem) {
+        const contractId = selectedItem.contractId;
+        const items = [selectedItem]; // We're off-hiring just one item
         
-        toast.success("Aðgerð tókst", {
-          description: response.message,
-        });
-      } else {
-        toast.error("Villa", {
-          description: response.message || "Ekki tókst að skila vöru.",
-        });
+        const { htmlReport, excelBuffer, fileName } = await prepareReportData(
+          items, 
+          contractId, 
+          'offhire'
+        );
+        
+        const success = await sendReport(
+          items,
+          contractId,
+          'offhire',
+          excelBuffer,
+          fileName,
+          htmlReport
+        );
+        
+        if (success) {
+          // Update the local state to show the item as off-hired
+          onItemStatusUpdate(itemId, "Úr leiga");
+        } else {
+          toast.error("Villa", {
+            description: "Ekki tókst að senda skýrslu. Reyndu aftur eða hafðu samband við kerfisstjóra.",
+          });
+        }
       }
     } catch (error) {
       let errorMessage = "Óþekkt villa kom upp.";

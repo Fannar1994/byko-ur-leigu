@@ -5,6 +5,7 @@ import RentalTabsNavigation from "@/components/RentalTabsNavigation";
 import { Contract, RentalItem } from "@/types/contract";
 import TiltektTab from "./TiltektTab";
 import OffHiredItemsTab from "./OffHiredItemsTab";
+import { setItemCount, getItemCount } from "@/utils/countUtils";
 
 interface ContractTabsProps {
   contracts: Contract[];
@@ -36,6 +37,17 @@ const ContractTabs: React.FC<ContractTabsProps> = ({
   onCountChange,
   onItemStatusUpdate
 }) => {
+  // Enhance the count change handler to store counts in our utility
+  const handleCountChange = (itemId: string, count: number) => {
+    // Store the count in our utility
+    setItemCount(itemId, count);
+    
+    // Call the original handler if provided
+    if (onCountChange) {
+      onCountChange(itemId, count);
+    }
+  };
+  
   return (
     <Tabs defaultValue="tiltekt" className="w-full">
       <RentalTabsNavigation />
@@ -52,7 +64,7 @@ const ContractTabs: React.FC<ContractTabsProps> = ({
           onTogglePicked={onTogglePicked}
           onCompletePickup={onCompletePickup}
           showCountColumn={true}
-          onCountChange={onCountChange}
+          onCountChange={handleCountChange}
           onStatusUpdate={onItemStatusUpdate}
         />
       </TabsContent>
@@ -63,7 +75,7 @@ const ContractTabs: React.FC<ContractTabsProps> = ({
           handleOffHireClick={onOffHireClick}
           processingItemId={processingItemId}
           showCountColumn={true}
-          onCountChange={onCountChange}
+          onCountChange={handleCountChange}
         />
       </TabsContent>
     </Tabs>

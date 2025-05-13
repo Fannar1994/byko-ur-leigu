@@ -31,24 +31,24 @@ const OffHireDialog: React.FC<OffHireDialogProps> = ({
     <AlertDialog open={isOpen} onOpenChange={onClose}>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Off-Hire Item</AlertDialogTitle>
+          <AlertDialogTitle>Senda Úr Leigu Skýrslu</AlertDialogTitle>
           <AlertDialogDescription>
-            You are about to off-hire <strong>{item.itemName}</strong> with serial number{" "}
-            <strong>{item.serialNumber}</strong>. Do you want to proceed with no charge (N/C)?
+            Þú ert að fara að senda skýrslu fyrir <strong>{item.itemName}</strong> með raðnúmer{" "}
+            <strong>{item.serialNumber}</strong>. Skýrslan verður send á leiga@byko.is. Viltu halda áfram?
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel onClick={onClose}>Cancel</AlertDialogCancel>
+          <AlertDialogCancel onClick={onClose}>Hætta við</AlertDialogCancel>
           <AlertDialogAction
             className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             onClick={() => onConfirm(item.id, false)}
           >
-            Off-Hire with Charge
+            Skila með gjaldi
           </AlertDialogAction>
           <AlertDialogAction
             onClick={() => onConfirm(item.id, true)}
           >
-            Off-Hire N/C
+            Skila án gjalds
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
