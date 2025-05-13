@@ -1,26 +1,22 @@
+// This should match what your API returns
+interface Contract {
+  ContractId: string;
+  ContractNumber: string;
+  Status: string;
+  StartDate: string;
+  EndDate: string;
+  TotalValue: number;
+  Location: string;
+  Customer: {
+    Kennitala: string;
+    Name: string;
+  };
+}
 
-export async function fetchContracts() {
-  const baseUrl = import.meta.env.VITE_INSPHIRE_API;
-  const sessionId = localStorage.getItem("inspSession");
-
-  if (!sessionId) {
-    throw new Error("No inspHire session found. Please log in.");
-  }
-
+export async function fetchContracts(): Promise<Contract[]> {
   const response = await fetch(`${baseUrl}/api/contracts`, {
-    method: "GET",
-    headers: {
-      "EnableString": "BYKO",
-      "SessionID": sessionId,
-      "Content-Type": "application/json"
-    }
+    headers: defaultHeaders()
   });
-
-  if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error("Failed to fetch contracts: " + errorText);
-  }
-
-  const data = await response.json();
-  return data;
+  if (!response.ok) throw new Error("Failed to fetch contracts");
+  return response.json();
 }
