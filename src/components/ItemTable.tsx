@@ -1,19 +1,12 @@
 
 import React, { useState } from "react";
-import { UserX, Package, MapPin, Building } from "lucide-react";
 import { RentalItem } from "@/types/contract";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
-import CountComponent from "./CountComponent";
 import {
   Table,
   TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
 } from "@/components/ui/table";
+import ItemTableHeader from "./item/ItemTableHeader";
+import ItemTableRow from "./item/ItemTableRow";
 
 interface ItemTableProps {
   items: RentalItem[];
@@ -53,7 +46,7 @@ const ItemTable: React.FC<ItemTableProps> = ({
     setSelectedRowId(prevId => prevId === itemId ? null : itemId);
   };
 
-  const handleCountChange = (itemId: string) => (count: number) => {
+  const handleCountChange = (itemId: string, count: number) => {
     if (onCountChange) {
       onCountChange(itemId, count);
     }
@@ -64,39 +57,6 @@ const ItemTable: React.FC<ItemTableProps> = ({
     }));
   };
 
-  const handleStatusClick = (item: RentalItem) => {
-    if (onStatusClick && item.status === "Tiltekt") {
-      const count = itemCounts[item.id] || 0;
-      onStatusClick(item, count);
-    }
-  };
-
-  const getItemStatusColor = (status?: string) => {
-    switch (status) {
-      case "On Rent": 
-      case "Í leigu": return "bg-primary text-primary-foreground"; 
-      case "Off-Hired":
-      case "Úr leiga": return "bg-red-100 text-red-800";
-      case "Pending Return": 
-      case "Tiltekt": return "bg-white text-black"; 
-      case "Tilbúið til afhendingar": return "bg-green-500 text-black"; 
-      default: return "bg-gray-100 text-gray-800";
-    }
-  };
-
-  const getDepartmentBadgeColor = (department?: string) => {
-    switch (department) {
-      case "KOPA": return "bg-blue-100 text-blue-800";
-      case "ÞORH": return "bg-green-100 text-green-800";
-      case "GRAN": return "bg-purple-100 text-purple-800";
-      case "KEFL": return "bg-orange-100 text-orange-800";
-      case "SELF": return "bg-pink-100 text-pink-800";
-      case "AKEY": return "bg-indigo-100 text-indigo-800";
-      case "VER": return "bg-yellow-100 text-yellow-800";
-      default: return "bg-gray-100 text-gray-800";
-    }
-  };
-
   if (items.length === 0) {
     return <div className="text-center py-6 text-gray-500">Engar vörur fundust</div>;
   }
@@ -104,134 +64,39 @@ const ItemTable: React.FC<ItemTableProps> = ({
   return (
     <div className="overflow-x-auto">
       <Table>
-        <TableHeader className="bg-[#2A2A2A]">
-          <TableRow>
-            <TableHead className="text-white">Leigunúmer</TableHead>
-            <TableHead className="text-white">Vöruheiti</TableHead>
-            {showContractColumn && (
-              <TableHead className="text-white">Samningsnúmer</TableHead>
-            )}
-            {showDepartmentColumn && (
-              <TableHead className="text-white">Deild</TableHead>
-            )}
-            {showLocationColumn && (
-              <TableHead className="text-white">Verkstaður</TableHead>
-            )}
-            <TableHead className="text-white text-center">Staða</TableHead>
-            {showCountColumn && (
-              <TableHead className="text-white text-center">Talningar</TableHead>
-            )}
-            {(showActions || onTogglePicked) && (
-              <TableHead className="text-white text-center">Aðgerðir</TableHead>
-            )}
-          </TableRow>
-        </TableHeader>
+        <ItemTableHeader 
+          showContractColumn={showContractColumn}
+          showCountColumn={showCountColumn}
+          showLocationColumn={showLocationColumn}
+          showDepartmentColumn={showDepartmentColumn}
+          showActions={showActions || !!onTogglePicked}
+        />
         <TableBody className="bg-[#2A2A2A]">
           {items.map((item) => {
             const isSelected = selectedRowId === item.id;
             const isPicked = pickedItems[item.id];
+            const contractNumber = contractNumbers ? contractNumbers[item.contractId] : undefined;
             
             return (
-              <TableRow 
-                key={item.id} 
-                onClick={() => handleRowClick(item.id)}
-                className={isSelected 
-                  ? "bg-primary text-black hover:bg-primary/90 cursor-pointer" 
-                  : isPicked 
-                    ? "bg-green-900/20 hover:bg-green-900/30 cursor-pointer"
-                    : "hover:bg-primary/90 hover:text-black cursor-pointer"}
-              >
-                <TableCell className={isSelected ? "text-black" : "text-white"}>
-                  {item.serialNumber}
-                </TableCell>
-                <TableCell className={isSelected ? "font-medium text-black" : "font-medium text-white"}>
-                  {item.itemName}
-                </TableCell>
-                {showContractColumn && (
-                  <TableCell className={isSelected ? "text-black" : "text-white"}>
-                    {contractNumbers && contractNumbers[item.contractId] && (
-                      <Link 
-                        to={`/contract/${contractNumbers[item.contractId]}`}
-                        className={isSelected ? "text-black hover:underline" : "text-primary hover:underline"}
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        {contractNumbers[item.contractId]}
-                      </Link>
-                    )}
-                    {(!contractNumbers || !contractNumbers[item.contractId]) && (
-                      <span>-</span>
-                    )}
-                  </TableCell>
-                )}
-                {showDepartmentColumn && (
-                  <TableCell className={isSelected ? "text-black" : "text-white"}>
-                    <div className="flex items-center gap-1">
-                      <Building size={14} className={isSelected ? "text-black" : "text-gray-400"} />
-                      {item.department ? (
-                        <Badge className={getDepartmentBadgeColor(item.department)}>
-                          {item.department}
-                        </Badge>
-                      ) : (
-                        <span className="text-gray-400">-</span>
-                      )}
-                    </div>
-                  </TableCell>
-                )}
-                {showLocationColumn && (
-                  <TableCell className={isSelected ? "text-black" : "text-white"}>
-                    <div className="flex items-center gap-1">
-                      <MapPin size={14} className={isSelected ? "text-black" : "text-gray-400"} />
-                      <span>{item.location || "Óþekktur staður"}</span>
-                    </div>
-                  </TableCell>
-                )}
-                <TableCell className="text-center">
-                  <Badge 
-                    className={`${getItemStatusColor(item.status)} ${item.status === "Tiltekt" ? "cursor-pointer hover:bg-opacity-80" : ""}`}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleStatusClick(item);
-                    }}
-                  >
-                    {item.status}
-                  </Badge>
-                </TableCell>
-                {showCountColumn && (
-                  <TableCell className="text-center" onClick={(e) => e.stopPropagation()}>
-                    <CountComponent 
-                      itemId={item.id}
-                      onCountChange={handleCountChange(item.id)}
-                    />
-                  </TableCell>
-                )}
-                {showActions && onOffHireClick && (
-                  <TableCell className="text-center" onClick={(e) => e.stopPropagation()}>
-                    <Button
-                      size="sm"
-                      variant="destructive"
-                      onClick={() => onOffHireClick(item)}
-                      disabled={processingItemId === item.id}
-                      className="flex items-center gap-1"
-                    >
-                      <UserX size={14} />
-                      <span>Skila</span>
-                    </Button>
-                  </TableCell>
-                )}
-                {onTogglePicked && (
-                  <TableCell className="text-center" onClick={(e) => e.stopPropagation()}>
-                    <Button
-                      size="sm"
-                      variant={pickedItems[item.id] ? "default" : "outline"}
-                      onClick={() => onTogglePicked(item.id)}
-                      className="flex items-center gap-1"
-                    >
-                      <Package size={14} />
-                      <span>{pickedItems[item.id] ? "Tilbúið" : "Merkja"}</span>
-                    </Button>
-                  </TableCell>
-                )}
-              </TableRow>
+              <ItemTableRow 
+                key={item.id}
+                item={item}
+                isSelected={isSelected}
+                isPicked={isPicked}
+                contractNumber={contractNumber}
+                onTogglePicked={onTogglePicked}
+                onOffHireClick={onOffHireClick}
+                processingItemId={processingItemId}
+                onCountChange={handleCountChange}
+                onStatusClick={onStatusClick}
+                itemCounts={itemCounts}
+                showContractColumn={showContractColumn}
+                showCountColumn={showCountColumn}
+                showLocationColumn={showLocationColumn}
+                showDepartmentColumn={showDepartmentColumn}
+                showActions={showActions}
+                onRowClick={() => handleRowClick(item.id)}
+              />
             );
           })}
         </TableBody>
