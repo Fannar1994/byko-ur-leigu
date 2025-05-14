@@ -88,19 +88,21 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, onDataChange }
     <div className="space-y-6 w-full max-w-5xl mx-auto animate-fade-in">
       <RenterInfoCard renter={results.renter} />
 
-      <Tabs defaultValue="active" className="w-full">
+      <Tabs defaultValue={isHomePage ? "active" : "tiltekt"} className="w-full">
         <RentalTabsNavigation />
         
-        <TabsContent value="active" className="animate-fade-in">
-          <Card>
-            <ContractsTableComponent 
-              contracts={sortedContracts}
-              sortField={sortField}
-              sortDirection={sortDirection}
-              handleSort={handleSort}
-            />
-          </Card>
-        </TabsContent>
+        {isHomePage && (
+          <TabsContent value="active" className="animate-fade-in">
+            <Card>
+              <ContractsTableComponent 
+                contracts={sortedContracts}
+                sortField={sortField}
+                sortDirection={sortDirection}
+                handleSort={handleSort}
+              />
+            </Card>
+          </TabsContent>
+        )}
         
         {!isHomePage && (
           <>
@@ -137,6 +139,6 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, onDataChange }
       </Tabs>
     </div>
   );
-};
+}
 
 export default ResultsDisplay;
