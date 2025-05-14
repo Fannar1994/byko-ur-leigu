@@ -9,6 +9,7 @@ import ContractsTableComponent from "./ContractsTableComponent";
 import RenterInfoCard from "./RenterInfoCard";
 import RentalTabsNavigation from "./RentalTabsNavigation";
 import { OffHireHandler } from "./contract/OffHireHandler";
+import { useLocation } from "react-router-dom";
 
 interface ResultsDisplayProps {
   results: SearchResults | null;
@@ -19,6 +20,8 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, onDataChange }
   const [sortField, setSortField] = useState<keyof Contract>("startDate");
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("desc");
   const [localRentalItems, setLocalRentalItems] = useState<RentalItem[]>([]);
+  const location = useLocation();
+  const isHomePage = location.pathname === "/";
   
   // Add this for counting functionality
   const handleCountChange = (itemId: string, count: number) => {
@@ -99,34 +102,38 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, onDataChange }
           </Card>
         </TabsContent>
         
-        <TabsContent value="tiltekt" className="animate-fade-in">
-          <TabContent 
-            title="Vörur í tiltekt" 
-            items={tiltektItems} 
-            contractNumbers={contractNumbersMap} 
-            showLocationColumn={true}
-            showCountColumn={true}
-            onCountChange={handleCountChange}
-          />
-        </TabsContent>
-        
-        <TabsContent value="offhired" className="animate-fade-in">
-          <OffHireHandler onItemStatusUpdate={handleItemStatusUpdate}>
-            {({ handleOffHireClick, processingItemId }) => (
+        {!isHomePage && (
+          <>
+            <TabsContent value="tiltekt" className="animate-fade-in">
               <TabContent 
-                title="Úr leiga" 
-                items={offHiredItems} 
+                title="Vörur í tiltekt" 
+                items={tiltektItems} 
                 contractNumbers={contractNumbersMap} 
-                showActions={true}
-                onOffHireClick={handleOffHireClick}
-                processingItemId={processingItemId}
                 showLocationColumn={true}
                 showCountColumn={true}
                 onCountChange={handleCountChange}
               />
-            )}
-          </OffHireHandler>
-        </TabsContent>
+            </TabsContent>
+            
+            <TabsContent value="offhired" className="animate-fade-in">
+              <OffHireHandler onItemStatusUpdate={handleItemStatusUpdate}>
+                {({ handleOffHireClick, processingItemId }) => (
+                  <TabContent 
+                    title="Úr leiga" 
+                    items={offHiredItems} 
+                    contractNumbers={contractNumbersMap} 
+                    showActions={true}
+                    onOffHireClick={handleOffHireClick}
+                    processingItemId={processingItemId}
+                    showLocationColumn={true}
+                    showCountColumn={true}
+                    onCountChange={handleCountChange}
+                  />
+                )}
+              </OffHireHandler>
+            </TabsContent>
+          </>
+        )}
       </Tabs>
     </div>
   );

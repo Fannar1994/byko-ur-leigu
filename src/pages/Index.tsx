@@ -98,7 +98,7 @@ const Index = () => {
       
       <main className="container px-4 pb-12 max-w-7xl mx-auto space-y-8">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-white">Tiltektarkerfi hjá BYKO Leigu</h1>
+          <h1 className="text-3xl font-bold text-white">Samningayfirlit BYKO Leigu</h1>
           <p className="text-white">Leitaðu að leigusamningum með kennitölu</p>
         </div>
       

@@ -1,5 +1,5 @@
 
-import React, { useState, createContext } from "react";
+import React, { useState, createContext, useEffect } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -13,7 +13,8 @@ import ContractDetails from "./pages/ContractDetails";
 // Create auth context
 export const AuthContext = createContext({
   isAuthenticated: false,
-  setIsAuthenticated: (value: boolean) => {}
+  setIsAuthenticated: (value: boolean) => {},
+  logout: () => {}
 });
 
 // Protected route component
@@ -27,13 +28,37 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   return <>{children}</>;
 };
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+      retry: 1,
+      staleTime: 30000,
+    },
+  },
+});
 
 const App = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   
+  // Check for existing session on app load
+  useEffect(() => {
+    const sessionId = localStorage.getItem("inspSession");
+    if (sessionId) {
+      setIsAuthenticated(true);
+    }
+  }, []);
+
+  // Logout function to clear session
+  const logout = () => {
+    localStorage.removeItem("inspSession");
+    localStorage.removeItem("inspDepot");
+    localStorage.removeItem("inspUsername");
+    setIsAuthenticated(false);
+  };
+  
   return (
-    <AuthContext.Provider value={{ isAuthenticated, setIsAuthenticated }}>
+    <AuthContext.Provider value={{ isAuthenticated, setIsAuthenticated, logout }}>
       <QueryClientProvider client={queryClient}>
         <TooltipProvider>
           <Toaster />
@@ -51,7 +76,6 @@ const App = () => {
                   <ContractDetails />
                 </ProtectedRoute>
               } />
-              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>
