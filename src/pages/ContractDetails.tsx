@@ -15,6 +15,7 @@ import { useFilteredItems } from "@/hooks/useFilteredItems";
 import { useSorting } from "@/hooks/useSorting";
 import { OffHireHandler } from "@/components/contract/OffHireHandler";
 import { PickupHandler } from "@/components/contract/PickupHandler";
+import { hasTiltektBeenCompleted } from "@/utils/contractStatusUtils";
 
 const ContractDetails = () => {
   const { contractNumber } = useParams();
@@ -67,6 +68,10 @@ const ContractDetails = () => {
 
   // Get contract from data
   const contract = contractData?.contracts.find(c => c.contractNumber === contractNumber);
+  const contractId = contract?.id || "";
+  
+  // Check if tiltekt has been completed for this contract
+  const isTiltektCompleted = hasTiltektBeenCompleted(contractId);
 
   return (
     <div className="min-h-screen bg-background dark">
@@ -83,8 +88,11 @@ const ContractDetails = () => {
                 
                 <OffHireHandler onItemStatusUpdate={handleItemStatusUpdate}>
                   {({ handleOffHireClick, processingItemId }) => (
-                    <PickupHandler onItemStatusUpdate={handleItemStatusUpdate}>
-                      {({ pickedItems, toggleItemPicked, handleCompletePickup }) => (
+                    <PickupHandler 
+                      contractId={contractId} 
+                      onItemStatusUpdate={handleItemStatusUpdate}
+                    >
+                      {({ pickedItems, toggleItemPicked, handleCompletePickup, isTiltektCompleted }) => (
                         <ContractTabs 
                           contracts={contractData.contracts}
                           activeItems={activeItems}
@@ -101,6 +109,7 @@ const ContractDetails = () => {
                           handleSort={handleSort}
                           onCountChange={handleCountChange}
                           onItemStatusUpdate={handleItemStatusUpdateWithCount}
+                          isTiltektCompleted={isTiltektCompleted}
                         />
                       )}
                     </PickupHandler>

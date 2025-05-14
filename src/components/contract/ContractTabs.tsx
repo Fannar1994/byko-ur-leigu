@@ -23,6 +23,7 @@ interface ContractTabsProps {
   handleSort: (field: keyof Contract) => void;
   onCountChange?: (itemId: string, count: number) => void;
   onItemStatusUpdate?: (itemId: string, newStatus: "Tiltekt" | "Úr leiga" | "Í leigu" | "On Rent" | "Off-Hired" | "Pending Return" | "Tilbúið til afhendingar", count: number) => void;
+  isTiltektCompleted?: boolean;
 }
 
 const ContractTabs: React.FC<ContractTabsProps> = ({
@@ -35,7 +36,8 @@ const ContractTabs: React.FC<ContractTabsProps> = ({
   onCompletePickup,
   onOffHireClick,
   onCountChange,
-  onItemStatusUpdate
+  onItemStatusUpdate,
+  isTiltektCompleted = false
 }) => {
   // Enhance the count change handler to store counts in our utility
   const handleCountChange = (itemId: string, count: number) => {
@@ -62,6 +64,7 @@ const ContractTabs: React.FC<ContractTabsProps> = ({
           showCountColumn={true}
           onCountChange={handleCountChange}
           onStatusUpdate={onItemStatusUpdate}
+          isTiltektCompleted={isTiltektCompleted}
         />
       </TabsContent>
       

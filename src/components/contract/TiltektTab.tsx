@@ -1,7 +1,8 @@
+
 import React from "react";
 import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Check } from "lucide-react";
+import { Check, AlertCircle } from "lucide-react";
 import ItemTable from "../ItemTable";
 import { RentalItem } from "@/types/contract";
 import { toast } from "sonner";
@@ -16,6 +17,7 @@ interface TiltektTabProps {
   showCountColumn?: boolean;
   onCountChange?: (itemId: string, count: number) => void;
   onStatusUpdate?: (itemId: string, newStatus: "Tiltekt" | "Úr leiga" | "Í leigu" | "On Rent" | "Off-Hired" | "Pending Return" | "Tilbúið til afhendingar", count: number) => void;
+  isTiltektCompleted?: boolean;
 }
 
 const TiltektTab: React.FC<TiltektTabProps> = ({ 
@@ -26,7 +28,8 @@ const TiltektTab: React.FC<TiltektTabProps> = ({
   onCompletePickup,
   showCountColumn = true,
   onCountChange,
-  onStatusUpdate
+  onStatusUpdate,
+  isTiltektCompleted = false
 }) => {
   const hasPickedItems = Object.values(pickedItems).some(Boolean);
   
@@ -51,7 +54,13 @@ const TiltektTab: React.FC<TiltektTabProps> = ({
       <CardHeader className="pb-2">
         <CardTitle className="text-xl font-semibold text-white flex justify-between items-center">
           <span>Tiltekt</span>
-          {readyForPickItems.length > 0 && (
+          {isTiltektCompleted && (
+            <div className="flex items-center text-green-500 text-sm">
+              <Check className="h-4 w-4 mr-1" />
+              <span>Tiltekt lokið</span>
+            </div>
+          )}
+          {readyForPickItems.length > 0 && !isTiltektCompleted && (
             <Button 
               className="ml-auto" 
               onClick={onCompletePickup}
@@ -63,6 +72,13 @@ const TiltektTab: React.FC<TiltektTabProps> = ({
         </CardTitle>
       </CardHeader>
       <CardContent>
+        {isTiltektCompleted && readyForPickItems.length > 0 && (
+          <div className="mb-4 p-2 bg-yellow-500/20 border border-yellow-500/30 rounded flex items-center">
+            <AlertCircle className="h-4 w-4 mr-2 text-yellow-500" />
+            <span className="text-sm text-yellow-500">Tiltekt hefur þegar verið lokið fyrir þennan samning.</span>
+          </div>
+        )}
+      
         {readyForPickItems.length === 0 && tiltektItems.length === 0 ? (
           <div className="text-center py-6 text-gray-500">Engar vörur eru tilbúnar fyrir tiltekt</div>
         ) : (
@@ -73,7 +89,7 @@ const TiltektTab: React.FC<TiltektTabProps> = ({
                 <ItemTable 
                   items={readyForPickItems} 
                   showContractColumn={false}
-                  onTogglePicked={onTogglePicked}
+                  onTogglePicked={!isTiltektCompleted ? onTogglePicked : undefined}
                   pickedItems={pickedItems}
                   showCountColumn={showCountColumn}
                   onCountChange={onCountChange}

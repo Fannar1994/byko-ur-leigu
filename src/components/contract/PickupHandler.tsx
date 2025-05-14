@@ -1,25 +1,44 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { RentalItem } from "@/types/contract";
 import { prepareReportData } from "@/services/reportService";
 import { sendReport } from "@/services/microsoftService";
+import { hasTiltektBeenCompleted, markTiltektAsCompleted } from "@/utils/contractStatusUtils";
 
 interface PickupHandlerProps {
+  contractId: string;
   onItemStatusUpdate: (itemIds: string[], newStatus: "Tiltekt" | "Úr leiga" | "Í leigu" | "On Rent" | "Off-Hired" | "Pending Return" | "Tilbúið til afhendingar") => void;
   children: (props: {
     pickedItems: Record<string, boolean>;
     toggleItemPicked: (itemId: string) => void;
     handleCompletePickup: () => void;
+    isTiltektCompleted: boolean;
   }) => React.ReactNode;
 }
 
-export function PickupHandler({ children, onItemStatusUpdate }: PickupHandlerProps) {
+export function PickupHandler({ children, onItemStatusUpdate, contractId }: PickupHandlerProps) {
   const [pickedItems, setPickedItems] = useState<Record<string, boolean>>({});
   const [itemCounts, setItemCounts] = useState<Record<string, number>>({});
   const [isProcessing, setIsProcessing] = useState(false);
+  const [isTiltektCompleted, setIsTiltektCompleted] = useState(false);
+  
+  // Check if tiltekt has already been completed for this contract
+  useEffect(() => {
+    if (contractId) {
+      const completed = hasTiltektBeenCompleted(contractId);
+      setIsTiltektCompleted(completed);
+    }
+  }, [contractId]);
 
   const toggleItemPicked = (itemId: string) => {
+    if (isTiltektCompleted) {
+      toast.error("Tiltekt lokið", {
+        description: "Tiltekt hefur þegar verið lokið fyrir þennan samning.",
+      });
+      return;
+    }
+    
     setPickedItems(prev => ({
       ...prev,
       [itemId]: !prev[itemId]
@@ -27,6 +46,13 @@ export function PickupHandler({ children, onItemStatusUpdate }: PickupHandlerPro
   };
 
   const handleCompletePickup = async () => {
+    if (isTiltektCompleted) {
+      toast.error("Tiltekt lokið", {
+        description: "Tiltekt hefur þegar verið lokið fyrir þennan samning.",
+      });
+      return;
+    }
+    
     const pickedItemIds = Object.entries(pickedItems)
       .filter(([_, isPicked]) => isPicked)
       .map(([id]) => id);
@@ -48,9 +74,6 @@ export function PickupHandler({ children, onItemStatusUpdate }: PickupHandlerPro
         const item = { id } as RentalItem;
         return item;
       });
-      
-      // For demo purposes, we'll use a dummy contract ID
-      const contractId = "DUMMY-CONTRACT-ID";
       
       // Generate the report data
       const { htmlReport, excelBuffer, fileName } = await prepareReportData(
@@ -77,6 +100,10 @@ export function PickupHandler({ children, onItemStatusUpdate }: PickupHandlerPro
         // Clear the picked items
         setPickedItems({});
         
+        // Mark tiltekt as completed for this contract
+        markTiltektAsCompleted(contractId);
+        setIsTiltektCompleted(true);
+        
         toast.success("Tiltekt lokið", {
           description: `${pickedItemIds.length} vörur merktar sem tilbúnar til afhendingar og skýrsla send.`,
         });
@@ -102,7 +129,8 @@ export function PickupHandler({ children, onItemStatusUpdate }: PickupHandlerPro
   return children({
     pickedItems,
     toggleItemPicked,
-    handleCompletePickup
+    handleCompletePickup,
+    isTiltektCompleted
   });
 }
 
