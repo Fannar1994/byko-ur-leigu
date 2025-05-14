@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { CustomTab } from "@/components/ui/custom-tabs";
 import ItemTable from "@/components/ItemTable";
 import { RentalItem } from '@/types/contract';
 
@@ -38,28 +38,23 @@ const TabContent: React.FC<TabContentProps> = ({
   onStatusClick,
 }) => {
   return (
-    <Card>
-      <CardHeader className="pb-2">
-        <CardTitle className="text-xl font-semibold text-white">{title}</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <ItemTable 
-          items={items} 
-          contractNumbers={contractNumbers}
-          showActions={showActions}
-          onOffHireClick={onOffHireClick}
-          processingItemId={processingItemId}
-          onTogglePicked={onTogglePicked}
-          pickedItems={pickedItems}
-          showContractColumn={showContractColumn}
-          showCountColumn={showCountColumn}
-          showLocationColumn={showLocationColumn}
-          showDepartmentColumn={showDepartmentColumn}
-          onCountChange={onCountChange}
-          onStatusClick={onStatusClick}
-        />
-      </CardContent>
-    </Card>
+    <CustomTab title={title}>
+      <ItemTable 
+        items={items} 
+        contractNumbers={contractNumbers}
+        showActions={showActions}
+        onOffHireClick={onOffHireClick}
+        processingItemId={processingItemId}
+        onTogglePicked={onTogglePicked}
+        pickedItems={pickedItems}
+        showContractColumn={showContractColumn}
+        showCountColumn={showCountColumn}
+        showLocationColumn={showLocationColumn}
+        showDepartmentColumn={showDepartmentColumn}
+        onCountChange={onCountChange}
+        onStatusClick={onStatusClick}
+      />
+    </CustomTab>
   );
 };
 
