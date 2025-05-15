@@ -1,6 +1,12 @@
 
 import { SearchResults, OffHireResponse } from "@/types/contract";
-import { fetchContracts, fetchContractItems, offHireItem as apiOffHireItem, updateItemStatus } from "@/api/inspHireService";
+import { 
+  fetchContracts, 
+  fetchContractItems, 
+  offHireItem as apiOffHireItem, 
+  updateItemStatus, 
+  fetchCustomerByKennitala 
+} from "@/api/inspHireService";
 import { validateKennitala } from "./validation";
 
 /**
@@ -13,7 +19,21 @@ export async function searchByKennitala(kennitala: string): Promise<SearchResult
   }
 
   try {
-    // Real API implementation
+    // Try to fetch customer info first
+    let customerName = "Óþekktur";
+    let customerInfo;
+    
+    try {
+      customerInfo = await fetchCustomerByKennitala(kennitala);
+      if (customerInfo && customerInfo.length > 0) {
+        customerName = customerInfo[0]?.Name || "Óþekktur";
+      }
+    } catch (error) {
+      console.error("Error fetching customer info:", error);
+      // Continue with contracts lookup even if customer info fails
+    }
+
+    // Fetch all contracts
     const allContracts = await fetchContracts();
 
     const contracts = allContracts.filter((contract: any) =>
@@ -30,7 +50,7 @@ export async function searchByKennitala(kennitala: string): Promise<SearchResult
 
     return {
       renter: {
-        name: contracts[0].Customer?.Name ?? "Óþekktur",
+        name: contracts[0].Customer?.Name || customerName,
         kennitala
       },
       contracts: contracts.map((c: any) => ({
