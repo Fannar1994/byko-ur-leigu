@@ -54,7 +54,7 @@ const ItemTableRow: React.FC<ItemTableRowProps> = ({
     }
   };
 
-  // Handle photo button click - FIX: Properly stopping propagation
+  // Handle photo button click - FIX: Properly stopping propagation and NOT triggering status update
   const handlePhotoButtonClick = (e: React.MouseEvent) => {
     // Ensure we prevent the default behavior and stop event propagation
     e.preventDefault();
@@ -69,10 +69,9 @@ const ItemTableRow: React.FC<ItemTableRowProps> = ({
           description: "Aðgerð til að bæta við mynd í skýrsluna verður virk fljótlega.",
         });
         
-        // If we still need to call the status update function, we can do it here
-        if (onStatusClick) {
-          onStatusClick(item, count);
-        }
+        // Important: Removed the onStatusClick call here
+        // This was causing the item to be marked as delivered/picked
+        // when clicking the camera button
       } else {
         toast.error("Villa", {
           description: "Þú verður að setja inn talningar áður en þú bætir við mynd.",
@@ -140,8 +139,8 @@ const ItemTableRow: React.FC<ItemTableRowProps> = ({
         </TableCell>
       )}
       
-      <TableCell className="text-center">
-        <div className="flex items-center justify-center gap-2" onClick={(e) => e.stopPropagation()}>
+      <TableCell className="text-center" onClick={(e) => e.stopPropagation()}>
+        <div className="flex items-center justify-center gap-2">
           {/* Only show status badge if it's NOT a Tiltekt item */}
           {!isTiltektItem && (
             <Badge className={getItemStatusColor(item.status)}>
