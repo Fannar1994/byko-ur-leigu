@@ -31,7 +31,7 @@ const OffHiredItemsList: React.FC<OffHiredItemsListProps> = ({
   return (
     <div>
       <div className="flex justify-between items-center mb-4">
-        <h3 className="text-lg font-medium text-white"></h3>
+        <div></div> {/* Empty div to maintain flex layout */}
         <Button 
           variant="destructive" 
           className="text-white"
