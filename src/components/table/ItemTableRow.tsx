@@ -54,30 +54,16 @@ const ItemTableRow: React.FC<ItemTableRowProps> = ({
     }
   };
 
-  // Handle photo button click - FIX: Properly stopping propagation and NOT triggering status update
+  // Handle photo button click - completely independent from picking or status logic
   const handlePhotoButtonClick = (e: React.MouseEvent) => {
     // Ensure we prevent the default behavior and stop event propagation
     e.preventDefault();
     e.stopPropagation();
     
-    // Check if the item status is Tiltekt
-    if (item.status === "Tiltekt" || item.id.includes("mock-tiltekt")) {
-      const count = itemCounts[item.id] || 0;
-      
-      if (count > 0) {
-        toast.success("Mynd", {
-          description: "Aðgerð til að bæta við mynd í skýrsluna verður virk fljótlega.",
-        });
-        
-        // Important: Removed the onStatusClick call here
-        // This was causing the item to be marked as delivered/picked
-        // when clicking the camera button
-      } else {
-        toast.error("Villa", {
-          description: "Þú verður að setja inn talningar áður en þú bætir við mynd.",
-        });
-      }
-    }
+    // Always show the camera action toast, regardless of item status or count
+    toast.success("Mynd", {
+      description: "Aðgerð til að bæta við mynd í skýrsluna verður virk fljótlega.",
+    });
   };
 
   // Check if this is a Tiltekt item
@@ -141,25 +127,23 @@ const ItemTableRow: React.FC<ItemTableRowProps> = ({
       
       <TableCell className="text-center" onClick={(e) => e.stopPropagation()}>
         <div className="flex items-center justify-center gap-2">
-          {/* Only show status badge if it's NOT a Tiltekt item */}
+          {/* Show status badge for non-Tiltekt items */}
           {!isTiltektItem && (
             <Badge className={getItemStatusColor(item.status)}>
               {item.status}
             </Badge>
           )}
           
-          {/* Show camera button if it IS a Tiltekt item */}
-          {isTiltektItem && (
-            <Button 
-              variant="outline" 
-              size="sm"
-              className="p-1 h-7 bg-blue-600 hover:bg-blue-700 text-white"
-              onClick={handlePhotoButtonClick}
-              title="Bæta við mynd í skýrslu"
-            >
-              <Camera className="h-4 w-4" />
-            </Button>
-          )}
+          {/* Show camera button for ALL items - not just Tiltekt items */}
+          <Button 
+            variant="outline" 
+            size="sm"
+            className="p-1 h-7 bg-blue-600 hover:bg-blue-700 text-white"
+            onClick={handlePhotoButtonClick}
+            title="Bæta við mynd í skýrslu"
+          >
+            <Camera className="h-4 w-4" />
+          </Button>
         </div>
       </TableCell>
       
