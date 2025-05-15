@@ -4,11 +4,8 @@ import { TableRow, TableCell } from "@/components/ui/table";
 import { RentalItem } from "@/types/contract";
 import ContractLink from "@/components/item/ContractLink";
 import ItemStatusBadge from "@/components/item/ItemStatusBadge";
-import PhotoButton from "@/components/item/PhotoButton";
 import ItemLocation from "@/components/item/ItemLocation";
 import ItemDepartment from "@/components/item/ItemDepartment";
-import ItemActionButton from "@/components/item/ItemActionButton";
-import ItemStatusCell from "@/components/item/ItemStatusCell";
 import CountComponent from "@/components/CountComponent";
 import { FileText } from "lucide-react";
 
@@ -112,10 +109,6 @@ const ItemTableRow: React.FC<ItemTableRowProps> = ({
         </TableCell>
       )}
       
-      <TableCell className="text-center">
-        <PhotoButton />
-      </TableCell>
-      
       {showCountColumn && (
         <TableCell className="text-center" onClick={(e) => e.stopPropagation()}>
           <CountComponent 
@@ -140,28 +133,6 @@ const ItemTableRow: React.FC<ItemTableRowProps> = ({
           </button>
         )}
       </TableCell>
-      
-      {/* Only show the Merkja/Pick button column if not hidden */}
-      {onTogglePicked && !hideMerkjaButtons && (
-        <TableCell className="text-center" onClick={(e) => e.stopPropagation()}>
-          {/* Only show the Merkja button if count is 0 */}
-          {(!itemCounts[item.id] || itemCounts[item.id] === 0) && (
-            <ItemActionButton 
-              item={item}
-              isPicked={isPicked}
-              onTogglePicked={onTogglePicked}
-              actionType="pick"
-            />
-          )}
-          {item.status === "Tiltekt" && onStatusClick && (
-            <ItemStatusCell 
-              status={item.status}
-              isTiltektItem={true}
-              isSelected={isSelected}
-            />
-          )}
-        </TableCell>
-      )}
     </TableRow>
   );
 };

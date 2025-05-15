@@ -35,18 +35,12 @@ const ItemTableHeader: React.FC<ItemTableHeaderProps> = ({
           <TableHead className="text-white">Staðsetning</TableHead>
         )}
         
-        <TableHead className="text-center text-white">Taktu mynd</TableHead>
-        
         {showCountColumn && (
           <TableHead className="text-center text-white">Talningar</TableHead>
         )}
         
         {/* Always show comment column */}
         <TableHead className="text-center text-white">Athugasemd</TableHead>
-        
-        {showActions && (
-          <TableHead className="text-center text-white">Aðgerðir</TableHead>
-        )}
       </TableRow>
     </TableHeader>
   );

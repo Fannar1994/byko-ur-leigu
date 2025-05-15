@@ -49,9 +49,10 @@ const OffHiredItemsList: React.FC<OffHiredItemsListProps> = ({
         showCountColumn={showCountColumn}
         showActions={false}
         onCountChange={onCountChange}
-        onTogglePicked={onTogglePicked}
         pickedItems={pickedItems}
+        onTogglePicked={onTogglePicked}
         onOpenDescriptionDialog={onOpenDescriptionDialog}
+        hideMerkjaButtons={true}
       />
     </div>
   );

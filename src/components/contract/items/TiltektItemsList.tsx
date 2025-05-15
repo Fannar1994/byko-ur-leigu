@@ -21,12 +21,6 @@ const TiltektItemsList: React.FC<TiltektItemsListProps> = ({
   showCountColumn = true,
   onCountChange
 }) => {
-  // Create a simple pickedItems object to make the component work with ItemTable
-  const pickedItems: Record<string, boolean> = {};
-  
-  // Add a dummy toggle function since we handle picking via counts now
-  const dummyToggle = () => {};
-
   return (
     <div>
       <div className="flex justify-between items-center mb-4">
@@ -44,12 +38,11 @@ const TiltektItemsList: React.FC<TiltektItemsListProps> = ({
         items={displayedTiltektItems}
         showContractColumn={false}
         showCountColumn={showCountColumn}
+        showActions={false}
         onStatusClick={onStatusClick}
         onCountChange={onCountChange}
-        pickedItems={pickedItems}
-        onTogglePicked={dummyToggle}
         onOpenDescriptionDialog={onOpenDescriptionDialog}
-        hideMerkjaButtons={true} // Hide the Merkja buttons as requested
+        hideMerkjaButtons={true}
       />
     </div>
   );

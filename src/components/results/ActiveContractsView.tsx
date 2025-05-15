@@ -32,6 +32,7 @@ const ActiveContractsView: React.FC<ActiveContractsViewProps> = ({
           contractNumbers={contractNumbersMap} 
           showLocationColumn={true}
           showCountColumn={true}
+          showActions={false}
           onCountChange={onCountChange}
         />
       </TabsContent>
@@ -42,9 +43,8 @@ const ActiveContractsView: React.FC<ActiveContractsViewProps> = ({
             <TabContent 
               title="Úr leiga" 
               items={offHiredItems.filter(item => !processedItems.includes(item.id))}
-              contractNumbers={contractNumbersMap} 
-              showActions={false} // Change this to false to hide the actions column
-              onOffHireClick={handleOffHireClick}
+              contractNumbers={contractNumbersMap}
+              showActions={false}
               processingItemId={processingItemId}
               showLocationColumn={true}
               showCountColumn={true}
