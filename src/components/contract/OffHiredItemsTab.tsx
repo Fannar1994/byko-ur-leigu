@@ -2,7 +2,6 @@
 import React, { useState } from "react";
 import { RentalItem } from "@/types/contract";
 import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card";
-import { AlertCircle } from "lucide-react";
 import DescriptionDialog from "./dialog/DescriptionDialog";
 import ItemDescriptionsList from "./items/ItemDescriptionsList";
 import OffHiredItemsList from "./items/OffHiredItemsList";
@@ -94,25 +93,17 @@ const OffHiredItemsTab: React.FC<OffHiredItemsTabProps> = ({
         {displayedItems.length === 0 ? (
           <div className="text-center py-6 text-gray-500">Engar vörur í þessum flokki</div>
         ) : (
-          <div className="space-y-8">
-            <OffHiredItemsList
-              displayedOffHiredItems={displayedItems}
-              onOpenDescriptionDialog={handleOpenDescriptionDialog}
-              onBatchOffHire={handleBatchOffHireItems}
-              pickedItems={pickedItems}
-              onTogglePicked={onTogglePicked}
-              isProcessing={processingItemId !== null}
-              anyItemsPicked={anyItemsPicked}
-              onCountChange={onCountChange}
-              showCountColumn={showCountColumn}
-            />
-            
-            <ItemDescriptionsList
-              itemDescriptions={itemDescriptions}
-              displayedItems={displayedItems}
-              onEditDescription={handleOpenDescriptionDialog}
-            />
-          </div>
+          <OffHiredItemsList
+            displayedOffHiredItems={displayedItems}
+            onOpenDescriptionDialog={handleOpenDescriptionDialog}
+            onBatchOffHire={handleBatchOffHireItems}
+            pickedItems={pickedItems}
+            onTogglePicked={onTogglePicked}
+            isProcessing={processingItemId !== null}
+            anyItemsPicked={anyItemsPicked}
+            onCountChange={onCountChange}
+            showCountColumn={showCountColumn}
+          />
         )}
       </CardContent>
       

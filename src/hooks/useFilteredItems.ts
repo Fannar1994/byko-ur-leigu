@@ -11,7 +11,7 @@ export function useFilteredItems(rentalItems: RentalItem[]) {
     );
     
     const hasOffHiredItems = rentalItems.some(item => 
-      item.status === "Úr leiga" || item.status === "Off-Hired"
+      item.status === "Úr leiga" || item.status === "Off-Hired" || item.status === "On Rent" || item.status === "Í leigu"
     );
     
     let result = [...rentalItems];
@@ -63,7 +63,7 @@ export function useFilteredItems(rentalItems: RentalItem[]) {
           serialNumber: "URL-24680",
           dueDate: new Date().toISOString().split('T')[0],
           rentalRate: 3500,
-          status: "Úr leiga",
+          status: "On Rent",  // Changed from Úr leiga to On Rent
           location: "KOPA",
           department: "KOPA"
         });
@@ -76,7 +76,7 @@ export function useFilteredItems(rentalItems: RentalItem[]) {
           serialNumber: "URL-98765",
           dueDate: new Date().toISOString().split('T')[0],
           rentalRate: 1800,
-          status: "Off-Hired",
+          status: "Í leigu",  // Changed from Off-Hired to Í leigu
           location: "KEFL",
           department: "KEFL"
         });
@@ -109,8 +109,9 @@ export function useFilteredItems(rentalItems: RentalItem[]) {
     item.status === "Vara afhent"
   ), [enhancedItems]);
   
+  // Filter to ONLY show On Rent or Í leigu items in the offHiredItems list
   const offHiredItems = useMemo(() => enhancedItems.filter(item => 
-    item.status === "Úr leiga" || item.status === "Off-Hired"
+    item.status === "On Rent" || item.status === "Í leigu"
   ), [enhancedItems]);
 
   return {
