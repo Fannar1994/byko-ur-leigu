@@ -6,7 +6,7 @@ export const getItemStatusColor = (status?: string) => {
     case "Off-Hired":
     case "Úr leiga": return "bg-red-100 text-red-800";
     case "Pending Return": 
-    case "Tiltekt": return "bg-white text-black"; 
+    case "Tiltekt": return "bg-yellow-200 text-yellow-800 border border-yellow-400"; // Enhanced to make more noticeable
     case "Tilbúið til afhendingar": return "bg-green-500 text-black"; 
     default: return "bg-gray-100 text-gray-800";
   }

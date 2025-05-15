@@ -60,6 +60,9 @@ const ItemTableRow: React.FC<ItemTableRowProps> = ({
     }
   };
 
+  // Check if the badge should be interactive (show hand cursor)
+  const isInteractiveBadge = item.status === "Tiltekt" || item.id.includes("mock-tiltekt");
+
   return (
     <TableRow 
       onClick={onRowClick}
@@ -118,8 +121,9 @@ const ItemTableRow: React.FC<ItemTableRowProps> = ({
       
       <TableCell className="text-center">
         <Badge 
-          className={`${getItemStatusColor(item.status)} ${item.status === "Tiltekt" ? "cursor-pointer hover:bg-opacity-80" : ""}`}
+          className={`${getItemStatusColor(item.status)} ${isInteractiveBadge ? "cursor-pointer hover:bg-opacity-80 hover:scale-105 transition-all" : ""}`}
           onClick={handleStatusClick}
+          title={isInteractiveBadge ? "Smelltu til að breyta í 'Tilbúið til afhendingar'" : undefined}
         >
           {item.status}
         </Badge>

@@ -44,7 +44,7 @@ export function useFilteredItems(rentalItems: RentalItem[]) {
           serialNumber: "TIL-67890",
           dueDate: new Date().toISOString().split('T')[0],
           rentalRate: 1800,
-          status: "Tilbúið til afhendingar",
+          status: "Tiltekt",  // Changed from "Tilbúið til afhendingar" to "Tiltekt" so user can see the transition
           location: "GRAN",
           department: "GRAN"
         });

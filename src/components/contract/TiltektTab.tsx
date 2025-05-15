@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -42,6 +43,9 @@ const TiltektTab: React.FC<TiltektTabProps> = ({
     
     if (onStatusUpdate) {
       onStatusUpdate(item, count);
+      toast.success("Vara uppfærð", {
+        description: `${item.itemName} er nú tilbúin til afhendingar.`,
+      });
     }
   };
   
@@ -96,6 +100,10 @@ const TiltektTab: React.FC<TiltektTabProps> = ({
             {tiltektItems.length > 0 && (
               <div>
                 <h3 className="text-lg font-medium text-white mb-4">Vörur tilbúnar til afhendingar</h3>
+                <div className="mb-2 p-2 bg-gray-700 rounded flex items-center justify-center">
+                  <AlertCircle className="h-4 w-4 mr-2 text-gray-300" />
+                  <span className="text-sm text-gray-300">Smelltu á "Tiltekt" merkið til að færa vöru í "Tilbúið til afhendingar"</span>
+                </div>
                 <ItemTable 
                   items={tiltektItems} 
                   showContractColumn={false}

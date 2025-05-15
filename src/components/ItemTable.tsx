@@ -43,8 +43,8 @@ const ItemTable: React.FC<ItemTableProps> = ({
   const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
   const [itemCounts, setItemCounts] = useState<Record<string, number>>({});
 
+  // Initialize item counts from the utility
   useEffect(() => {
-    // Initialize item counts from the utility
     const counts: Record<string, number> = {};
     items.forEach(item => {
       counts[item.id] = getItemCount(item.id);
@@ -69,7 +69,7 @@ const ItemTable: React.FC<ItemTableProps> = ({
 
   const handleStatusClick = (item: RentalItem, count: number) => {
     if (onStatusClick) {
-      onStatusClick(item, count);
+      onStatusClick(item, itemCounts[item.id] || 0);
     }
   };
 
