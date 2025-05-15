@@ -26,7 +26,7 @@ const OffHiredItemsTab: React.FC<OffHiredItemsTabProps> = ({
   return (
     <TabContent 
       title="Vörur úr leigu" 
-      items={displayedItems}
+      items={displayedItems} // Use filtered items here
       showContractColumn={false}
       showActions={true}
       onOffHireClick={handleOffHireClick}

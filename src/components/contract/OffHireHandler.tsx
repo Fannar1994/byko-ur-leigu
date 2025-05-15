@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { toast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 import { RentalItem } from "@/types/contract";
 import OffHireDialog from "@/components/OffHireDialog";
 import { prepareReportData } from "@/services/reportService";
