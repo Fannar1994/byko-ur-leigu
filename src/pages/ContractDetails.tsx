@@ -45,13 +45,13 @@ const handleCountChange = (itemId: string, count: number) => {
       if (Array.isArray(itemId)) {
         return prevItems.map(item => 
           itemId.includes(item.id) 
-            ? { ...item, status: newStatus } 
+            ? { ...item, status: newStatus as any } 
             : item
         );
       } else {
         return prevItems.map(item => 
           item.id === itemId 
-            ? { ...item, status: newStatus } 
+            ? { ...item, status: newStatus as any } 
             : item
         );
       }

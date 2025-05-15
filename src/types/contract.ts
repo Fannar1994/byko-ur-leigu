@@ -28,15 +28,15 @@ export interface RentalItem {
   serialNumber: string;
   dueDate: string;
   rentalRate: number;
-  status?: 'On Rent' | 'Off-Hired' | 'Pending Return' | 'Í leigu' | 'Tiltekt' | 'Úr leiga' | 'Tilbúið til afhendingar';
+  status?: 'On Rent' | 'Off-Hired' | 'Pending Return' | 'Í leigu' | 'Tiltekt' | 'Úr leiga' | 'Tilbúið til afhendingar' | 'Vara afhent';
   location?: string;
   department?: 'KOPA' | 'ÞORH' | 'GRAN' | 'KEFL' | 'SELF' | 'AKEY' | 'VER';
 }
 
 export interface SearchResults {
-  renter: Renter;
-  contracts: Contract[];
-  rentalItems: RentalItem[];
+  success: boolean;
+  message: string;
+  itemId: string;
 }
 
 export interface OffHireResponse {
