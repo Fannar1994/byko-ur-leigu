@@ -8,6 +8,7 @@ import ItemLocation from "@/components/item/ItemLocation";
 import ItemDepartment from "@/components/item/ItemDepartment";
 import CountComponent from "@/components/CountComponent";
 import { FileText } from "lucide-react";
+import ItemStatusCell from "@/components/item/ItemStatusCell";
 
 interface ItemTableRowProps {
   item: RentalItem;
@@ -69,6 +70,9 @@ const ItemTableRow: React.FC<ItemTableRowProps> = ({
     }
   };
 
+  // Determine if this is a tiltekt item
+  const isTiltektItem = item.status === "Tiltekt" || item.status === "Tilbúið til afhendingar" || item.status === "Vara afhent";
+
   return (
     <TableRow 
       className={`
@@ -119,7 +123,14 @@ const ItemTableRow: React.FC<ItemTableRowProps> = ({
         </TableCell>
       )}
       
-      {/* Comment button column - Now centered with flex */}
+      {/* Status cell with camera button */}
+      <ItemStatusCell 
+        status={item.status || ''} 
+        isTiltektItem={isTiltektItem}
+        isSelected={isSelected} 
+      />
+      
+      {/* Comment button column */}
       <TableCell className="text-center" onClick={(e) => e.stopPropagation()}>
         {onOpenDescriptionDialog && (
           <div className="flex items-center justify-center">
