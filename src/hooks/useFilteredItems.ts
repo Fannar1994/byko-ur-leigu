@@ -90,6 +90,7 @@ export function useFilteredItems(rentalItems: RentalItem[]) {
     item.status === "Í leigu" || item.status === "On Rent"
   ), [enhancedItems]);
   
+  // Updated this filter to exclude "Tilbúið til afhendingar" items from readyForPickItems
   const readyForPickItems = useMemo(() => enhancedItems.filter(item => 
     item.status !== "Tiltekt" && 
     item.status !== "Úr leiga" && 
@@ -99,6 +100,7 @@ export function useFilteredItems(rentalItems: RentalItem[]) {
     item.status !== "Tilbúið til afhendingar"
   ), [enhancedItems]);
   
+  // Updated to include "Tilbúið til afhendingar" items in tiltektItems list
   const tiltektItems = useMemo(() => enhancedItems.filter(item => 
     item.status === "Tiltekt" || item.status === "Tilbúið til afhendingar"
   ), [enhancedItems]);
