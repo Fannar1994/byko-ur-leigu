@@ -119,18 +119,21 @@ const ItemTableRow: React.FC<ItemTableRowProps> = ({
         </TableCell>
       )}
       
-      {/* Comment button column */}
+      {/* Comment button column - Now centered with flex */}
       <TableCell className="text-center" onClick={(e) => e.stopPropagation()}>
         {onOpenDescriptionDialog && (
-          <button 
-            className="text-blue-400 hover:text-blue-500 p-1 rounded-sm flex items-center justify-center"
-            onClick={(e) => {
-              e.stopPropagation();
-              onOpenDescriptionDialog(item);
-            }}
-          >
-            <FileText className="h-4 w-4" />
-          </button>
+          <div className="flex items-center justify-center">
+            <button 
+              className="text-blue-400 hover:text-blue-500 p-1 rounded-sm flex items-center justify-center"
+              onClick={(e) => {
+                e.stopPropagation();
+                onOpenDescriptionDialog(item);
+              }}
+              title="Bæta við athugasemd"
+            >
+              <FileText className="h-4 w-4" />
+            </button>
+          </div>
         )}
       </TableCell>
     </TableRow>

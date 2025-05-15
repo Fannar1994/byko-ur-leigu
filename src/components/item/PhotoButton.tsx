@@ -42,7 +42,7 @@ const PhotoButton: React.FC<PhotoButtonProps> = ({ onClick }) => {
   };
 
   return (
-    <>
+    <div className="flex items-center justify-center">
       <Button 
         variant="outline" 
         size="sm"
@@ -63,7 +63,7 @@ const PhotoButton: React.FC<PhotoButtonProps> = ({ onClick }) => {
         className="hidden"
         aria-hidden="true"
       />
-    </>
+    </div>
   );
 };
 
