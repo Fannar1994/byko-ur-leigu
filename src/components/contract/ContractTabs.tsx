@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 import RentalTabsNavigation from "@/components/RentalTabsNavigation";
