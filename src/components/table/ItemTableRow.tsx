@@ -1,3 +1,4 @@
+
 import React from "react";
 import { MapPin, Building } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
@@ -63,7 +64,12 @@ const ItemTableRow: React.FC<ItemTableRowProps> = ({
         onStatusClick(item, count);
       } else {
         console.log("Count must be greater than 0 to update status");
-        // You could add a toast message here
+        // Show a toast message here for immediate feedback
+        const toast = window.document.querySelector('.sonner-toast');
+        if (!toast) {
+          // Only show if no toast is already visible
+          alert("Þú verður að setja inn talningar áður en þú setur vöruna í leigu.");
+        }
       }
     }
   };

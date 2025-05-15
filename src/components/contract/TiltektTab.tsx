@@ -44,8 +44,11 @@ const TiltektTab: React.FC<TiltektTabProps> = ({
     if (onStatusUpdate) {
       console.log(`TiltektTab: Calling onStatusUpdate for item ${item.id} with count ${count}`);
       onStatusUpdate(item, count);
-      toast.success("Vara uppfærð", {
-        description: `${item.itemName} er nú tilbúin til afhendingar.`,
+      
+      // Show a more prominent toast notification
+      toast.success("Vara uppfærð í 'Tilbúið til afhendingar'", {
+        description: `${item.itemName} (${item.serialNumber}) hefur verið merkt sem tilbúin til afhendingar og skýrsla send.`,
+        duration: 5000,
       });
     }
   };
@@ -103,7 +106,10 @@ const TiltektTab: React.FC<TiltektTabProps> = ({
                 <h3 className="text-lg font-medium text-white mb-4">Vörur tilbúnar til afhendingar</h3>
                 <div className="mb-2 p-2 bg-gray-700 rounded flex items-center justify-center">
                   <AlertCircle className="h-4 w-4 mr-2 text-gray-300" />
-                  <span className="text-sm text-gray-300">Smelltu á "Tiltekt" merkið til að færa vöru í "Tilbúið til afhendingar"</span>
+                  <span className="text-sm text-gray-300">
+                    Smelltu á "Tiltekt" merkið til að færa vöru í "Tilbúið til afhendingar". 
+                    Settu inn talningu fyrst og smelltu svo á merkið.
+                  </span>
                 </div>
                 <ItemTable 
                   items={tiltektItems} 

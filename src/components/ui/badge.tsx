@@ -30,7 +30,7 @@ export interface BadgeProps
 
 function Badge({ className, variant, ...props }: BadgeProps) {
   return (
-    <div className={cn(badgeVariants({ variant }), className, "transition-all duration-300")} {...props} />
+    <div className={cn(badgeVariants({ variant }), className, "transition-all duration-300 ease-in-out transform hover:scale-105")} {...props} />
   )
 }
 

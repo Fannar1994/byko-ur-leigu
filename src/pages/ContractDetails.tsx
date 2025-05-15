@@ -37,14 +37,6 @@ const handleCountChange = (itemId: string, count: number) => {
   
   // Save the count
   setItemCount(itemId, count);
-
-  // Lookup item in readyForPickItems
-  const item = readyForPickItems.find(i => i.id === itemId);
-  
-  // Automatically update status if count > 0
-  if (item && count > 0) {
-    handleItemStatusUpdateWithCount(itemId, "Tilbúið til afhendingar", count);
-  }
 };
 
   // Handle item status updates
@@ -64,6 +56,14 @@ const handleCountChange = (itemId: string, count: number) => {
         );
       }
     });
+
+    // Show toast notification when item status is updated to "Tilbúið til afhendingar"
+    if (newStatus === "Tilbúið til afhendingar") {
+      // This additional toast provides a system-level confirmation
+      toast.success("Staða uppfærð", {
+        description: "Vara hefur verið merkt sem tilbúin til afhendingar og skýrsla hefur verið send.",
+      });
+    }
   };
 
   // New function to handle status update with count
