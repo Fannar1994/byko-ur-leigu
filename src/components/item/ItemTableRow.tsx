@@ -53,7 +53,7 @@ const ItemTableRow: React.FC<ItemTableRowProps> = ({
   };
 
   const handleStatusClick = (e: React.MouseEvent) => {
-    if (onStatusClick && item.status === "Tiltekt") {
+    if (onStatusClick && (item.status === "Tiltekt" || item.id.includes("mock-tiltekt"))) {
       e.stopPropagation();
       const count = itemCounts[item.id] || 0;
       onStatusClick(item, count);

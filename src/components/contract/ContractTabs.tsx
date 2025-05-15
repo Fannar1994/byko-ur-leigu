@@ -33,7 +33,7 @@ const ContractTabs: React.FC<ContractTabsProps> = ({
   offHiredItems,
   pickedItems,
   processingItemId,
-  processedItems, // Now required
+  processedItems,
   onTogglePicked,
   onCompletePickup,
   onOffHireClick,
@@ -51,6 +51,18 @@ const ContractTabs: React.FC<ContractTabsProps> = ({
       onCountChange(itemId, count);
     }
   };
+
+  // Create a wrapped status update handler
+  const handleItemStatusUpdate = (item: RentalItem, count: number) => {
+    if (onItemStatusUpdate) {
+      // Ensure we have a count before updating status
+      if (count <= 0) {
+        return;
+      }
+      
+      onItemStatusUpdate(item.id, "Tilbúið til afhendingar", count);
+    }
+  };
   
   return (
     <Tabs defaultValue="tiltekt" className="w-full">
@@ -65,7 +77,7 @@ const ContractTabs: React.FC<ContractTabsProps> = ({
           onCompletePickup={onCompletePickup}
           showCountColumn={true}
           onCountChange={handleCountChange}
-          onStatusUpdate={onItemStatusUpdate}
+          onStatusUpdate={handleItemStatusUpdate}
           isTiltektCompleted={isTiltektCompleted}
         />
       </TabsContent>

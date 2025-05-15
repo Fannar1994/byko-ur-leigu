@@ -67,6 +67,12 @@ const ItemTable: React.FC<ItemTableProps> = ({
     }));
   };
 
+  const handleStatusClick = (item: RentalItem, count: number) => {
+    if (onStatusClick) {
+      onStatusClick(item, count);
+    }
+  };
+
   if (items.length === 0) {
     return <div className="text-center py-6 text-gray-500">Engar vörur fundust</div>;
   }
@@ -98,7 +104,7 @@ const ItemTable: React.FC<ItemTableProps> = ({
                 onOffHireClick={onOffHireClick}
                 processingItemId={processingItemId}
                 onCountChange={handleCountChange}
-                onStatusClick={onStatusClick}
+                onStatusClick={handleStatusClick}
                 itemCounts={itemCounts}
                 showContractColumn={showContractColumn}
                 showCountColumn={showCountColumn}

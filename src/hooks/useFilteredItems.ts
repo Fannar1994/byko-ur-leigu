@@ -21,8 +21,10 @@ export function useFilteredItems(rentalItems: RentalItem[]) {
       // Add sample Tiltekt items if none exist
       if (!hasTiltektItems) {
         const contractId = rentalItems[0].contractId;
+        const timestamp = Date.now();
+        
         result.push({
-          id: `mock-tiltekt-1-${Date.now()}`,
+          id: `mock-tiltekt-1-${timestamp}`,
           contractId: contractId,
           itemName: "Rafmagnsborvél",
           category: "Handverkfæri",
@@ -35,7 +37,7 @@ export function useFilteredItems(rentalItems: RentalItem[]) {
         });
         
         result.push({
-          id: `mock-tiltekt-2-${Date.now()}`,
+          id: `mock-tiltekt-2-${timestamp}`,
           contractId: contractId,
           itemName: "Slípivél",
           category: "Handverkfæri",
@@ -51,8 +53,10 @@ export function useFilteredItems(rentalItems: RentalItem[]) {
       // Add sample Úr leiga items if none exist
       if (!hasOffHiredItems) {
         const contractId = rentalItems[0].contractId;
+        const timestamp = Date.now();
+        
         result.push({
-          id: `mock-offhired-1-${Date.now()}`,
+          id: `mock-offhired-1-${timestamp}`,
           contractId: contractId,
           itemName: "Háþrýstidæla",
           category: "Verkfæri",
@@ -65,7 +69,7 @@ export function useFilteredItems(rentalItems: RentalItem[]) {
         });
         
         result.push({
-          id: `mock-offhired-2-${Date.now()}`,
+          id: `mock-offhired-2-${timestamp}`,
           contractId: contractId,
           itemName: "Stigapallur",
           category: "Verkfæri",

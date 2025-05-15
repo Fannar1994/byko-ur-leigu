@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -16,7 +15,7 @@ interface TiltektTabProps {
   onCompletePickup: () => void;
   showCountColumn?: boolean;
   onCountChange?: (itemId: string, count: number) => void;
-  onStatusUpdate?: (itemId: string, newStatus: "Tiltekt" | "Úr leiga" | "Í leigu" | "On Rent" | "Off-Hired" | "Pending Return" | "Tilbúið til afhendingar", count: number) => void;
+  onStatusUpdate?: (item: RentalItem, count: number) => void;
   isTiltektCompleted?: boolean;
 }
 
@@ -42,10 +41,7 @@ const TiltektTab: React.FC<TiltektTabProps> = ({
     }
     
     if (onStatusUpdate) {
-      onStatusUpdate(item.id, "Tilbúið til afhendingar", count);
-      toast.success("Aðgerð tókst", {
-        description: `${item.itemName} sett sem tilbúið til afhendingar með ${count} talningar.`,
-      });
+      onStatusUpdate(item, count);
     }
   };
   
