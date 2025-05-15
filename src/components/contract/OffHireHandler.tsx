@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { toast } from "sonner";
+import { toast } from "@/components/ui/use-toast";
 import { RentalItem } from "@/types/contract";
 import OffHireDialog from "@/components/OffHireDialog";
 import { prepareReportData } from "@/services/reportService";
@@ -53,12 +53,15 @@ export function OffHireHandler({ children, onItemStatusUpdate }: OffHireHandlerP
           // Update the local state to show the item as off-hired
           onItemStatusUpdate(itemId, "Úr leiga");
           
-          toast.success("Skýrsla send", {
-            description: `Úr leigu skýrsla var send á ${noCharge ? 'án gjalds' : 'með gjaldi'}.`,
+          toast({
+            title: "Skýrsla send",
+            description: "Úr leigu skýrsla var send.",
           });
         } else {
-          toast.error("Villa", {
+          toast({
+            title: "Villa",
             description: "Ekki tókst að senda skýrslu. Reyndu aftur eða hafðu samband við kerfisstjóra.",
+            variant: "destructive",
           });
         }
       }
@@ -69,8 +72,10 @@ export function OffHireHandler({ children, onItemStatusUpdate }: OffHireHandlerP
         errorMessage = error.message;
       }
       
-      toast.error("Villa", {
+      toast({
+        title: "Villa",
         description: errorMessage,
+        variant: "destructive",
       });
     } finally {
       setProcessingItemId(null);

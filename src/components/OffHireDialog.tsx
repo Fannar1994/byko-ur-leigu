@@ -40,15 +40,9 @@ const OffHireDialog: React.FC<OffHireDialogProps> = ({
         <AlertDialogFooter>
           <AlertDialogCancel onClick={onClose}>Hætta við</AlertDialogCancel>
           <AlertDialogAction
-            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             onClick={() => onConfirm(item.id, false)}
           >
-            Skila með gjaldi
-          </AlertDialogAction>
-          <AlertDialogAction
-            onClick={() => onConfirm(item.id, true)}
-          >
-            Skila án gjalds
+            Senda
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
