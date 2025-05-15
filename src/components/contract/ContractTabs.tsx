@@ -15,6 +15,7 @@ interface ContractTabsProps {
   offHiredItems: RentalItem[];
   pickedItems: Record<string, boolean>;
   processingItemId: string | null;
+  processedItems?: string[]; // New prop to track processed items
   sortField: keyof Contract;
   sortDirection: "asc" | "desc";
   onTogglePicked: (itemId: string) => void;
@@ -32,6 +33,7 @@ const ContractTabs: React.FC<ContractTabsProps> = ({
   offHiredItems,
   pickedItems,
   processingItemId,
+  processedItems = [], // Default to empty array
   onTogglePicked,
   onCompletePickup,
   onOffHireClick,
@@ -75,6 +77,7 @@ const ContractTabs: React.FC<ContractTabsProps> = ({
           processingItemId={processingItemId}
           showCountColumn={true}
           onCountChange={handleCountChange}
+          processedItems={processedItems}
         />
       </TabsContent>
     </Tabs>

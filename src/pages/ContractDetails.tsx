@@ -1,5 +1,5 @@
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import ContractInfo from "@/components/ContractInfo";
 import ContractHeader from "@/components/contract/ContractHeader";
@@ -20,6 +20,7 @@ import { hasTiltektBeenCompleted } from "@/utils/contractStatusUtils";
 const ContractDetails = () => {
   const { contractNumber } = useParams();
   const navigate = useNavigate();
+  const [processedItems, setProcessedItems] = useState<string[]>([]);
   
   // Use custom hooks
   const { loading, contractData, localRentalItems, setLocalRentalItems, lastKennitala } = 
@@ -51,6 +52,11 @@ const ContractDetails = () => {
         );
       }
     });
+    
+    // If an item is being marked as "Úr leiga", add it to processed items
+    if (newStatus === "Úr leiga" && !Array.isArray(itemId)) {
+      setProcessedItems(prev => [...prev, itemId]);
+    }
   };
 
   // New function to handle status update with count
@@ -101,6 +107,7 @@ const ContractDetails = () => {
                           offHiredItems={offHiredItems}
                           pickedItems={pickedItems}
                           processingItemId={processingItemId}
+                          processedItems={processedItems}
                           sortField={sortField}
                           sortDirection={sortDirection}
                           onTogglePicked={toggleItemPicked}

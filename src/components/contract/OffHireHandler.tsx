@@ -18,8 +18,14 @@ export function OffHireHandler({ children, onItemStatusUpdate }: OffHireHandlerP
   const [offHireDialogOpen, setOffHireDialogOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState<RentalItem | null>(null);
   const [processingItemId, setProcessingItemId] = useState<string | null>(null);
+  const [processedItems, setProcessedItems] = useState<string[]>([]);
 
   const handleOffHireClick = (item: RentalItem) => {
+    // Skip if the item has already been processed
+    if (processedItems.includes(item.id)) {
+      return;
+    }
+    
     setSelectedItem(item);
     setOffHireDialogOpen(true);
   };
@@ -52,6 +58,9 @@ export function OffHireHandler({ children, onItemStatusUpdate }: OffHireHandlerP
         if (success) {
           // Update the local state to show the item as off-hired
           onItemStatusUpdate(itemId, "Úr leiga");
+          
+          // Add the item to processed items so it won't appear in the UI
+          setProcessedItems(prev => [...prev, itemId]);
           
           toast({
             title: "Skýrsla send",

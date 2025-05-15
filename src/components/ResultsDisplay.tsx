@@ -20,6 +20,7 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, onDataChange }
   const [sortField, setSortField] = useState<keyof Contract>("startDate");
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("desc");
   const [localRentalItems, setLocalRentalItems] = useState<RentalItem[]>([]);
+  const [processedItems, setProcessedItems] = useState<string[]>([]);
   const location = useLocation();
   const isHomePage = location.pathname === "/";
   
@@ -57,7 +58,8 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, onDataChange }
   
   const offHiredItems = localRentalItems.filter(item => 
     contractIds.includes(item.contractId) && 
-    (item.status === "Off-Hired" || item.status === "Úr leiga")
+    (item.status === "Off-Hired" || item.status === "Úr leiga") &&
+    !processedItems.includes(item.id)
   );
 
   const handleSort = (field: keyof Contract) => {
@@ -78,6 +80,11 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results, onDataChange }
           : item
       )
     );
+    
+    // If item is being marked as returned, add to processed items
+    if (newStatus === "Úr leiga") {
+      setProcessedItems(prev => [...prev, itemId]);
+    }
     
     if (onDataChange) {
       onDataChange();
