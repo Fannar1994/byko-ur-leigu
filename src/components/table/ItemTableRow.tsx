@@ -1,15 +1,13 @@
 
 import React from "react";
-import { MapPin, Building, Camera } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
 import { TableRow, TableCell } from "@/components/ui/table";
-import { Link } from "react-router-dom";
-import CountComponent from "../CountComponent";
 import { RentalItem } from "@/types/contract";
-import { getItemStatusColor, getDepartmentBadgeColor } from "@/utils/itemStatusUtils";
+import CountComponent from "../CountComponent";
 import ItemActionButton from "../item/ItemActionButton";
-import { Button } from "@/components/ui/button";
-import { toast } from "sonner";
+import ItemStatusCell from "../item/ItemStatusCell";
+import ItemLocation from "../item/ItemLocation";
+import ItemDepartment from "../item/ItemDepartment";
+import ContractLink from "../item/ContractLink";
 
 interface ItemTableRowProps {
   item: RentalItem;
@@ -54,18 +52,6 @@ const ItemTableRow: React.FC<ItemTableRowProps> = ({
     }
   };
 
-  // Handle photo button click - completely independent from picking or status logic
-  const handlePhotoButtonClick = (e: React.MouseEvent) => {
-    // Ensure we prevent the default behavior and stop event propagation
-    e.preventDefault();
-    e.stopPropagation();
-    
-    // Always show the camera action toast, regardless of item status or count
-    toast.success("Mynd", {
-      description: "Aðgerð til að bæta við mynd í skýrsluna verður virk fljótlega.",
-    });
-  };
-
   // Check if this is a Tiltekt item
   const isTiltektItem = item.status === "Tiltekt" || item.id.includes("mock-tiltekt");
   
@@ -87,65 +73,36 @@ const ItemTableRow: React.FC<ItemTableRowProps> = ({
       
       {showContractColumn && (
         <TableCell className={isSelected ? "text-black" : "text-white"}>
-          {contractNumber ? (
-            <Link 
-              to={`/contract/${contractNumber}`}
-              className={isSelected ? "text-black hover:underline" : "text-primary hover:underline"}
-              onClick={(e) => e.stopPropagation()}
-            >
-              {contractNumber}
-            </Link>
-          ) : (
-            <span>-</span>
-          )}
+          <ContractLink 
+            contractNumber={contractNumber}
+            isSelected={isSelected}
+          />
         </TableCell>
       )}
       
       {showDepartmentColumn && (
         <TableCell className={isSelected ? "text-black" : "text-white"}>
-          <div className="flex items-center gap-1">
-            <Building size={14} className={isSelected ? "text-black" : "text-gray-400"} />
-            {item.department ? (
-              <Badge className={getDepartmentBadgeColor(item.department)}>
-                {item.department}
-              </Badge>
-            ) : (
-              <span className="text-gray-400">-</span>
-            )}
-          </div>
+          <ItemDepartment 
+            department={item.department}
+            isSelected={isSelected}
+          />
         </TableCell>
       )}
       
       {showLocationColumn && (
         <TableCell className={isSelected ? "text-black" : "text-white"}>
-          <div className="flex items-center gap-1">
-            <MapPin size={14} className={isSelected ? "text-black" : "text-gray-400"} />
-            <span>{item.location || "Óþekktur staður"}</span>
-          </div>
+          <ItemLocation 
+            location={item.location}
+            isSelected={isSelected} 
+          />
         </TableCell>
       )}
       
-      <TableCell className="text-center" onClick={(e) => e.stopPropagation()}>
-        <div className="flex items-center justify-center gap-2">
-          {/* Show status badge for non-Tiltekt items */}
-          {!isTiltektItem && (
-            <Badge className={getItemStatusColor(item.status)}>
-              {item.status}
-            </Badge>
-          )}
-          
-          {/* Show camera button for ALL items - not just Tiltekt items */}
-          <Button 
-            variant="outline" 
-            size="sm"
-            className="p-1 h-7 bg-blue-600 hover:bg-blue-700 text-white"
-            onClick={handlePhotoButtonClick}
-            title="Bæta við mynd í skýrslu"
-          >
-            <Camera className="h-4 w-4" />
-          </Button>
-        </div>
-      </TableCell>
+      <ItemStatusCell 
+        status={item.status || ""} 
+        isTiltektItem={isTiltektItem}
+        isSelected={isSelected}
+      />
       
       {showCountColumn && (
         <TableCell className="text-center" onClick={(e) => e.stopPropagation()}>
