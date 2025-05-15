@@ -22,3 +22,13 @@ export const clearTiltektCompletionStatus = (contractId: string): void => {
   const updatedContracts = completedTiltektContracts.filter((id: string) => id !== contractId);
   localStorage.setItem('completedTiltektContracts', JSON.stringify(updatedContracts));
 };
+
+// Get all contracts that have completed tiltekt
+export const getAllCompletedTiltektContracts = (): string[] => {
+  return JSON.parse(localStorage.getItem('completedTiltektContracts') || '[]');
+};
+
+// Clear all tiltekt completion statuses (for testing)
+export const clearAllTiltektCompletionStatuses = (): void => {
+  localStorage.setItem('completedTiltektContracts', JSON.stringify([]));
+};

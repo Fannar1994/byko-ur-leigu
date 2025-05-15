@@ -28,6 +28,11 @@ export function PickupHandler({ children, onItemStatusUpdate, contractId }: Pick
     if (contractId) {
       const completed = hasTiltektBeenCompleted(contractId);
       setIsTiltektCompleted(completed);
+      
+      if (completed) {
+        // Clear picked items when tiltekt is already completed
+        setPickedItems({});
+      }
     }
   }, [contractId]);
 

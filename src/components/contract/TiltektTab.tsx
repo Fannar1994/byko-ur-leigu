@@ -6,7 +6,6 @@ import { Check, AlertCircle } from "lucide-react";
 import ItemTable from "../ItemTable";
 import { RentalItem } from "@/types/contract";
 import { toast } from "sonner";
-import { fetchContractItems as apiFetchContractItems } from "@/api/inspHireService";
 
 interface TiltektTabProps {
   readyForPickItems: RentalItem[];
@@ -64,7 +63,7 @@ const TiltektTab: React.FC<TiltektTabProps> = ({
             <Button 
               className="ml-auto" 
               onClick={onCompletePickup}
-              disabled={!hasPickedItems}
+              disabled={!hasPickedItems || isTiltektCompleted}
             >
               <Check className="h-4 w-4 mr-2" /> Staðfesta tiltekt
             </Button>
@@ -72,7 +71,7 @@ const TiltektTab: React.FC<TiltektTabProps> = ({
         </CardTitle>
       </CardHeader>
       <CardContent>
-        {isTiltektCompleted && readyForPickItems.length > 0 && (
+        {isTiltektCompleted && (
           <div className="mb-4 p-2 bg-yellow-500/20 border border-yellow-500/30 rounded flex items-center">
             <AlertCircle className="h-4 w-4 mr-2 text-yellow-500" />
             <span className="text-sm text-yellow-500">Tiltekt hefur þegar verið lokið fyrir þennan samning.</span>
@@ -92,7 +91,7 @@ const TiltektTab: React.FC<TiltektTabProps> = ({
                   onTogglePicked={!isTiltektCompleted ? onTogglePicked : undefined}
                   pickedItems={pickedItems}
                   showCountColumn={showCountColumn}
-                  onCountChange={onCountChange}
+                  onCountChange={!isTiltektCompleted ? onCountChange : undefined}
                 />
               </div>
             )}
