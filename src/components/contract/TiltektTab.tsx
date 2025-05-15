@@ -42,6 +42,7 @@ const TiltektTab: React.FC<TiltektTabProps> = ({
     }
     
     if (onStatusUpdate) {
+      console.log(`TiltektTab: Calling onStatusUpdate for item ${item.id} with count ${count}`);
       onStatusUpdate(item, count);
       toast.success("Vara uppfærð", {
         description: `${item.itemName} er nú tilbúin til afhendingar.`,

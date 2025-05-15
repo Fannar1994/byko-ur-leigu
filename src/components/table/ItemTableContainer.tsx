@@ -7,7 +7,7 @@ import {
 } from "@/components/ui/table";
 import ItemTableHeader from "./ItemTableHeader";
 import ItemTableBody from "./ItemTableBody";
-import { getItemCount } from "@/utils/countUtils";
+import { getItemCount, setItemCount } from "@/utils/countUtils";
 
 interface ItemTableContainerProps {
   items: RentalItem[];
@@ -57,20 +57,25 @@ const ItemTableContainer: React.FC<ItemTableContainerProps> = ({
   };
 
   const handleCountChange = (itemId: string, count: number) => {
-    if (onCountChange) {
-      onCountChange(itemId, count);
-    }
     // Store the count in local state
     setItemCounts(prev => ({
       ...prev,
       [itemId]: count
     }));
+    
+    // Store in util and call parent handler
+    setItemCount(itemId, count);
+    if (onCountChange) {
+      onCountChange(itemId, count);
+    }
   };
 
   const handleStatusClick = (item: RentalItem, count: number) => {
+    console.log(`Status clicked for item ${item.id} with status ${item.status}`);
     if (onStatusClick) {
       // Use the stored count for this item
       const currentCount = itemCounts[item.id] || 0;
+      console.log(`Calling onStatusClick with count: ${currentCount}`);
       onStatusClick(item, currentCount);
     }
   };

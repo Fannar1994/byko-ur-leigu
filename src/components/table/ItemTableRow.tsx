@@ -1,4 +1,3 @@
-
 import React from "react";
 import { MapPin, Building } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
@@ -53,16 +52,25 @@ const ItemTableRow: React.FC<ItemTableRowProps> = ({
   };
 
   const handleStatusClick = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent row click
+    
+    // Check if badge should be interactive (Tiltekt status)
     if (onStatusClick && (item.status === "Tiltekt" || item.id.includes("mock-tiltekt"))) {
-      e.stopPropagation();
       const count = itemCounts[item.id] || 0;
-      onStatusClick(item, count);
+      console.log(`Status badge clicked for ${item.id} with count ${count}`);
+      
+      if (count > 0) {
+        onStatusClick(item, count);
+      } else {
+        console.log("Count must be greater than 0 to update status");
+        // You could add a toast message here
+      }
     }
   };
 
-  // Check if the badge should be interactive (show hand cursor)
+  // Check if the badge should be interactive
   const isInteractiveBadge = item.status === "Tiltekt" || item.id.includes("mock-tiltekt");
-
+  
   return (
     <TableRow 
       onClick={onRowClick}
@@ -119,7 +127,7 @@ const ItemTableRow: React.FC<ItemTableRowProps> = ({
         </TableCell>
       )}
       
-      <TableCell className="text-center">
+      <TableCell className="text-center" onClick={(e) => e.stopPropagation()}>
         <Badge 
           className={`${getItemStatusColor(item.status)} ${isInteractiveBadge ? "cursor-pointer hover:bg-opacity-80 hover:scale-105 transition-all duration-300" : ""}`}
           onClick={handleStatusClick}
@@ -134,6 +142,7 @@ const ItemTableRow: React.FC<ItemTableRowProps> = ({
           <CountComponent 
             itemId={item.id}
             onCountChange={handleCountChange}
+            count={itemCounts[item.id]}
           />
         </TableCell>
       )}

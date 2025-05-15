@@ -1,3 +1,4 @@
+
 export const getItemStatusColor = (status?: string) => {
   switch (status) {
     case "On Rent": 
