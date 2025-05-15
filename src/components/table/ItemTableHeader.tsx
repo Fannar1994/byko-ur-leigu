@@ -31,7 +31,7 @@ const ItemTableHeader: React.FC<ItemTableHeaderProps> = ({
         {showLocationColumn && (
           <TableHead className="text-white">Verkstaður</TableHead>
         )}
-        <TableHead className="text-white text-center">Staða</TableHead>
+        <TableHead className="text-white text-center">Taktu mynd</TableHead>
         {showCountColumn && (
           <TableHead className="text-white text-center">Talningar</TableHead>
         )}
