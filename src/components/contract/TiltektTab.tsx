@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Check, AlertCircle } from "lucide-react";
@@ -36,6 +36,12 @@ const TiltektTab: React.FC<TiltektTabProps> = ({
   // Keep track of item counts to know which ones to update
   const [itemCounts, setItemCounts] = useState<Record<string, number>>({});
   
+  // Track items that have been marked as delivered (to remove them from the display)
+  const [deliveredItems, setDeliveredItems] = useState<string[]>([]);
+  
+  // Filter out delivered items from display
+  const displayedTiltektItems = tiltektItems.filter(item => !deliveredItems.includes(item.id));
+  
   const handleStatusClick = (item: RentalItem, count: number) => {
     if (count <= 0) {
       toast.error("Villa", {
@@ -48,6 +54,9 @@ const TiltektTab: React.FC<TiltektTabProps> = ({
       console.log(`TiltektTab: Calling onStatusUpdate for item ${item.id} with count ${count}`);
       onStatusUpdate(item, count);
       
+      // Add the item to the delivered items list (to remove from display)
+      setDeliveredItems(prev => [...prev, item.id]);
+      
       // Show a more prominent toast notification
       toast.success("Vara uppfærð í 'Tilbúið til afhendingar'", {
         description: `${item.itemName} (${item.serialNumber}) hefur verið merkt sem tilbúin til afhendingar og skýrsla send.`,
@@ -59,16 +68,21 @@ const TiltektTab: React.FC<TiltektTabProps> = ({
   // New function to handle batch update of items with counts > 0
   const handleBatchStatusUpdate = () => {
     let updatedCount = 0;
+    const newDeliveredItems: string[] = [];
     
     tiltektItems.forEach(item => {
       const count = getItemCount(item.id);
-      if (count > 0 && onStatusUpdate) {
+      if (count > 0 && onStatusUpdate && !deliveredItems.includes(item.id)) {
         onStatusUpdate(item, count);
         updatedCount++;
+        newDeliveredItems.push(item.id);
       }
     });
     
     if (updatedCount > 0) {
+      // Add all newly delivered items to the list
+      setDeliveredItems(prev => [...prev, ...newDeliveredItems]);
+      
       toast.success(`${updatedCount} vörur uppfærðar`, {
         description: `${updatedCount} vörur hafa verið merktar sem "Vara afhent" og skýrslur sendar.`,
         duration: 5000,
@@ -110,7 +124,7 @@ const TiltektTab: React.FC<TiltektTabProps> = ({
           </div>
         )}
       
-        {readyForPickItems.length === 0 && tiltektItems.length === 0 ? (
+        {readyForPickItems.length === 0 && displayedTiltektItems.length === 0 ? (
           <div className="text-center py-6 text-gray-500">Engar vörur eru tilbúnar fyrir tiltekt</div>
         ) : (
           <div className="space-y-8">
@@ -128,7 +142,7 @@ const TiltektTab: React.FC<TiltektTabProps> = ({
               </div>
             )}
 
-            {tiltektItems.length > 0 && (
+            {displayedTiltektItems.length > 0 && (
               <div>
                 <div className="flex justify-between items-center mb-4">
                   <h3 className="text-lg font-medium text-white">Vörur tilbúnar til afhendingar</h3>
@@ -143,12 +157,12 @@ const TiltektTab: React.FC<TiltektTabProps> = ({
                 <div className="mb-2 p-2 bg-gray-700 rounded flex items-center justify-center">
                   <AlertCircle className="h-4 w-4 mr-2 text-gray-300" />
                   <span className="text-sm text-gray-300">
-                    Smelltu á "Tiltekt" merkið til að færa vöru í "Tilbúið til afhendingar". 
+                    Smelltu á "Taktu mynd" til að færa vöru í "Tilbúið til afhendingar". 
                     Settu inn talningu fyrst og smelltu svo á merkið.
                   </span>
                 </div>
                 <ItemTable 
-                  items={tiltektItems} 
+                  items={displayedTiltektItems} 
                   showContractColumn={false}
                   showCountColumn={showCountColumn}
                   onCountChange={onCountChange}
