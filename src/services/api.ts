@@ -8,6 +8,7 @@ import {
   fetchCustomerByKennitala 
 } from "@/api/inspHireService";
 import { validateKennitala } from "./validation";
+import { useQuery } from "@tanstack/react-query";
 
 /**
  * Search for contracts by kennitala.
@@ -69,6 +70,20 @@ export async function searchByKennitala(kennitala: string): Promise<SearchResult
     console.error("Error fetching data:", error);
     throw error;
   }
+}
+
+/**
+ * React Query hook for searching by kennitala
+ */
+export function useSearchByKennitala(kennitala: string, enabled: boolean = false) {
+  return useQuery({
+    queryKey: ["search", kennitala],
+    queryFn: () => searchByKennitala(kennitala),
+    enabled: enabled && !!kennitala && kennitala.length === 10,
+    retry: 1,
+    refetchOnWindowFocus: false,
+    staleTime: 1000 * 60 * 5, // 5 minutes
+  });
 }
 
 // Re-export validation function for convenience

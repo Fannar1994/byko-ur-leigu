@@ -5,8 +5,9 @@ import { Check, AlertCircle } from "lucide-react";
 import { RentalItem } from "@/types/contract";
 import { toast } from "sonner";
 import { getItemCount } from "@/utils/countUtils";
+import { useUpdateItemStatus } from "@/mutations/useUpdateItemStatus";
 
-// Import our new components
+// Import our components
 import DescriptionDialog from "./dialog/DescriptionDialog";
 import ItemDescriptionsList from "./items/ItemDescriptionsList";
 import TiltektItemsList from "./items/TiltektItemsList";
@@ -22,6 +23,7 @@ interface TiltektTabProps {
   onCountChange?: (itemId: string, count: number) => void;
   onStatusUpdate?: (item: RentalItem, count: number) => void;
   isTiltektCompleted?: boolean;
+  contractId?: string;
 }
 
 interface ItemDescription {
@@ -38,9 +40,13 @@ const TiltektTab: React.FC<TiltektTabProps> = ({
   showCountColumn = true,
   onCountChange,
   onStatusUpdate,
-  isTiltektCompleted = false
+  isTiltektCompleted = false,
+  contractId
 }) => {
   const hasPickedItems = Object.values(pickedItems).some(Boolean);
+  
+  // Use our mutation hook
+  const updateItemStatusMutation = useUpdateItemStatus(contractId);
   
   // State for description dialog
   const [isDescriptionDialogOpen, setIsDescriptionDialogOpen] = useState(false);
@@ -72,40 +78,79 @@ const TiltektTab: React.FC<TiltektTabProps> = ({
       return;
     }
     
-    if (onStatusUpdate) {
-      console.log(`TiltektTab: Calling onStatusUpdate for item ${item.id} with count ${count}`);
-      onStatusUpdate(item, count);
-      
-      toast.success("Vara uppfærð í 'Tilbúið til afhendingar'", {
-        description: `${item.itemName} (${item.serialNumber}) hefur verið merkt sem tilbúin til afhendingar og skýrsla send.`,
-        duration: 5000,
-      });
-    }
+    // Use our mutation
+    updateItemStatusMutation.mutate(
+      { 
+        itemId: item.id, 
+        status: "Tilbúið til afhendingar",
+        memo: `Tiltekt lokið - talning: ${count}`
+      },
+      {
+        onSuccess: () => {
+          toast.success("Vara uppfærð í 'Tilbúið til afhendingar'", {
+            description: `${item.itemName} (${item.serialNumber}) hefur verið merkt sem tilbúin til afhendingar.`,
+            duration: 5000,
+          });
+          
+          // Still call the parent handler if provided
+          if (onStatusUpdate) {
+            onStatusUpdate(item, count);
+          }
+        },
+        onError: (error) => {
+          toast.error("Villa við að uppfæra vöru", {
+            description: `Ekki tókst að uppfæra stöðu vöru: ${error instanceof Error ? error.message : 'Óþekkt villa'}`,
+          });
+        }
+      }
+    );
   };
   
   // Handle batch update of items with counts > 0
   const handleBatchStatusUpdate = () => {
     let updatedCount = 0;
+    let errorCount = 0;
     
-    tiltektItems.forEach(item => {
-      // Only process items that are in "Tiltekt" status
-      if (item.status === "Tiltekt") {
-        const count = getItemCount(item.id);
-        if (count > 0 && onStatusUpdate) {
-          onStatusUpdate(item, count);
-          updatedCount++;
-        }
+    // Process each item in tiltektItems that has a status of "Tiltekt"
+    tiltektOnlyItems.forEach(item => {
+      const count = getItemCount(item.id);
+      if (count > 0) {
+        updateItemStatusMutation.mutate(
+          { 
+            itemId: item.id, 
+            status: "Tilbúið til afhendingar",
+            memo: `Tiltekt lokið - talning: ${count}` 
+          },
+          {
+            onSuccess: () => {
+              updatedCount++;
+              // Call parent handler if provided
+              if (onStatusUpdate) {
+                onStatusUpdate(item, count);
+              }
+            },
+            onError: () => {
+              errorCount++;
+            }
+          }
+        );
       }
     });
     
     if (updatedCount > 0) {
       toast.success(`${updatedCount} vörur uppfærðar`, {
-        description: `${updatedCount} vörur hafa verið merktar sem "Vara afhent" og skýrslur sendar.`,
+        description: `${updatedCount} vörur hafa verið merktar sem "Tilbúið til afhendingar".`,
         duration: 5000,
       });
-    } else {
+    } else if (errorCount === 0) {
       toast.error("Engar vörur uppfærðar", {
         description: "Þú verður að setja inn talningar fyrir vörur áður en þú getur merkt þær sem afhentar.",
+      });
+    }
+    
+    if (errorCount > 0) {
+      toast.error(`${errorCount} vörur ekki uppfærðar`, {
+        description: "Villa kom upp við að uppfæra sumar vörur. Vinsamlegast reyndu aftur.",
       });
     }
   };

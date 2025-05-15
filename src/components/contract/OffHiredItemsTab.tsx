@@ -5,6 +5,8 @@ import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card";
 import DescriptionDialog from "./dialog/DescriptionDialog";
 import ItemDescriptionsList from "./items/ItemDescriptionsList";
 import OffHiredItemsList from "./items/OffHiredItemsList";
+import { useOffHireItem } from "@/mutations/useOffHireItem";
+import { toast } from "sonner";
 
 interface OffHiredItemsTabProps {
   offHiredItems: RentalItem[];
@@ -17,6 +19,7 @@ interface OffHiredItemsTabProps {
   pickedItems: Record<string, boolean>;
   onTogglePicked: (itemId: string) => void;
   anyItemsPicked: boolean;
+  contractId?: string;
 }
 
 interface ItemDescription {
@@ -34,10 +37,14 @@ const OffHiredItemsTab: React.FC<OffHiredItemsTabProps> = ({
   processedItems = [],
   pickedItems,
   onTogglePicked,
-  anyItemsPicked
+  anyItemsPicked,
+  contractId
 }) => {
   // Filter out items that have been processed
   const displayedItems = offHiredItems.filter(item => !processedItems.includes(item.id));
+  
+  // Use our mutation hook
+  const offHireMutation = useOffHireItem(contractId);
   
   // State for description dialog
   const [isDescriptionDialogOpen, setIsDescriptionDialogOpen] = useState(false);
@@ -51,9 +58,55 @@ const OffHiredItemsTab: React.FC<OffHiredItemsTabProps> = ({
     return desc ? desc.text : "";
   };
   
-  // Handler for batch off-hire
+  // Handler for batch off-hire with React Query
   const handleBatchOffHireItems = () => {
-    handleBatchOffHire(displayedItems);
+    // Get only picked items
+    const itemsToOffHire = displayedItems.filter(item => pickedItems[item.id]);
+    
+    if (itemsToOffHire.length === 0) {
+      toast.error("Engar vörur valdar", {
+        description: "Veldu vörur til að skila áður en þú ýtir á 'Skila vöru'.",
+      });
+      return;
+    }
+    
+    // Process each item
+    const today = new Date().toISOString().split('T')[0];
+    let successCount = 0;
+    let failCount = 0;
+    
+    itemsToOffHire.forEach(item => {
+      const itemDesc = getItemDescription(item.id);
+      const reason = itemDesc ? 
+        `Off-hire from Tiltektarkerfi: ${itemDesc}` : 
+        "Off-hire from Tiltektarkerfi";
+      
+      offHireMutation.mutate(
+        { itemId: item.id, date: today, reason },
+        {
+          onSuccess: () => {
+            successCount++;
+            // Still call the original handler for UI updates
+            handleOffHireClick(item);
+          },
+          onError: () => {
+            failCount++;
+          }
+        }
+      );
+    });
+    
+    if (successCount > 0) {
+      toast.success(`${successCount} vörur merktar úr leigu`, {
+        description: `${successCount} vörur hafa verið merktar sem 'Úr leigu'.`,
+      });
+    }
+    
+    if (failCount > 0) {
+      toast.error(`Villa við að merkja ${failCount} vörur úr leigu`, {
+        description: "Ekki tókst að merkja allar vörur úr leigu. Vinsamlegast reyndu aftur.",
+      });
+    }
   };
   
   // Handler for opening the description dialog
@@ -82,6 +135,17 @@ const OffHiredItemsTab: React.FC<OffHiredItemsTabProps> = ({
     });
     
     setIsDescriptionDialogOpen(false);
+    
+    // Show success toast
+    if (description.trim()) {
+      toast.success("Athugasemd vistuð", {
+        description: `Athugasemdin fyrir ${currentItem.itemName} hefur verið vistuð.`,
+      });
+    } else {
+      toast.info("Athugasemd fjarlægð", {
+        description: `Athugasemdin fyrir ${currentItem.itemName} hefur verið fjarlægð.`,
+      });
+    }
   };
 
   return (
@@ -100,7 +164,7 @@ const OffHiredItemsTab: React.FC<OffHiredItemsTabProps> = ({
               onBatchOffHire={handleBatchOffHireItems}
               pickedItems={pickedItems}
               onTogglePicked={onTogglePicked}
-              isProcessing={processingItemId !== null}
+              isProcessing={processingItemId !== null || offHireMutation.isPending}
               anyItemsPicked={anyItemsPicked}
               onCountChange={onCountChange}
               showCountColumn={showCountColumn}
