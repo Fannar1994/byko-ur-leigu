@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { toast } from "@/components/ui/use-toast";
+import { toast } from "@/hooks/use-toast";
 import { RentalItem } from "@/types/contract";
 import OffHireDialog from "@/components/OffHireDialog";
 import { prepareReportData } from "@/services/reportService";
@@ -63,15 +63,13 @@ export function OffHireHandler({ children, onItemStatusUpdate }: OffHireHandlerP
           // Add the item to processed items so it won't appear in the UI
           setProcessedItems(prev => [...prev, itemId]);
           
-          toast({
-            title: "Skýrsla send",
-            description: "Úr leigu skýrsla var send.",
+          toast("Skýrsla send", {
+            description: "Úr leigu skýrsla var send."
           });
         } else {
-          toast({
-            title: "Villa",
+          toast("Villa", {
             description: "Ekki tókst að senda skýrslu. Reyndu aftur eða hafðu samband við kerfisstjóra.",
-            variant: "destructive",
+            variant: "destructive"
           });
         }
       }
@@ -82,10 +80,9 @@ export function OffHireHandler({ children, onItemStatusUpdate }: OffHireHandlerP
         errorMessage = error.message;
       }
       
-      toast({
-        title: "Villa",
+      toast("Villa", {
         description: errorMessage,
-        variant: "destructive",
+        variant: "destructive"
       });
     } finally {
       setProcessingItemId(null);

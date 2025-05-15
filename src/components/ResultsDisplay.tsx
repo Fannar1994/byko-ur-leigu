@@ -1,9 +1,8 @@
-
 import React, { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { SearchResults, Contract, RentalItem } from "@/types/contract";
-import { toast } from "sonner";
+import { toast } from "@/hooks/use-toast";
 import TabContent from "./TabContent";
 import ContractsTableComponent from "./ContractsTableComponent";
 import RenterInfoCard from "./RenterInfoCard";
