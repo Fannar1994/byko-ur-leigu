@@ -54,7 +54,7 @@ const ItemTableRow: React.FC<ItemTableRowProps> = ({
     }
   };
 
-  // New function to handle photo button click
+  // Handle photo button click
   const handlePhotoButtonClick = (e: React.MouseEvent) => {
     e.stopPropagation(); // Prevent row click
     
@@ -79,8 +79,8 @@ const ItemTableRow: React.FC<ItemTableRowProps> = ({
     }
   };
 
-  // Check if we should show the photo button
-  const showPhotoButton = item.status === "Tiltekt" || item.id.includes("mock-tiltekt");
+  // Check if this is a Tiltekt item
+  const isTiltektItem = item.status === "Tiltekt" || item.id.includes("mock-tiltekt");
   
   return (
     <TableRow 
@@ -140,11 +140,15 @@ const ItemTableRow: React.FC<ItemTableRowProps> = ({
       
       <TableCell className="text-center" onClick={(e) => e.stopPropagation()}>
         <div className="flex items-center justify-center gap-2">
-          <Badge className={getItemStatusColor(item.status)}>
-            {item.status}
-          </Badge>
+          {/* Only show status badge if it's NOT a Tiltekt item */}
+          {!isTiltektItem && (
+            <Badge className={getItemStatusColor(item.status)}>
+              {item.status}
+            </Badge>
+          )}
           
-          {showPhotoButton && (
+          {/* Show camera button if it IS a Tiltekt item */}
+          {isTiltektItem && (
             <Button 
               variant="outline" 
               size="sm"
