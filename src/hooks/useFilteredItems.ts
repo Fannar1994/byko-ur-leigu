@@ -7,7 +7,7 @@ export function useFilteredItems(rentalItems: RentalItem[]) {
   const enhancedItems = useMemo(() => {
     // Check if we need to add sample data
     const hasTiltektItems = rentalItems.some(item => 
-      item.status === "Tiltekt" || item.status === "Tilbúið til afhendingar"
+      item.status === "Tiltekt" || item.status === "Tilbúið til afhendingar" || item.status === "Vara afhent"
     );
     
     const hasOffHiredItems = rentalItems.some(item => 
@@ -86,23 +86,27 @@ export function useFilteredItems(rentalItems: RentalItem[]) {
     return result;
   }, [rentalItems]);
   
+  // Filter active items (Í leigu/On Rent)
   const activeItems = useMemo(() => enhancedItems.filter(item => 
     item.status === "Í leigu" || item.status === "On Rent"
   ), [enhancedItems]);
   
-  // Updated this filter to exclude "Tilbúið til afhendingar" items from readyForPickItems
+  // Items that need to be picked - make sure to EXCLUDE all statuses that should be in other categories
   const readyForPickItems = useMemo(() => enhancedItems.filter(item => 
     item.status !== "Tiltekt" && 
     item.status !== "Úr leiga" && 
     item.status !== "Off-Hired" &&
     item.status !== "Í leigu" &&
     item.status !== "On Rent" &&
-    item.status !== "Tilbúið til afhendingar"
+    item.status !== "Tilbúið til afhendingar" &&
+    item.status !== "Vara afhent"
   ), [enhancedItems]);
   
-  // Updated to include "Tilbúið til afhendingar" items in tiltektItems list
+  // Include both "Tiltekt" and items ready for delivery in tiltektItems list
   const tiltektItems = useMemo(() => enhancedItems.filter(item => 
-    item.status === "Tiltekt" || item.status === "Tilbúið til afhendingar"
+    item.status === "Tiltekt" || 
+    item.status === "Tilbúið til afhendingar" ||
+    item.status === "Vara afhent"
   ), [enhancedItems]);
   
   const offHiredItems = useMemo(() => enhancedItems.filter(item => 

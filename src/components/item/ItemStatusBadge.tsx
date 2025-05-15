@@ -5,10 +5,10 @@ import { getItemStatusColor } from "@/utils/itemStatusUtils";
 
 interface ItemStatusBadgeProps {
   status: string;
-  isSelected: boolean;
+  isSelected?: boolean;
 }
 
-const ItemStatusBadge: React.FC<ItemStatusBadgeProps> = ({ status }) => {
+const ItemStatusBadge: React.FC<ItemStatusBadgeProps> = ({ status, isSelected = false }) => {
   return (
     <Badge className={getItemStatusColor(status)}>
       {status}

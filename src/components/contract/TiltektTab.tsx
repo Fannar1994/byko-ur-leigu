@@ -42,17 +42,20 @@ const TiltektTab: React.FC<TiltektTabProps> = ({
 }) => {
   const hasPickedItems = Object.values(pickedItems).some(Boolean);
   
-  // Track items that have been marked as delivered (to remove them from the display)
-  const [deliveredItems, setDeliveredItems] = useState<string[]>([]);
-  
   // State for description dialog
   const [isDescriptionDialogOpen, setIsDescriptionDialogOpen] = useState(false);
   const [currentItem, setCurrentItem] = useState<RentalItem | null>(null);
   const [description, setDescription] = useState("");
   const [itemDescriptions, setItemDescriptions] = useState<ItemDescription[]>([]);
   
-  // Filter out delivered items from display
-  const displayedTiltektItems = tiltektItems.filter(item => !deliveredItems.includes(item.id));
+  // Filter tiltektItems to separate "Tiltekt" items from "Tilbúið til afhendingar" items
+  const tiltektOnlyItems = tiltektItems.filter(item => 
+    item.status === "Tiltekt"
+  );
+  
+  const readyForDeliveryItems = tiltektItems.filter(item => 
+    item.status === "Tilbúið til afhendingar" || item.status === "Vara afhent"
+  );
   
   // Get description for an item
   const getItemDescription = (itemId: string): string => {
@@ -73,9 +76,6 @@ const TiltektTab: React.FC<TiltektTabProps> = ({
       console.log(`TiltektTab: Calling onStatusUpdate for item ${item.id} with count ${count}`);
       onStatusUpdate(item, count);
       
-      // Add the item to the delivered items list (to remove from display)
-      setDeliveredItems(prev => [...prev, item.id]);
-      
       toast.success("Vara uppfærð í 'Tilbúið til afhendingar'", {
         description: `${item.itemName} (${item.serialNumber}) hefur verið merkt sem tilbúin til afhendingar og skýrsla send.`,
         duration: 5000,
@@ -86,21 +86,19 @@ const TiltektTab: React.FC<TiltektTabProps> = ({
   // Handle batch update of items with counts > 0
   const handleBatchStatusUpdate = () => {
     let updatedCount = 0;
-    const newDeliveredItems: string[] = [];
     
     tiltektItems.forEach(item => {
-      const count = getItemCount(item.id);
-      if (count > 0 && onStatusUpdate && !deliveredItems.includes(item.id)) {
-        onStatusUpdate(item, count);
-        updatedCount++;
-        newDeliveredItems.push(item.id);
+      // Only process items that are in "Tiltekt" status
+      if (item.status === "Tiltekt") {
+        const count = getItemCount(item.id);
+        if (count > 0 && onStatusUpdate) {
+          onStatusUpdate(item, count);
+          updatedCount++;
+        }
       }
     });
     
     if (updatedCount > 0) {
-      // Add all newly delivered items to the list
-      setDeliveredItems(prev => [...prev, ...newDeliveredItems]);
-      
       toast.success(`${updatedCount} vörur uppfærðar`, {
         description: `${updatedCount} vörur hafa verið merktar sem "Vara afhent" og skýrslur sendar.`,
         duration: 5000,
@@ -172,7 +170,7 @@ const TiltektTab: React.FC<TiltektTabProps> = ({
           </div>
         )}
       
-        {readyForPickItems.length === 0 && displayedTiltektItems.length === 0 ? (
+        {readyForPickItems.length === 0 && tiltektOnlyItems.length === 0 && readyForDeliveryItems.length === 0 ? (
           <div className="text-center py-6 text-gray-500">Engar vörur eru tilbúnar fyrir tiltekt</div>
         ) : (
           <div className="space-y-8">
@@ -189,9 +187,9 @@ const TiltektTab: React.FC<TiltektTabProps> = ({
               />
             )}
 
-            {displayedTiltektItems.length > 0 && (
+            {tiltektOnlyItems.length > 0 && (
               <TiltektItemsList
-                displayedTiltektItems={displayedTiltektItems}
+                displayedTiltektItems={tiltektOnlyItems}
                 onOpenDescriptionDialog={handleOpenDescriptionDialog}
                 onBatchStatusUpdate={handleBatchStatusUpdate}
                 onStatusClick={handleStatusClick}
@@ -200,9 +198,21 @@ const TiltektTab: React.FC<TiltektTabProps> = ({
               />
             )}
             
+            {readyForDeliveryItems.length > 0 && (
+              <div>
+                <h3 className="text-lg font-medium text-white mb-4">Vörur tilbúnar til afhendingar</h3>
+                <ItemTable 
+                  items={readyForDeliveryItems}
+                  showContractColumn={false}
+                  showCountColumn={showCountColumn}
+                  onCountChange={onCountChange}
+                />
+              </div>
+            )}
+            
             <ItemDescriptionsList
               itemDescriptions={itemDescriptions}
-              displayedItems={displayedTiltektItems}
+              displayedItems={[...tiltektOnlyItems, ...readyForDeliveryItems]}
               onEditDescription={handleOpenDescriptionDialog}
             />
           </div>
@@ -221,5 +231,8 @@ const TiltektTab: React.FC<TiltektTabProps> = ({
     </Card>
   );
 };
+
+// Add missing import
+import ItemTable from "@/components/ItemTable";
 
 export default TiltektTab;
