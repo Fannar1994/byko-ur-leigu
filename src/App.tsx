@@ -1,4 +1,3 @@
-
 import React, { useState, createContext, useEffect } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -6,25 +5,18 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Index from "./pages/Index";
-import Login from "./pages/Login";
 import NotFound from "./pages/NotFound";
 import ContractDetails from "./pages/ContractDetails";
 
 // Create auth context
 export const AuthContext = createContext({
-  isAuthenticated: false,
+  isAuthenticated: true, // Always authenticated
   setIsAuthenticated: (value: boolean) => {},
   logout: () => {}
 });
 
-// Protected route component
+// Protected route component - modified to always allow access
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
-  const { isAuthenticated } = React.useContext(AuthContext);
-  
-  if (!isAuthenticated) {
-    return <Navigate to="/login" />;
-  }
-  
   return <>{children}</>;
 };
 
@@ -39,22 +31,26 @@ const queryClient = new QueryClient({
 });
 
 const App = () => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(true); // Always authenticated
   
-  // Check for existing session on app load
+  // Simulate session setup on app load
   useEffect(() => {
-    const sessionId = localStorage.getItem("inspSession");
-    if (sessionId) {
-      setIsAuthenticated(true);
+    // Set default values for session that would normally be set after login
+    if (!localStorage.getItem("inspSession")) {
+      localStorage.setItem("inspSession", "auto-session");
+      localStorage.setItem("inspDepot", "main");
+      localStorage.setItem("inspUsername", "user");
     }
   }, []);
 
   // Logout function to clear session
   const logout = () => {
+    // Keep logout functionality for any buttons that might use it
     localStorage.removeItem("inspSession");
     localStorage.removeItem("inspDepot");
     localStorage.removeItem("inspUsername");
-    setIsAuthenticated(false);
+    // But immediately restore authentication
+    setTimeout(() => setIsAuthenticated(true), 100);
   };
   
   return (
@@ -65,18 +61,11 @@ const App = () => {
           <Sonner />
           <BrowserRouter>
             <Routes>
-              <Route path="/login" element={<Login />} />
-              <Route path="/" element={
-                <ProtectedRoute>
-                  <Index />
-                </ProtectedRoute>
-              } />
-              <Route path="/contract/:contractNumber" element={
-                <ProtectedRoute>
-                  <ContractDetails />
-                </ProtectedRoute>
-              } />
+              <Route path="/" element={<Index />} />
+              <Route path="/contract/:contractNumber" element={<ContractDetails />} />
               <Route path="*" element={<NotFound />} />
+              {/* Redirect /login to home */}
+              <Route path="/login" element={<Navigate to="/" />} />
             </Routes>
           </BrowserRouter>
         </TooltipProvider>

@@ -1,3 +1,4 @@
+
 // src/api/inspHireService.ts
 import { API_CONFIG } from "@/config/appConfig";
 
@@ -23,10 +24,11 @@ export async function testApiConnection() {
   }
 }
 
+// Modified to work without requiring explicit session from localStorage
 function getSessionId(): string {
   const session = localStorage.getItem("inspSession");
-  if (!session) throw new Error("Session not found. Please log in.");
-  return session;
+  // Always return a valid session ID, even if not logged in
+  return session || "auto-session";
 }
 
 const defaultHeaders = () => ({
@@ -35,52 +37,13 @@ const defaultHeaders = () => ({
   "Content-Type": "application/json"
 });
 
+// This function is kept for API compatibility but no longer requires real credentials
 export async function loginToInspHire(username: string, password: string) {
-  try {
-    console.log(`Attempting to connect to inspHire API at: ${baseUrl}`);
-    
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
-    
-    const response = await fetch(`${baseUrl}/api/session`, {
-      method: "POST",
-      headers: {
-        "EnableString": API_CONFIG.enableString,
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ username, password }),
-      signal: controller.signal
-    });
-    
-    clearTimeout(timeoutId);
-
-    if (!response.ok) {
-      console.error(`Login failed with status: ${response.status} ${response.statusText}`);
-      throw new Error(`Login failed: Network response was not ok (${response.status})`);
-    }
-
-    const data = await response.json();
-    console.log("Login response received", { status: data.STATUS });
-    
-    if (data.STATUS !== 1) {
-      throw new Error(data.MESSAGE || "Invalid login credentials");
-    }
-
-    return {
-      sessionId: data.SESSIONID,
-      username: data.USERNAME,
-      depot: data.DEPOT
-    };
-  } catch (error) {
-    console.error("Login error:", error);
-    if (error instanceof DOMException && error.name === "AbortError") {
-      throw new Error("Connection to inspHire API timed out. Server may be unreachable.");
-    }
-    if (error instanceof TypeError && error.message.includes("Failed to fetch")) {
-      throw new Error(`Could not connect to inspHire API at ${baseUrl}. Please check your network connection or API configuration.`);
-    }
-    throw error;
-  }
+  return {
+    sessionId: "auto-session",
+    username: "auto-user",
+    depot: "main"
+  };
 }
 
 // Helper function to handle fetch errors consistently
