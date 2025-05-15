@@ -43,7 +43,7 @@ const ActiveContractsView: React.FC<ActiveContractsViewProps> = ({
               title="Úr leiga" 
               items={offHiredItems.filter(item => !processedItems.includes(item.id))}
               contractNumbers={contractNumbersMap} 
-              showActions={true}
+              showActions={false} // Change this to false to hide the actions column
               onOffHireClick={handleOffHireClick}
               processingItemId={processingItemId}
               showLocationColumn={true}

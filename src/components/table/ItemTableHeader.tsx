@@ -35,9 +35,6 @@ const ItemTableHeader: React.FC<ItemTableHeaderProps> = ({
         {showCountColumn && (
           <TableHead className="text-white text-center">Talningar</TableHead>
         )}
-        {showActions && (
-          <TableHead className="text-white text-center">Aðgerðir</TableHead>
-        )}
       </TableRow>
     </TableHeader>
   );

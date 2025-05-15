@@ -64,7 +64,7 @@ const ItemTableBody: React.FC<ItemTableBodyProps> = ({
             showCountColumn={showCountColumn}
             showLocationColumn={showLocationColumn}
             showDepartmentColumn={showDepartmentColumn}
-            showActions={showActions}
+            showActions={false} // Always set to false to hide the actions column
             onRowClick={() => onRowClick(item.id)}
           />
         );

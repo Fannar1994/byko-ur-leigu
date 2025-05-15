@@ -114,16 +114,7 @@ const ItemTableRow: React.FC<ItemTableRowProps> = ({
         </TableCell>
       )}
       
-      {showActions && onOffHireClick && (
-        <TableCell className="text-center" onClick={(e) => e.stopPropagation()}>
-          <ItemActionButton 
-            item={item}
-            onOffHireClick={onOffHireClick}
-            processingItemId={processingItemId}
-            actionType="offHire"
-          />
-        </TableCell>
-      )}
+      {/* Removed the showActions section completely */}
       
       {onTogglePicked && (
         <TableCell className="text-center" onClick={(e) => e.stopPropagation()}>

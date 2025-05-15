@@ -68,6 +68,7 @@ const OffHiredItemsList: React.FC<OffHiredItemsListProps> = ({
         items={displayedOffHiredItems}
         showContractColumn={false}
         showCountColumn={showCountColumn}
+        showActions={false} // Explicitly set showActions to false
         onCountChange={onCountChange}
         onTogglePicked={onTogglePicked}
         pickedItems={pickedItems}
