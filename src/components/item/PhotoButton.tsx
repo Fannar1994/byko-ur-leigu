@@ -48,7 +48,7 @@ const PhotoButton: React.FC<PhotoButtonProps> = ({ onClick }) => {
         size="sm"
         className="p-1 h-7 bg-blue-600 hover:bg-blue-700 text-white"
         onClick={handlePhotoButtonClick}
-        title="Bæta við mynd í skýrslu"
+        title="Taka mynd fyrir skýrslu"
       >
         <Camera className="h-4 w-4" />
       </Button>

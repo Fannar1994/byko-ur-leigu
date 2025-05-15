@@ -39,6 +39,9 @@ const ItemTableHeader: React.FC<ItemTableHeaderProps> = ({
           <TableHead className="text-center text-white">Talningar</TableHead>
         )}
         
+        {/* Photo column header */}
+        <TableHead className="text-center text-white">Mynd</TableHead>
+        
         {/* Always show comment column */}
         <TableHead className="text-center text-white">Athugasemd</TableHead>
       </TableRow>

@@ -8,6 +8,7 @@ import ItemLocation from "@/components/item/ItemLocation";
 import ItemDepartment from "@/components/item/ItemDepartment";
 import CountComponent from "@/components/CountComponent";
 import { FileText } from "lucide-react";
+import PhotoButton from "@/components/item/PhotoButton";
 
 interface ItemTableRowProps {
   item: RentalItem;
@@ -111,13 +112,22 @@ const ItemTableRow: React.FC<ItemTableRowProps> = ({
       
       {showCountColumn && (
         <TableCell className="text-center" onClick={(e) => e.stopPropagation()}>
-          <CountComponent 
-            count={itemCounts[item.id]} 
-            onCountChange={handleLocalCountChange}
-            itemId={item.id}
-          />
+          <div className="flex items-center justify-center">
+            <CountComponent 
+              count={itemCounts[item.id]} 
+              onCountChange={handleLocalCountChange}
+              itemId={item.id}
+            />
+          </div>
         </TableCell>
       )}
+      
+      {/* Photo button column */}
+      <TableCell className="text-center" onClick={(e) => e.stopPropagation()}>
+        <div className="flex items-center justify-center">
+          <PhotoButton />
+        </div>
+      </TableCell>
       
       {/* Comment button column */}
       <TableCell className="text-center" onClick={(e) => e.stopPropagation()}>
