@@ -121,7 +121,7 @@ const ItemTableRow: React.FC<ItemTableRowProps> = ({
       
       <TableCell className="text-center">
         <Badge 
-          className={`${getItemStatusColor(item.status)} ${isInteractiveBadge ? "cursor-pointer hover:bg-opacity-80 hover:scale-105 transition-all" : ""}`}
+          className={`${getItemStatusColor(item.status)} ${isInteractiveBadge ? "cursor-pointer hover:bg-opacity-80 hover:scale-105 transition-all duration-300" : ""}`}
           onClick={handleStatusClick}
           title={isInteractiveBadge ? "Smelltu til að breyta í 'Tilbúið til afhendingar'" : undefined}
         >

@@ -69,7 +69,9 @@ const ItemTable: React.FC<ItemTableProps> = ({
 
   const handleStatusClick = (item: RentalItem, count: number) => {
     if (onStatusClick) {
-      onStatusClick(item, itemCounts[item.id] || 0);
+      // Use the stored count for this item
+      const currentCount = itemCounts[item.id] || 0;
+      onStatusClick(item, currentCount);
     }
   };
 
