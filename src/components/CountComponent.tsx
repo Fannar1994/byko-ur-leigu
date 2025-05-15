@@ -13,7 +13,7 @@ const CountComponent: React.FC<CountComponentProps> = ({
   onCountChange,
   itemId
 }) => {
-  const [localCount, setLocalCount] = useState<string>(count ? count.toString() : '');
+  const [localCount, setLocalCount] = useState<string>(count !== undefined ? count.toString() : '0'); // Default to '0'
   
   useEffect(() => {
     if (count !== undefined) {
@@ -39,7 +39,7 @@ const CountComponent: React.FC<CountComponentProps> = ({
         type="number"
         value={localCount}
         onChange={handleCountChange}
-        placeholder=""
+        placeholder="0"
         className="w-16 h-8 text-center text-white bg-transparent no-arrows"
         min="0"
         aria-label="Talningar"

@@ -1,18 +1,20 @@
 
-import React from "react";
+import React, { useEffect } from "react"; // Added useEffect
 import { TableRow, TableCell } from "@/components/ui/table";
 import { RentalItem } from "@/types/contract";
-import CountComponent from "../CountComponent";
-import ItemActionButton from "../item/ItemActionButton";
-import ItemStatusCell from "../item/ItemStatusCell";
-import ItemLocation from "../item/ItemLocation";
-import ItemDepartment from "../item/ItemDepartment";
-import ContractLink from "../item/ContractLink";
+import ContractLink from "@/components/item/ContractLink";
+import ItemStatusBadge from "@/components/item/ItemStatusBadge";
+import PhotoButton from "@/components/item/PhotoButton";
+import ItemLocation from "@/components/item/ItemLocation";
+import ItemDepartment from "@/components/item/ItemDepartment";
+import ItemActionButton from "@/components/item/ItemActionButton";
+import ItemStatusCell from "@/components/item/ItemStatusCell";
+import CountComponent from "@/components/CountComponent";
 
 interface ItemTableRowProps {
   item: RentalItem;
   isSelected: boolean;
-  isPicked: boolean;
+  isPicked?: boolean;
   contractNumber?: string;
   onTogglePicked?: (itemId: string) => void;
   onOffHireClick?: (item: RentalItem) => void;
@@ -25,7 +27,7 @@ interface ItemTableRowProps {
   showLocationColumn: boolean;
   showDepartmentColumn: boolean;
   showActions: boolean;
-  onRowClick: () => void;
+  onRowClick: (itemId: string) => void;
 }
 
 const ItemTableRow: React.FC<ItemTableRowProps> = ({
@@ -46,70 +48,75 @@ const ItemTableRow: React.FC<ItemTableRowProps> = ({
   showActions,
   onRowClick
 }) => {
-  const handleCountChange = (count: number) => {
+  // Effect to automatically toggle picked state when count changes
+  useEffect(() => {
+    const count = itemCounts[item.id] || 0;
+    // If count > 0 and item is not already picked, mark it as picked
+    if (count > 0 && onTogglePicked && !isPicked) {
+      onTogglePicked(item.id);
+    }
+    // If count is back to 0 and item is picked, toggle it back
+    else if (count === 0 && onTogglePicked && isPicked) {
+      onTogglePicked(item.id);
+    }
+  }, [itemCounts, item.id, isPicked, onTogglePicked]);
+
+  const handleLocalCountChange = (count: number) => {
     if (onCountChange) {
       onCountChange(item.id, count);
     }
   };
 
-  // Check if this is a Tiltekt item
-  const isTiltektItem = item.status === "Tiltekt" || item.id.includes("mock-tiltekt");
-  
   return (
     <TableRow 
+      className={`
+        cursor-pointer hover:bg-[#3A3A3A] transition-colors
+        ${isSelected ? 'bg-[#3A3A3A]' : ''}
+        ${isPicked ? 'bg-[#2c4633]' : ''}
+        ${processingItemId === item.id ? 'opacity-50' : ''}
+      `}
       onClick={onRowClick}
-      className={isSelected 
-        ? "bg-primary text-black hover:bg-primary/90 cursor-pointer" 
-        : isPicked 
-          ? "bg-green-900/20 hover:bg-green-900/30 cursor-pointer"
-          : "hover:bg-primary/90 hover:text-black cursor-pointer"}
     >
-      <TableCell className={isSelected ? "text-black" : "text-white"}>
-        {item.serialNumber}
+      <TableCell>
+        <div className="flex flex-col">
+          <span className="text-white">{item.serialNumber}</span>
+          {item.status && (
+            <ItemStatusBadge status={item.status} />
+          )}
+        </div>
       </TableCell>
-      <TableCell className={isSelected ? "font-medium text-black" : "font-medium text-white"}>
-        {item.itemName}
+      <TableCell>
+        <span className="text-white">{item.itemName}</span>
       </TableCell>
       
-      {showContractColumn && (
-        <TableCell className={isSelected ? "text-black" : "text-white"}>
-          <ContractLink 
-            contractNumber={contractNumber}
-            isSelected={isSelected}
-          />
+      {showContractColumn && contractNumber && (
+        <TableCell>
+          <ContractLink contractNumber={contractNumber} />
         </TableCell>
       )}
       
       {showDepartmentColumn && (
-        <TableCell className={isSelected ? "text-black" : "text-white"}>
-          <ItemDepartment 
-            department={item.department}
-            isSelected={isSelected}
-          />
+        <TableCell>
+          <ItemDepartment department={item.department} />
         </TableCell>
       )}
       
       {showLocationColumn && (
-        <TableCell className={isSelected ? "text-black" : "text-white"}>
-          <ItemLocation 
-            location={item.location}
-            isSelected={isSelected} 
-          />
+        <TableCell>
+          <ItemLocation location={item.location} />
         </TableCell>
       )}
       
-      <ItemStatusCell 
-        status={item.status || ""} 
-        isTiltektItem={isTiltektItem}
-        isSelected={isSelected}
-      />
+      <TableCell className="text-center">
+        <PhotoButton itemId={item.id} />
+      </TableCell>
       
       {showCountColumn && (
         <TableCell className="text-center" onClick={(e) => e.stopPropagation()}>
           <CountComponent 
+            count={itemCounts[item.id]} 
+            onCountChange={handleLocalCountChange}
             itemId={item.id}
-            onCountChange={handleCountChange}
-            count={itemCounts[item.id]}
           />
         </TableCell>
       )}
@@ -118,12 +125,22 @@ const ItemTableRow: React.FC<ItemTableRowProps> = ({
       
       {onTogglePicked && (
         <TableCell className="text-center" onClick={(e) => e.stopPropagation()}>
-          <ItemActionButton 
-            item={item}
-            isPicked={isPicked}
-            onTogglePicked={onTogglePicked}
-            actionType="pick"
-          />
+          {/* Only show the Merkja button if count is 0 */}
+          {(!itemCounts[item.id] || itemCounts[item.id] === 0) && (
+            <ItemActionButton 
+              item={item}
+              isPicked={isPicked}
+              onTogglePicked={onTogglePicked}
+              actionType="pick"
+            />
+          )}
+          {item.status === "Tiltekt" && onStatusClick && (
+            <ItemStatusCell 
+              item={item} 
+              onStatusClick={() => onStatusClick(item, itemCounts[item.id] || 0)}
+              count={itemCounts[item.id] || 0}
+            />
+          )}
         </TableCell>
       )}
     </TableRow>
