@@ -30,12 +30,21 @@ const ContractDetails = () => {
     useFilteredItems(localRentalItems);
   const { sortField, sortDirection, handleSort } = useSorting();
 
-  // Handle count change
-  const handleCountChange = (itemId: string, count: number) => {
-    console.log(`Item ${itemId} count changed to ${count}`);
-    // Store the count in our utility
-    setItemCount(itemId, count);
-  };
+// Handle count change and status update together
+const handleCountChange = (itemId: string, count: number) => {
+  console.log(`Item ${itemId} count changed to ${count}`);
+  
+  // Save the count
+  setItemCount(itemId, count);
+
+  // Lookup item in readyForPickItems
+  const item = readyForPickItems.find(i => i.id === itemId);
+  
+  // Automatically update status if count > 0
+  if (item && count > 0) {
+    handleItemStatusUpdateWithCount(itemId, "Tilbúið til afhendingar", count);
+  }
+};
 
   // Handle item status updates
   const handleItemStatusUpdate = (itemId: string | string[], newStatus: "On Rent" | "Off-Hired" | "Pending Return" | "Í leigu" | "Tiltekt" | "Úr leiga" | "Tilbúið til afhendingar") => {
