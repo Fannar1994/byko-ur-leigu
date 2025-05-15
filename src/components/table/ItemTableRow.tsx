@@ -54,9 +54,11 @@ const ItemTableRow: React.FC<ItemTableRowProps> = ({
     }
   };
 
-  // Handle photo button click
+  // Handle photo button click - FIX: Properly stopping propagation
   const handlePhotoButtonClick = (e: React.MouseEvent) => {
-    e.stopPropagation(); // Prevent row click
+    // Ensure we prevent the default behavior and stop event propagation
+    e.preventDefault();
+    e.stopPropagation();
     
     // Check if the item status is Tiltekt
     if (item.status === "Tiltekt" || item.id.includes("mock-tiltekt")) {
@@ -138,8 +140,8 @@ const ItemTableRow: React.FC<ItemTableRowProps> = ({
         </TableCell>
       )}
       
-      <TableCell className="text-center" onClick={(e) => e.stopPropagation()}>
-        <div className="flex items-center justify-center gap-2">
+      <TableCell className="text-center">
+        <div className="flex items-center justify-center gap-2" onClick={(e) => e.stopPropagation()}>
           {/* Only show status badge if it's NOT a Tiltekt item */}
           {!isTiltektItem && (
             <Badge className={getItemStatusColor(item.status)}>
