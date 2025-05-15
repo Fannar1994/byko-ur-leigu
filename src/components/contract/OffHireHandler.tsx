@@ -69,7 +69,7 @@ export function OffHireHandler({ children, onItemStatusUpdate }: OffHireHandlerP
         } else {
           toast("Villa", {
             description: "Ekki tókst að senda skýrslu. Reyndu aftur eða hafðu samband við kerfisstjóra.",
-            variant: "destructive"
+            style: { backgroundColor: "red", color: "white" }
           });
         }
       }
@@ -82,7 +82,7 @@ export function OffHireHandler({ children, onItemStatusUpdate }: OffHireHandlerP
       
       toast("Villa", {
         description: errorMessage,
-        variant: "destructive"
+        style: { backgroundColor: "red", color: "white" }
       });
     } finally {
       setProcessingItemId(null);
