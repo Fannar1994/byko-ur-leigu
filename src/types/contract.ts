@@ -34,9 +34,9 @@ export interface RentalItem {
 }
 
 export interface SearchResults {
-  success: boolean;
-  message: string;
-  itemId: string;
+  renter: Renter;
+  contracts: Contract[];
+  rentalItems: RentalItem[];
 }
 
 export interface OffHireResponse {
