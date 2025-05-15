@@ -1,8 +1,7 @@
-
 import React, { useState, useEffect } from "react";
 import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Check, AlertCircle, NoteText } from "lucide-react";
+import { Check, AlertCircle, FileText } from "lucide-react";
 import ItemTable from "../ItemTable";
 import { RentalItem } from "@/types/contract";
 import { toast } from "sonner";
@@ -215,7 +214,7 @@ const TiltektTab: React.FC<TiltektTabProps> = ({
                       variant="outline"
                       className="bg-blue-600 hover:bg-blue-700 text-white"
                     >
-                      <NoteText className="h-4 w-4 mr-2" /> Bæta við athugasemd
+                      <FileText className="h-4 w-4 mr-2" /> Bæta við athugasemd
                     </Button>
                     <Button 
                       onClick={handleBatchStatusUpdate}
@@ -258,7 +257,7 @@ const TiltektTab: React.FC<TiltektTabProps> = ({
                                 className="text-xs text-blue-400 mt-2 hover:underline flex items-center"
                                 onClick={() => handleOpenDescriptionDialog(item)}
                               >
-                                <NoteText className="h-3 w-3 mr-1" /> Breyta athugasemd
+                                <FileText className="h-3 w-3 mr-1" /> Breyta athugasemd
                               </button>
                             </div>
                           ) : null;
