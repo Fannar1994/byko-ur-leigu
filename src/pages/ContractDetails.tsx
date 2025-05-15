@@ -40,7 +40,7 @@ const handleCountChange = (itemId: string, count: number) => {
 };
 
   // Handle item status updates
-  const handleItemStatusUpdate = (itemId: string | string[], newStatus: "On Rent" | "Off-Hired" | "Pending Return" | "Í leigu" | "Tiltekt" | "Úr leiga" | "Tilbúið til afhendingar") => {
+  const handleItemStatusUpdate = (itemId: string | string[], newStatus: "On Rent" | "Off-Hired" | "Pending Return" | "Í leigu" | "Tiltekt" | "Úr leiga" | "Tilbúið til afhendingar" | "Vara afhent") => {
     setLocalRentalItems(prevItems => {
       if (Array.isArray(itemId)) {
         return prevItems.map(item => 
@@ -57,11 +57,15 @@ const handleCountChange = (itemId: string, count: number) => {
       }
     });
 
-    // Show toast notification when item status is updated to "Tilbúið til afhendingar"
+    // Show toast notification when item status is updated
     if (newStatus === "Tilbúið til afhendingar") {
       // This additional toast provides a system-level confirmation
       toast.success("Staða uppfærð", {
         description: "Vara hefur verið merkt sem tilbúin til afhendingar og skýrsla hefur verið send.",
+      });
+    } else if (newStatus === "Vara afhent") {
+      toast.success("Staða uppfærð", {
+        description: "Vara hefur verið merkt sem afhent og skýrsla hefur verið send.",
       });
     }
   };

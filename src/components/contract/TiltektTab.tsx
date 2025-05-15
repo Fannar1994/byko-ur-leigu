@@ -1,5 +1,4 @@
-
-import React from "react";
+import React, { useState } from "react";
 import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Check, AlertCircle } from "lucide-react";
@@ -33,6 +32,9 @@ const TiltektTab: React.FC<TiltektTabProps> = ({
 }) => {
   const hasPickedItems = Object.values(pickedItems).some(Boolean);
   
+  // Keep track of item counts to know which ones to update
+  const [itemCounts, setItemCounts] = useState<Record<string, number>>({});
+  
   const handleStatusClick = (item: RentalItem, count: number) => {
     if (count <= 0) {
       toast.error("Villa", {
@@ -49,6 +51,30 @@ const TiltektTab: React.FC<TiltektTabProps> = ({
       toast.success("Vara uppfærð í 'Tilbúið til afhendingar'", {
         description: `${item.itemName} (${item.serialNumber}) hefur verið merkt sem tilbúin til afhendingar og skýrsla send.`,
         duration: 5000,
+      });
+    }
+  };
+  
+  // New function to handle batch update of items with counts > 0
+  const handleBatchStatusUpdate = () => {
+    let updatedCount = 0;
+    
+    tiltektItems.forEach(item => {
+      const count = getItemCount(item.id);
+      if (count > 0 && onStatusUpdate) {
+        onStatusUpdate(item, count);
+        updatedCount++;
+      }
+    });
+    
+    if (updatedCount > 0) {
+      toast.success(`${updatedCount} vörur uppfærðar`, {
+        description: `${updatedCount} vörur hafa verið merktar sem "Vara afhent" og skýrslur sendar.`,
+        duration: 5000,
+      });
+    } else {
+      toast.error("Engar vörur uppfærðar", {
+        description: "Þú verður að setja inn talningar fyrir vörur áður en þú getur merkt þær sem afhentar.",
       });
     }
   };
@@ -103,7 +129,16 @@ const TiltektTab: React.FC<TiltektTabProps> = ({
 
             {tiltektItems.length > 0 && (
               <div>
-                <h3 className="text-lg font-medium text-white mb-4">Vörur tilbúnar til afhendingar</h3>
+                <div className="flex justify-between items-center mb-4">
+                  <h3 className="text-lg font-medium text-white">Vörur tilbúnar til afhendingar</h3>
+                  <Button 
+                    onClick={handleBatchStatusUpdate}
+                    variant="secondary"
+                    className="bg-green-600 hover:bg-green-700 text-white"
+                  >
+                    <Check className="h-4 w-4 mr-2" /> Merkja taldar vörur afhentar
+                  </Button>
+                </div>
                 <div className="mb-2 p-2 bg-gray-700 rounded flex items-center justify-center">
                   <AlertCircle className="h-4 w-4 mr-2 text-gray-300" />
                   <span className="text-sm text-gray-300">

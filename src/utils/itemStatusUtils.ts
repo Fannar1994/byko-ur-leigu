@@ -1,3 +1,4 @@
+
 export const getItemStatusColor = (status?: string) => {
   switch (status) {
     case "On Rent": 
@@ -7,6 +8,7 @@ export const getItemStatusColor = (status?: string) => {
     case "Pending Return": 
     case "Tiltekt": return "bg-yellow-200 text-yellow-800 border border-yellow-400"; // Enhanced to make more noticeable
     case "Tilbúið til afhendingar": return "bg-green-500 text-white"; // Bright green for better visibility
+    case "Vara afhent": return "bg-green-600 text-white font-semibold"; // Added new status with darker green
     default: return "bg-gray-100 text-gray-800";
   }
 };
