@@ -18,6 +18,9 @@ export interface Contract {
   totalValue: number;
   location?: string;
   department?: 'KOPA' | 'ÞORH' | 'GRAN' | 'KEFL' | 'SELF' | 'AKEY' | 'VER';
+  contractDate?: string;
+  deliveryDate?: string;
+  expectedReturnDate?: string;
 }
 
 export interface RentalItem {

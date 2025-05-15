@@ -62,6 +62,28 @@ const ContractInfo: React.FC<ContractInfoProps> = ({ contract, renter }) => {
             </div>
           </div>
           
+          <div>
+            <div className="text-sm text-gray-500">Samningsdagsetning</div>
+            <div className="text-lg font-medium text-white flex items-center">
+              <Calendar size={16} className="mr-2" />
+              {contract.contractDate ? formatDate(contract.contractDate) : formatDate(contract.startDate)}
+            </div>
+          </div>
+          <div>
+            <div className="text-sm text-gray-500">Afhendingardagur</div>
+            <div className="text-lg font-medium text-white flex items-center">
+              <Calendar size={16} className="mr-2" />
+              {contract.deliveryDate ? formatDate(contract.deliveryDate) : '-'}
+            </div>
+          </div>
+          <div>
+            <div className="text-sm text-gray-500">Áætluð skiladagsetning</div>
+            <div className="text-lg font-medium text-white flex items-center">
+              <Calendar size={16} className="mr-2" />
+              {contract.expectedReturnDate ? formatDate(contract.expectedReturnDate) : formatDate(contract.endDate)}
+            </div>
+          </div>
+          
           <div className="md:col-span-2">
             <div className="text-sm text-gray-500">Leigutaki</div>
             <div className="text-lg font-medium text-white">
