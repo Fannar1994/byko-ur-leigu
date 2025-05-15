@@ -34,7 +34,7 @@ const CountComponent: React.FC<CountComponentProps> = ({
   };
 
   return (
-    <div className="w-full">
+    <div className="flex items-center justify-center w-full">
       <Input
         type="number"
         value={localCount}
