@@ -1,15 +1,16 @@
-import React, { useState, useEffect } from "react";
+
+import React, { useState } from "react";
 import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Check, AlertCircle, FileText } from "lucide-react";
-import ItemTable from "../ItemTable";
+import { Check, AlertCircle } from "lucide-react";
 import { RentalItem } from "@/types/contract";
 import { toast } from "sonner";
 import { getItemCount } from "@/utils/countUtils";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
-import { Textarea } from "@/components/ui/textarea";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+
+// Import our new components
+import DescriptionDialog from "./dialog/DescriptionDialog";
+import ItemDescriptionsList from "./items/ItemDescriptionsList";
+import TiltektItemsList from "./items/TiltektItemsList";
+import ReadyForPickItems from "./items/ReadyForPickItems";
 
 interface TiltektTabProps {
   readyForPickItems: RentalItem[];
@@ -41,9 +42,6 @@ const TiltektTab: React.FC<TiltektTabProps> = ({
 }) => {
   const hasPickedItems = Object.values(pickedItems).some(Boolean);
   
-  // Keep track of item counts to know which ones to update
-  const [itemCounts, setItemCounts] = useState<Record<string, number>>({});
-  
   // Track items that have been marked as delivered (to remove them from the display)
   const [deliveredItems, setDeliveredItems] = useState<string[]>([]);
   
@@ -62,6 +60,7 @@ const TiltektTab: React.FC<TiltektTabProps> = ({
     return desc ? desc.text : "";
   };
   
+  // Handle status click for a single item
   const handleStatusClick = (item: RentalItem, count: number) => {
     if (count <= 0) {
       toast.error("Villa", {
@@ -77,7 +76,6 @@ const TiltektTab: React.FC<TiltektTabProps> = ({
       // Add the item to the delivered items list (to remove from display)
       setDeliveredItems(prev => [...prev, item.id]);
       
-      // Show a more prominent toast notification
       toast.success("Vara uppfærð í 'Tilbúið til afhendingar'", {
         description: `${item.itemName} (${item.serialNumber}) hefur verið merkt sem tilbúin til afhendingar og skýrsla send.`,
         duration: 5000,
@@ -85,7 +83,7 @@ const TiltektTab: React.FC<TiltektTabProps> = ({
     }
   };
   
-  // New function to handle batch update of items with counts > 0
+  // Handle batch update of items with counts > 0
   const handleBatchStatusUpdate = () => {
     let updatedCount = 0;
     const newDeliveredItems: string[] = [];
@@ -164,15 +162,6 @@ const TiltektTab: React.FC<TiltektTabProps> = ({
               <span>Tiltekt lokið</span>
             </div>
           )}
-          {readyForPickItems.length > 0 && !isTiltektCompleted && (
-            <Button 
-              className="ml-auto" 
-              onClick={onCompletePickup}
-              disabled={!hasPickedItems || isTiltektCompleted}
-            >
-              <Check className="h-4 w-4 mr-2" /> Staðfesta tiltekt
-            </Button>
-          )}
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -188,131 +177,47 @@ const TiltektTab: React.FC<TiltektTabProps> = ({
         ) : (
           <div className="space-y-8">
             {readyForPickItems.length > 0 && (
-              <div>
-                <h3 className="text-lg font-medium text-white mb-4">Vörur sem þarf að taka til</h3>
-                <ItemTable 
-                  items={readyForPickItems} 
-                  showContractColumn={false}
-                  onTogglePicked={!isTiltektCompleted ? onTogglePicked : undefined}
-                  pickedItems={pickedItems}
-                  showCountColumn={showCountColumn}
-                  onCountChange={!isTiltektCompleted ? onCountChange : undefined}
-                />
-              </div>
+              <ReadyForPickItems
+                readyForPickItems={readyForPickItems}
+                pickedItems={pickedItems}
+                onTogglePicked={onTogglePicked}
+                onCompletePickup={onCompletePickup}
+                showCountColumn={showCountColumn}
+                onCountChange={onCountChange}
+                hasPickedItems={hasPickedItems}
+                isTiltektCompleted={isTiltektCompleted}
+              />
             )}
 
             {displayedTiltektItems.length > 0 && (
-              <div>
-                <div className="flex justify-between items-center mb-4">
-                  <h3 className="text-lg font-medium text-white">Vörur tilbúnar til afhendingar</h3>
-                  <div className="flex space-x-2">
-                    <Button 
-                      onClick={() => {
-                        const item = displayedTiltektItems[0];
-                        handleOpenDescriptionDialog(item);
-                      }}
-                      variant="outline"
-                      className="bg-blue-600 hover:bg-blue-700 text-white"
-                    >
-                      <FileText className="h-4 w-4 mr-2" /> Bæta við athugasemd
-                    </Button>
-                    <Button 
-                      onClick={handleBatchStatusUpdate}
-                      variant="secondary"
-                      className="bg-green-600 hover:bg-green-700 text-white"
-                    >
-                      <Check className="h-4 w-4 mr-2" /> Merkja taldar vörur afhentar
-                    </Button>
-                  </div>
-                </div>
-                <div className="mb-2 p-2 bg-gray-700 rounded flex items-center justify-center">
-                  <AlertCircle className="h-4 w-4 mr-2 text-gray-300" />
-                  <span className="text-sm text-gray-300">
-                    Smelltu á "Taktu mynd" til að færa vöru í "Tilbúið til afhendingar". 
-                    Settu inn talningu fyrst og smelltu svo á merkið.
-                  </span>
-                </div>
-                <ItemTable 
-                  items={displayedTiltektItems} 
-                  showContractColumn={false}
-                  showCountColumn={showCountColumn}
-                  onCountChange={onCountChange}
-                  onStatusClick={handleStatusClick}
-                />
-                
-                {/* Item descriptions display */}
-                {itemDescriptions.some(d => displayedTiltektItems.some(item => item.id === d.id && d.text.trim() !== '')) && (
-                  <div className="mt-6 border border-gray-700 rounded-md p-4">
-                    <h4 className="text-white font-medium mb-3">Athugasemdir um vörur</h4>
-                    <div className="space-y-3">
-                      {itemDescriptions
-                        .filter(d => displayedTiltektItems.some(item => item.id === d.id) && d.text.trim() !== '')
-                        .map(d => {
-                          const item = displayedTiltektItems.find(item => item.id === d.id);
-                          return item ? (
-                            <div key={d.id} className="bg-gray-800/50 p-3 rounded-md">
-                              <div className="font-medium text-white mb-1">{item.itemName} ({item.serialNumber})</div>
-                              <div className="text-gray-300 text-sm whitespace-pre-wrap">{d.text}</div>
-                              <button 
-                                className="text-xs text-blue-400 mt-2 hover:underline flex items-center"
-                                onClick={() => handleOpenDescriptionDialog(item)}
-                              >
-                                <FileText className="h-3 w-3 mr-1" /> Breyta athugasemd
-                              </button>
-                            </div>
-                          ) : null;
-                        })
-                      }
-                    </div>
-                  </div>
-                )}
-              </div>
+              <TiltektItemsList
+                displayedTiltektItems={displayedTiltektItems}
+                onOpenDescriptionDialog={handleOpenDescriptionDialog}
+                onBatchStatusUpdate={handleBatchStatusUpdate}
+                onStatusClick={handleStatusClick}
+                onCountChange={onCountChange}
+                showCountColumn={showCountColumn}
+              />
             )}
+            
+            <ItemDescriptionsList
+              itemDescriptions={itemDescriptions}
+              displayedItems={displayedTiltektItems}
+              onEditDescription={handleOpenDescriptionDialog}
+            />
           </div>
         )}
       </CardContent>
       
       {/* Description Dialog */}
-      <Dialog open={isDescriptionDialogOpen} onOpenChange={setIsDescriptionDialogOpen}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle>Athugasemd um vöru</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4 py-4">
-            {currentItem && (
-              <div className="space-y-2">
-                <div className="flex flex-col space-y-1.5">
-                  <Label htmlFor="item-name">Vara</Label>
-                  <Input id="item-name" value={`${currentItem.itemName} (${currentItem.serialNumber})`} readOnly />
-                </div>
-                <div className="flex flex-col space-y-1.5">
-                  <Label htmlFor="item-description">Athugasemd</Label>
-                  <Textarea
-                    id="item-description"
-                    placeholder="Skrifaðu athugasemd hér..."
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                    rows={5}
-                    className="resize-none"
-                  />
-                </div>
-              </div>
-            )}
-          </div>
-          <DialogFooter className="sm:justify-between">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => setIsDescriptionDialogOpen(false)}
-            >
-              Hætta við
-            </Button>
-            <Button type="button" onClick={handleSaveDescription}>
-              Vista athugasemd
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <DescriptionDialog
+        isOpen={isDescriptionDialogOpen}
+        onOpenChange={setIsDescriptionDialogOpen}
+        currentItem={currentItem}
+        description={description}
+        setDescription={setDescription}
+        onSave={handleSaveDescription}
+      />
     </Card>
   );
 };

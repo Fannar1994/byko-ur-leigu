@@ -1,11 +1,10 @@
-
 import React from "react";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 import RentalTabsNavigation from "@/components/RentalTabsNavigation";
 import { Contract, RentalItem } from "@/types/contract";
 import TiltektTab from "./TiltektTab";
 import OffHiredItemsTab from "./OffHiredItemsTab";
-import { setItemCount, getItemCount } from "@/utils/countUtils";
+import { setItemCount } from "@/utils/countUtils";
 
 interface ContractTabsProps {
   contracts: Contract[];
