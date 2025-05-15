@@ -23,7 +23,7 @@ interface ContractDetailsContentProps {
   handleCountChange: (itemId: string, count: number) => void;
   sortField: string;
   sortDirection: "asc" | "desc";
-  handleSort: (field: any) => void;
+  handleSort: (field: string) => void;
 }
 
 const ContractDetailsContent: React.FC<ContractDetailsContentProps> = ({

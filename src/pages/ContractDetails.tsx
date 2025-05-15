@@ -8,6 +8,7 @@ import ContractLoading from "@/components/contract/ContractLoading";
 import ContractNotFound from "@/components/contract/ContractNotFound";
 import { Card } from "@/components/ui/card";
 import HistoricalContractView from "@/components/contract/HistoricalContractView";
+import ContractHandlers from "@/components/contract/ContractHandlers";
 
 // Import custom hooks
 import { useContractData } from "@/hooks/useContractData";
@@ -15,8 +16,6 @@ import { useFilteredItems } from "@/hooks/useFilteredItems";
 import { useSorting } from "@/hooks/useSorting";
 import { useItemStatusUpdate } from "@/hooks/useItemStatusUpdate";
 import { useCountHandler } from "@/hooks/useCountHandler";
-import { OffHireHandler } from "@/components/contract/OffHireHandler";
-import { PickupHandler } from "@/components/contract/PickupHandler";
 
 const ContractDetails = () => {
   const { contractNumber } = useParams();
@@ -60,82 +59,24 @@ const ContractDetails = () => {
                 {isContractOffHired ? (
                   <HistoricalContractView localRentalItems={localRentalItems} />
                 ) : (
-                  <OffHireHandler onItemStatusUpdate={handleItemStatusUpdate}>
-                    {({ 
-                      handleOffHireClick, 
-                      handleBatchOffHire, 
-                      processingItemId, 
-                      processedItems, 
-                      pickedItems: offHirePickedItems, 
-                      toggleItemPicked: toggleOffHireItemPicked, 
-                      anyItemsPicked: anyOffHireItemsPicked 
-                    }) => (
-                      <PickupHandler 
-                        contractId={contractId} 
-                        onItemStatusUpdate={handleItemStatusUpdate}
-                      >
-                        {({ pickedItems, toggleItemPicked, handleCompletePickup, isTiltektCompleted }) => (
-                          <Card className="p-6">
-                            {/* Render contract content based on OffHireHandler and PickupHandler */}
-                            {contract && contractData && (
-                              <div className="space-y-4">
-                                <div className="w-full">
-                                  {/* Tabs to switch between items */}
-                                  <div className="w-full">
-                                    <OffHireHandler onItemStatusUpdate={handleItemStatusUpdate}>
-                                      {({ 
-                                        handleOffHireClick, 
-                                        handleBatchOffHire, 
-                                        processingItemId, 
-                                        processedItems, 
-                                        pickedItems: offHirePickedItems, 
-                                        toggleItemPicked: toggleOffHireItemPicked, 
-                                        anyItemsPicked: anyOffHireItemsPicked 
-                                      }) => (
-                                        <PickupHandler 
-                                          contractId={contractId} 
-                                          onItemStatusUpdate={handleItemStatusUpdate}
-                                        >
-                                          {({ pickedItems, toggleItemPicked, handleCompletePickup, isTiltektCompleted }) => (
-                                            <div>
-                                              {/* Contract tabs */}
-                                              <ContractTabs 
-                                                contracts={contractData.contracts}
-                                                activeItems={activeItems}
-                                                readyForPickItems={readyForPickItems}
-                                                tiltektItems={tiltektItems}
-                                                offHiredItems={offHiredItems}
-                                                pickedItems={pickedItems}
-                                                processingItemId={processingItemId}
-                                                processedItems={processedItems}
-                                                sortField={sortField}
-                                                sortDirection={sortDirection}
-                                                onTogglePicked={toggleItemPicked}
-                                                onCompletePickup={handleCompletePickup}
-                                                onOffHireClick={handleOffHireClick}
-                                                onBatchOffHire={handleBatchOffHire}
-                                                handleSort={handleSort}
-                                                onCountChange={handleCountChange}
-                                                onItemStatusUpdate={handleItemStatusUpdateWithCount}
-                                                isTiltektCompleted={isTiltektCompleted}
-                                                offHirePickedItems={offHirePickedItems}
-                                                onToggleOffHirePicked={toggleOffHireItemPicked}
-                                                anyOffHireItemsPicked={anyOffHireItemsPicked}
-                                              />
-                                            </div>
-                                          )}
-                                        </PickupHandler>
-                                      )}
-                                    </OffHireHandler>
-                                  </div>
-                                </div>
-                              </div>
-                            )}
-                          </Card>
-                        )}
-                      </PickupHandler>
-                    )}
-                  </OffHireHandler>
+                  <Card className="p-6">
+                    <div className="space-y-4">
+                      <ContractHandlers
+                        contractId={contractId}
+                        localRentalItems={localRentalItems}
+                        activeItems={activeItems}
+                        readyForPickItems={readyForPickItems}
+                        tiltektItems={tiltektItems}
+                        offHiredItems={offHiredItems}
+                        handleItemStatusUpdate={handleItemStatusUpdate}
+                        handleItemStatusUpdateWithCount={handleItemStatusUpdateWithCount}
+                        handleCountChange={handleCountChange}
+                        sortField={sortField}
+                        sortDirection={sortDirection}
+                        handleSort={handleSort}
+                      />
+                    </div>
+                  </Card>
                 )}
               </div>
             ) : (
