@@ -6,6 +6,7 @@ import { Check, AlertCircle } from "lucide-react";
 import ItemTable from "../ItemTable";
 import { RentalItem } from "@/types/contract";
 import { toast } from "sonner";
+import { getItemCount } from "@/utils/countUtils";
 
 interface TiltektTabProps {
   readyForPickItems: RentalItem[];
@@ -41,9 +42,9 @@ const TiltektTab: React.FC<TiltektTabProps> = ({
     }
     
     if (onStatusUpdate) {
-      onStatusUpdate(item.id, "Í leigu", count);
+      onStatusUpdate(item.id, "Tilbúið til afhendingar", count);
       toast.success("Aðgerð tókst", {
-        description: `${item.itemName} sett í leigu með ${count} talningar.`,
+        description: `${item.itemName} sett sem tilbúið til afhendingar með ${count} talningar.`,
       });
     }
   };

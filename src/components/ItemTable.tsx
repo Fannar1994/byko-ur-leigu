@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { RentalItem } from "@/types/contract";
 import {
   Table,
@@ -7,6 +7,7 @@ import {
 } from "@/components/ui/table";
 import ItemTableHeader from "./item/ItemTableHeader";
 import ItemTableRow from "./item/ItemTableRow";
+import { getItemCount } from "@/utils/countUtils";
 
 interface ItemTableProps {
   items: RentalItem[];
@@ -41,6 +42,15 @@ const ItemTable: React.FC<ItemTableProps> = ({
 }) => {
   const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
   const [itemCounts, setItemCounts] = useState<Record<string, number>>({});
+
+  useEffect(() => {
+    // Initialize item counts from the utility
+    const counts: Record<string, number> = {};
+    items.forEach(item => {
+      counts[item.id] = getItemCount(item.id);
+    });
+    setItemCounts(counts);
+  }, [items]);
 
   const handleRowClick = (itemId: string) => {
     setSelectedRowId(prevId => prevId === itemId ? null : itemId);

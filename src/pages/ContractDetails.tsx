@@ -17,6 +17,7 @@ import { useSorting } from "@/hooks/useSorting";
 import { OffHireHandler } from "@/components/contract/OffHireHandler";
 import { PickupHandler } from "@/components/contract/PickupHandler";
 import { hasTiltektBeenCompleted } from "@/utils/contractStatusUtils";
+import { setItemCount } from "@/utils/countUtils";
 
 const ContractDetails = () => {
   const { contractNumber } = useParams();
@@ -32,7 +33,8 @@ const ContractDetails = () => {
   // Handle count change
   const handleCountChange = (itemId: string, count: number) => {
     console.log(`Item ${itemId} count changed to ${count}`);
-    // Here you would normally update a state or make an API call
+    // Store the count in our utility
+    setItemCount(itemId, count);
   };
 
   // Handle item status updates
@@ -58,8 +60,9 @@ const ContractDetails = () => {
   const handleItemStatusUpdateWithCount = (itemId: string, newStatus: string, count: number) => {
     // Update the item status first
     handleItemStatusUpdate(itemId, newStatus as any);
+    // Store the count in our utility
+    setItemCount(itemId, count);
     console.log(`Item ${itemId} status changed to ${newStatus} with count ${count}`);
-    // Here you would normally also update the count in a database
   };
 
   // Navigation
