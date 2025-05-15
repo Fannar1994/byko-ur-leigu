@@ -31,13 +31,13 @@ const ContractDetails = () => {
     useFilteredItems(localRentalItems);
   const { sortField, sortDirection, handleSort } = useSorting();
 
-// Handle count change and status update together
-const handleCountChange = (itemId: string, count: number) => {
-  console.log(`Item ${itemId} count changed to ${count}`);
-  
-  // Save the count
-  setItemCount(itemId, count);
-};
+  // Handle count change and status update together
+  const handleCountChange = (itemId: string, count: number) => {
+    console.log(`Item ${itemId} count changed to ${count}`);
+    
+    // Save the count
+    setItemCount(itemId, count);
+  };
 
   // Handle item status updates
   const handleItemStatusUpdate = (itemId: string | string[], newStatus: "On Rent" | "Off-Hired" | "Pending Return" | "Í leigu" | "Tiltekt" | "Úr leiga" | "Tilbúið til afhendingar" | "Vara afhent") => {
@@ -148,7 +148,15 @@ const handleCountChange = (itemId: string, count: number) => {
                 ) : (
                   // Render normal tabs view for active contracts
                   <OffHireHandler onItemStatusUpdate={handleItemStatusUpdate}>
-                    {({ handleOffHireClick, processingItemId, processedItems }) => (
+                    {({ 
+                      handleOffHireClick, 
+                      handleBatchOffHire, 
+                      processingItemId, 
+                      processedItems, 
+                      pickedItems: offHirePickedItems, 
+                      toggleItemPicked: toggleOffHireItemPicked, 
+                      anyItemsPicked: anyOffHireItemsPicked 
+                    }) => (
                       <PickupHandler 
                         contractId={contractId} 
                         onItemStatusUpdate={handleItemStatusUpdate}
@@ -168,10 +176,14 @@ const handleCountChange = (itemId: string, count: number) => {
                             onTogglePicked={toggleItemPicked}
                             onCompletePickup={handleCompletePickup}
                             onOffHireClick={handleOffHireClick}
+                            onBatchOffHire={handleBatchOffHire}
                             handleSort={handleSort}
                             onCountChange={handleCountChange}
                             onItemStatusUpdate={handleItemStatusUpdateWithCount}
                             isTiltektCompleted={isTiltektCompleted}
+                            offHirePickedItems={offHirePickedItems}
+                            onToggleOffHirePicked={toggleOffHireItemPicked}
+                            anyOffHireItemsPicked={anyOffHireItemsPicked}
                           />
                         )}
                       </PickupHandler>

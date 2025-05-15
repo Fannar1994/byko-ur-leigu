@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 import RentalTabsNavigation from "@/components/RentalTabsNavigation";
@@ -14,16 +15,20 @@ interface ContractTabsProps {
   offHiredItems: RentalItem[];
   pickedItems: Record<string, boolean>;
   processingItemId: string | null;
-  processedItems: string[]; // Updated to required prop
+  processedItems: string[]; 
   sortField: keyof Contract;
   sortDirection: "asc" | "desc";
   onTogglePicked: (itemId: string) => void;
   onCompletePickup: () => void;
   onOffHireClick: (item: RentalItem) => void;
+  onBatchOffHire: (items: RentalItem[]) => void;
   handleSort: (field: keyof Contract) => void;
   onCountChange?: (itemId: string, count: number) => void;
   onItemStatusUpdate?: (itemId: string, newStatus: "Tiltekt" | "Úr leiga" | "Í leigu" | "On Rent" | "Off-Hired" | "Pending Return" | "Tilbúið til afhendingar" | "Vara afhent", count: number) => void;
   isTiltektCompleted?: boolean;
+  offHirePickedItems: Record<string, boolean>;
+  onToggleOffHirePicked: (itemId: string) => void;
+  anyOffHireItemsPicked: boolean;
 }
 
 const ContractTabs: React.FC<ContractTabsProps> = ({
@@ -36,9 +41,13 @@ const ContractTabs: React.FC<ContractTabsProps> = ({
   onTogglePicked,
   onCompletePickup,
   onOffHireClick,
+  onBatchOffHire,
   onCountChange,
   onItemStatusUpdate,
-  isTiltektCompleted = false
+  isTiltektCompleted = false,
+  offHirePickedItems,
+  onToggleOffHirePicked,
+  anyOffHireItemsPicked
 }) => {
   // Enhance the count change handler to store counts in our utility
   const handleCountChange = (itemId: string, count: number) => {
@@ -84,12 +93,16 @@ const ContractTabs: React.FC<ContractTabsProps> = ({
       
       <TabsContent value="offhired">
         <OffHiredItemsTab 
-          offHiredItems={offHiredItems.filter(item => !processedItems.includes(item.id))}
+          offHiredItems={offHiredItems}
           handleOffHireClick={onOffHireClick}
+          handleBatchOffHire={onBatchOffHire}
           processingItemId={processingItemId}
           showCountColumn={true}
           onCountChange={handleCountChange}
           processedItems={processedItems}
+          pickedItems={offHirePickedItems}
+          onTogglePicked={onToggleOffHirePicked}
+          anyItemsPicked={anyOffHireItemsPicked}
         />
       </TabsContent>
     </Tabs>

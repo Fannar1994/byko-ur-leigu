@@ -9,8 +9,12 @@ interface ItemStatusBadgeProps {
 }
 
 const ItemStatusBadge: React.FC<ItemStatusBadgeProps> = ({ status, isSelected = false }) => {
+  const badgeClass = isSelected ? 
+    "bg-green-700 text-white hover:bg-green-800" : 
+    getItemStatusColor(status);
+
   return (
-    <Badge className={getItemStatusColor(status)}>
+    <Badge className={badgeClass}>
       {status}
     </Badge>
   );
