@@ -87,7 +87,7 @@ const OffHiredItemsTab: React.FC<OffHiredItemsTabProps> = ({
   return (
     <Card>
       <CardHeader className="pb-2">
-        <CardTitle className="text-xl font-semibold text-white">Vörur úr leigu</CardTitle>
+        <CardTitle className="text-xl font-semibold text-white">Úr leigu</CardTitle>
       </CardHeader>
       <CardContent>
         {displayedItems.length === 0 ? (

@@ -41,7 +41,7 @@ const ActiveContractsView: React.FC<ActiveContractsViewProps> = ({
         <OffHireHandler onItemStatusUpdate={onItemStatusUpdate}>
           {({ handleOffHireClick, processingItemId, processedItems }) => (
             <TabContent 
-              title="Úr leiga" 
+              title="Úr leigu" 
               items={offHiredItems.filter(item => !processedItems.includes(item.id))}
               contractNumbers={contractNumbersMap}
               showActions={false}
