@@ -75,7 +75,7 @@ const ItemTableRow: React.FC<ItemTableRowProps> = ({
         ${isPicked ? 'bg-[#2c4633]' : ''}
         ${processingItemId === item.id ? 'opacity-50' : ''}
       `}
-      onClick={onRowClick}
+      onClick={(e) => onRowClick(item.id)}
     >
       <TableCell>
         <div className="flex flex-col">
@@ -91,24 +91,24 @@ const ItemTableRow: React.FC<ItemTableRowProps> = ({
       
       {showContractColumn && contractNumber && (
         <TableCell>
-          <ContractLink contractNumber={contractNumber} />
+          <ContractLink contractNumber={contractNumber} isSelected={isSelected} />
         </TableCell>
       )}
       
       {showDepartmentColumn && (
         <TableCell>
-          <ItemDepartment department={item.department} />
+          <ItemDepartment department={item.department} isSelected={isSelected} />
         </TableCell>
       )}
       
       {showLocationColumn && (
         <TableCell>
-          <ItemLocation location={item.location} />
+          <ItemLocation location={item.location} isSelected={isSelected} />
         </TableCell>
       )}
       
       <TableCell className="text-center">
-        <PhotoButton itemId={item.id} />
+        <PhotoButton />
       </TableCell>
       
       {showCountColumn && (
@@ -136,9 +136,9 @@ const ItemTableRow: React.FC<ItemTableRowProps> = ({
           )}
           {item.status === "Tiltekt" && onStatusClick && (
             <ItemStatusCell 
-              item={item} 
-              onStatusClick={() => onStatusClick(item, itemCounts[item.id] || 0)}
-              count={itemCounts[item.id] || 0}
+              status={item.status}
+              isTiltektItem={true}
+              isSelected={isSelected}
             />
           )}
         </TableCell>
