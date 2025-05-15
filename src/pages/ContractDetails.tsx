@@ -20,7 +20,6 @@ import { hasTiltektBeenCompleted } from "@/utils/contractStatusUtils";
 const ContractDetails = () => {
   const { contractNumber } = useParams();
   const navigate = useNavigate();
-  const [processedItems, setProcessedItems] = useState<string[]>([]);
   
   // Use custom hooks
   const { loading, contractData, localRentalItems, setLocalRentalItems, lastKennitala } = 
@@ -52,11 +51,6 @@ const ContractDetails = () => {
         );
       }
     });
-    
-    // If an item is being marked as "Úr leiga", add it to processed items
-    if (newStatus === "Úr leiga" && !Array.isArray(itemId)) {
-      setProcessedItems(prev => [...prev, itemId]);
-    }
   };
 
   // New function to handle status update with count
@@ -93,7 +87,7 @@ const ContractDetails = () => {
                 <ContractInfo contract={contract} renter={contractData.renter} />
                 
                 <OffHireHandler onItemStatusUpdate={handleItemStatusUpdate}>
-                  {({ handleOffHireClick, processingItemId }) => (
+                  {({ handleOffHireClick, processingItemId, processedItems }) => (
                     <PickupHandler 
                       contractId={contractId} 
                       onItemStatusUpdate={handleItemStatusUpdate}

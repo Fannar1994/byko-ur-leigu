@@ -10,6 +10,7 @@ interface OffHireHandlerProps {
   children: (props: {
     handleOffHireClick: (item: RentalItem) => void;
     processingItemId: string | null;
+    processedItems: string[]; // Export processedItems to children
   }) => React.ReactNode;
   onItemStatusUpdate: (itemId: string, newStatus: "Tiltekt" | "Úr leiga" | "Í leigu" | "On Rent" | "Off-Hired" | "Pending Return" | "Tilbúið til afhendingar") => void;
 }
@@ -95,7 +96,8 @@ export function OffHireHandler({ children, onItemStatusUpdate }: OffHireHandlerP
     <>
       {children({
         handleOffHireClick,
-        processingItemId
+        processingItemId,
+        processedItems // Pass processedItems to children
       })}
       
       <OffHireDialog

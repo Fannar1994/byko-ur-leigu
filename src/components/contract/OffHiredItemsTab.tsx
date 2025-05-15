@@ -9,7 +9,7 @@ interface OffHiredItemsTabProps {
   processingItemId: string | null;
   showCountColumn?: boolean;
   onCountChange?: (itemId: string, count: number) => void;
-  processedItems?: string[]; // New prop to track processed items
+  processedItems?: string[]; // Prop to track processed items
 }
 
 const OffHiredItemsTab: React.FC<OffHiredItemsTabProps> = ({ 
@@ -21,9 +21,7 @@ const OffHiredItemsTab: React.FC<OffHiredItemsTabProps> = ({
   processedItems = [] // Default to empty array
 }) => {
   // Filter out items that have been processed
-  const displayedItems = processedItems.length > 0
-    ? offHiredItems.filter(item => !processedItems.includes(item.id))
-    : offHiredItems;
+  const displayedItems = offHiredItems.filter(item => !processedItems.includes(item.id));
 
   return (
     <TabContent 
