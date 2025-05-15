@@ -1,14 +1,11 @@
-import { SearchResults, OffHireResponse } from "@/types/contract";
-import { fetchContracts, fetchContractItems } from "@/api/inspHireService";
-import { validateKennitala } from "./validation";
-import { mockSearchByKennitala, mockOffHireItem } from "./mockApi";
 
-// Flag to determine if we should use mock data (for demo purposes)
-const useMockData = true;
+import { SearchResults, OffHireResponse } from "@/types/contract";
+import { fetchContracts, fetchContractItems, offHireItem as apiOffHireItem, updateItemStatus } from "@/api/inspHireService";
+import { validateKennitala } from "./validation";
 
 /**
  * Search for contracts by kennitala.
- * Will use mock data if useMockData is set to true
+ * Uses the real inspHire API
  */
 export async function searchByKennitala(kennitala: string): Promise<SearchResults> {
   if (!validateKennitala(kennitala)) {
@@ -16,11 +13,6 @@ export async function searchByKennitala(kennitala: string): Promise<SearchResult
   }
 
   try {
-    // Check if we should use mock data for demo purposes
-    if (useMockData) {
-      return mockSearchByKennitala(kennitala);
-    }
-
     // Real API implementation
     const allContracts = await fetchContracts();
 
@@ -63,20 +55,22 @@ export async function searchByKennitala(kennitala: string): Promise<SearchResult
 export { validateKennitala } from "./validation";
 
 /**
- * Off-hire an item - uses mock or real implementation based on useMockData flag
+ * Off-hire an item - uses the real API implementation
  */
 export async function offHireItem(itemId: string, noCharge: boolean = false): Promise<OffHireResponse> {
-  // Use mock data for demo purposes if flag is set
-  if (useMockData) {
-    return mockOffHireItem(itemId, noCharge);
+  try {
+    const today = new Date().toISOString().split('T')[0];
+    const reason = noCharge ? "Off-hired without charge" : "Off-hired from Tiltektarkerfi";
+    
+    const result = await apiOffHireItem(itemId, today, reason);
+    
+    return {
+      success: true,
+      message: `Hlutur var skráður af leigu${noCharge ? ' án gjalds' : ''}.`,
+      itemId
+    };
+  } catch (error) {
+    console.error("Error off-hiring item:", error);
+    throw error;
   }
-  
-  // Otherwise, we would call the real API here
-  
-  // For now, just return success without making any API calls
-  return {
-    success: true,
-    message: `Hlutur var skráður af leigu${noCharge ? ' án gjalds' : ''}.`,
-    itemId
-  };
 }
