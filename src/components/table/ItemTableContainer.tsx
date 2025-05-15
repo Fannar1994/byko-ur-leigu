@@ -23,6 +23,8 @@ interface ItemTableContainerProps {
   pickedItems?: Record<string, boolean>;
   onCountChange?: (itemId: string, count: number) => void;
   onStatusClick?: (item: RentalItem, count: number) => void;
+  onOpenDescriptionDialog?: (item: RentalItem) => void;
+  hideMerkjaButtons?: boolean;
 }
 
 const ItemTableContainer: React.FC<ItemTableContainerProps> = ({
@@ -39,6 +41,8 @@ const ItemTableContainer: React.FC<ItemTableContainerProps> = ({
   pickedItems = {},
   onCountChange,
   onStatusClick,
+  onOpenDescriptionDialog,
+  hideMerkjaButtons = false
 }) => {
   const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
   const [itemCounts, setItemCounts] = useState<Record<string, number>>({});
@@ -112,6 +116,8 @@ const ItemTableContainer: React.FC<ItemTableContainerProps> = ({
             showDepartmentColumn={showDepartmentColumn}
             showActions={showActions}
             onRowClick={handleRowClick}
+            onOpenDescriptionDialog={onOpenDescriptionDialog}
+            hideMerkjaButtons={hideMerkjaButtons}
           />
         </TableBody>
       </Table>

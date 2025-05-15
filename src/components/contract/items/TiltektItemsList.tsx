@@ -48,6 +48,8 @@ const TiltektItemsList: React.FC<TiltektItemsListProps> = ({
         onCountChange={onCountChange}
         pickedItems={pickedItems}
         onTogglePicked={dummyToggle}
+        onOpenDescriptionDialog={onOpenDescriptionDialog}
+        hideMerkjaButtons={true} // Hide the Merkja buttons as requested
       />
     </div>
   );

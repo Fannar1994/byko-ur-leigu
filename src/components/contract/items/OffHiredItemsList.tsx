@@ -51,6 +51,7 @@ const OffHiredItemsList: React.FC<OffHiredItemsListProps> = ({
         onCountChange={onCountChange}
         onTogglePicked={onTogglePicked}
         pickedItems={pickedItems}
+        onOpenDescriptionDialog={onOpenDescriptionDialog}
       />
     </div>
   );

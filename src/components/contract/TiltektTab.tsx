@@ -206,6 +206,8 @@ const TiltektTab: React.FC<TiltektTabProps> = ({
                   showContractColumn={false}
                   showCountColumn={showCountColumn}
                   onCountChange={onCountChange}
+                  onOpenDescriptionDialog={handleOpenDescriptionDialog}
+                  hideMerkjaButtons={true}
                 />
               </div>
             )}

@@ -17,6 +17,8 @@ interface ItemTableProps {
   pickedItems?: Record<string, boolean>;
   onCountChange?: (itemId: string, count: number) => void;
   onStatusClick?: (item: RentalItem, count: number) => void;
+  onOpenDescriptionDialog?: (item: RentalItem) => void;
+  hideMerkjaButtons?: boolean;
 }
 
 // This is an adapter component that maintains backward compatibility

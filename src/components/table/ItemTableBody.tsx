@@ -20,6 +20,8 @@ interface ItemTableBodyProps {
   showDepartmentColumn: boolean;
   showActions: boolean;
   onRowClick: (itemId: string) => void;
+  onOpenDescriptionDialog?: (item: RentalItem) => void;
+  hideMerkjaButtons?: boolean;
 }
 
 const ItemTableBody: React.FC<ItemTableBodyProps> = ({
@@ -38,7 +40,9 @@ const ItemTableBody: React.FC<ItemTableBodyProps> = ({
   showLocationColumn,
   showDepartmentColumn,
   showActions,
-  onRowClick
+  onRowClick,
+  onOpenDescriptionDialog,
+  hideMerkjaButtons = false
 }) => {
   return (
     <>
@@ -64,8 +68,10 @@ const ItemTableBody: React.FC<ItemTableBodyProps> = ({
             showCountColumn={showCountColumn}
             showLocationColumn={showLocationColumn}
             showDepartmentColumn={showDepartmentColumn}
-            showActions={false} // Always set to false to hide the actions column
+            showActions={showActions}
             onRowClick={() => onRowClick(item.id)}
+            onOpenDescriptionDialog={onOpenDescriptionDialog}
+            hideMerkjaButtons={hideMerkjaButtons}
           />
         );
       })}

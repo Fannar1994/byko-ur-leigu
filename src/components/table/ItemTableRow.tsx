@@ -1,5 +1,5 @@
 
-import React, { useEffect } from "react"; // Added useEffect
+import React, { useEffect } from "react"; 
 import { TableRow, TableCell } from "@/components/ui/table";
 import { RentalItem } from "@/types/contract";
 import ContractLink from "@/components/item/ContractLink";
@@ -10,6 +10,7 @@ import ItemDepartment from "@/components/item/ItemDepartment";
 import ItemActionButton from "@/components/item/ItemActionButton";
 import ItemStatusCell from "@/components/item/ItemStatusCell";
 import CountComponent from "@/components/CountComponent";
+import { FileText } from "lucide-react";
 
 interface ItemTableRowProps {
   item: RentalItem;
@@ -28,6 +29,8 @@ interface ItemTableRowProps {
   showDepartmentColumn: boolean;
   showActions: boolean;
   onRowClick: (itemId: string) => void;
+  onOpenDescriptionDialog?: (item: RentalItem) => void;
+  hideMerkjaButtons?: boolean;
 }
 
 const ItemTableRow: React.FC<ItemTableRowProps> = ({
@@ -46,7 +49,9 @@ const ItemTableRow: React.FC<ItemTableRowProps> = ({
   showLocationColumn,
   showDepartmentColumn,
   showActions,
-  onRowClick
+  onRowClick,
+  onOpenDescriptionDialog,
+  hideMerkjaButtons = false
 }) => {
   // Effect to automatically toggle picked state when count changes
   useEffect(() => {
@@ -121,9 +126,23 @@ const ItemTableRow: React.FC<ItemTableRowProps> = ({
         </TableCell>
       )}
       
-      {/* Removed the showActions section completely */}
+      {/* Comment button column */}
+      <TableCell className="text-center" onClick={(e) => e.stopPropagation()}>
+        {onOpenDescriptionDialog && (
+          <button 
+            className="text-blue-400 hover:text-blue-500 p-1 rounded-sm flex items-center justify-center"
+            onClick={(e) => {
+              e.stopPropagation();
+              onOpenDescriptionDialog(item);
+            }}
+          >
+            <FileText className="h-4 w-4" />
+          </button>
+        )}
+      </TableCell>
       
-      {onTogglePicked && (
+      {/* Only show the Merkja/Pick button column if not hidden */}
+      {onTogglePicked && !hideMerkjaButtons && (
         <TableCell className="text-center" onClick={(e) => e.stopPropagation()}>
           {/* Only show the Merkja button if count is 0 */}
           {(!itemCounts[item.id] || itemCounts[item.id] === 0) && (
