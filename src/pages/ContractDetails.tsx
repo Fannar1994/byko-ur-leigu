@@ -9,6 +9,7 @@ import ContractNotFound from "@/components/contract/ContractNotFound";
 import { Card } from "@/components/ui/card";
 import HistoricalContractView from "@/components/contract/HistoricalContractView";
 import ContractHandlers from "@/components/contract/ContractHandlers";
+import { Contract } from "@/types/contract";
 
 // Import custom hooks
 import { useContractData } from "@/hooks/useContractData";
@@ -71,7 +72,7 @@ const ContractDetails = () => {
                         handleItemStatusUpdate={handleItemStatusUpdate}
                         handleItemStatusUpdateWithCount={handleItemStatusUpdateWithCount}
                         handleCountChange={handleCountChange}
-                        sortField={sortField}
+                        sortField={sortField as keyof Contract}
                         sortDirection={sortDirection}
                         handleSort={handleSort}
                       />

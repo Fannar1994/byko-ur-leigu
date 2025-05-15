@@ -1,6 +1,6 @@
 
 import React from "react";
-import { RentalItem } from "@/types/contract";
+import { RentalItem, Contract } from "@/types/contract";
 import { OffHireHandler } from "@/components/contract/OffHireHandler";
 import { PickupHandler } from "@/components/contract/PickupHandler";
 import ContractTabs from "@/components/contract/ContractTabs";
@@ -15,9 +15,9 @@ interface ContractHandlersProps {
   handleItemStatusUpdate: (itemId: string | string[], newStatus: string) => void;
   handleItemStatusUpdateWithCount: (itemId: string, newStatus: string, count: number) => void;
   handleCountChange: (itemId: string, count: number) => void;
-  sortField: string;
+  sortField: keyof Contract;
   sortDirection: "asc" | "desc";
-  handleSort: (field: string) => void;
+  handleSort: (field: keyof Contract) => void;
 }
 
 const ContractHandlers: React.FC<ContractHandlersProps> = ({

@@ -21,9 +21,9 @@ interface ContractDetailsContentProps {
   handleItemStatusUpdate: (itemId: string | string[], newStatus: any) => void;
   handleItemStatusUpdateWithCount: (itemId: string, newStatus: string, count: number) => void;
   handleCountChange: (itemId: string, count: number) => void;
-  sortField: string;
+  sortField: keyof Contract;
   sortDirection: "asc" | "desc";
-  handleSort: (field: string) => void;
+  handleSort: (field: keyof Contract) => void;
 }
 
 const ContractDetailsContent: React.FC<ContractDetailsContentProps> = ({
