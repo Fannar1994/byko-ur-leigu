@@ -129,16 +129,7 @@ const TiltektTab: React.FC<TiltektTabProps> = ({
 
             {tiltektItems.length > 0 && (
               <div>
-                <div className="flex justify-between items-center mb-4">
-                  <h3 className="text-lg font-medium text-white">Vörur tilbúnar til afhendingar</h3>
-                  <Button 
-                    onClick={handleBatchStatusUpdate}
-                    variant="secondary"
-                    className="bg-green-600 hover:bg-green-700 text-white"
-                  >
-                    <Check className="h-4 w-4 mr-2" /> Merkja taldar vörur afhentar
-                  </Button>
-                </div>
+                <h3 className="text-lg font-medium text-white mb-4">Vörur tilbúnar til afhendingar</h3>
                 <div className="mb-2 p-2 bg-gray-700 rounded flex items-center justify-center">
                   <AlertCircle className="h-4 w-4 mr-2 text-gray-300" />
                   <span className="text-sm text-gray-300">
